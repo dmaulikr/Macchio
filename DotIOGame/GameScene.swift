@@ -20,8 +20,10 @@ class GameScene: SKScene {
     let minDirectionArrowDistanceFromPlayer: CGFloat = 3, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
     let spawnPosition = CGPoint(x: 200, y: 200)
     let playerSpeed: CGFloat = 100
+    var playerPreviousAngle: CGFloat!
+    let playerMaxAngleChangePerSecond: CGFloat = 180
     var playerMovingTouch: UITouch? = nil
-    var originalMovingTouchPositionInCamera: CGPoint? = nil
+    var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
     
@@ -48,7 +50,7 @@ class GameScene: SKScene {
             if playerMovingTouch == nil {
                 playerMovingTouch = touch
                 let location = touch.locationInNode(camera!)
-                originalMovingTouchPositionInCamera = location
+                originalPlayerMovingTouchPositionInCamera = location
                 
                 if prefs.showArrow {
                     directionArrow.hidden = false
@@ -57,7 +59,7 @@ class GameScene: SKScene {
                 }
                 
                 if prefs.showJoyStick {
-                    joyStickBox.position = originalMovingTouchPositionInCamera!
+                    joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
                     joyStickBox.hidden = false
                 }
             }
@@ -67,24 +69,55 @@ class GameScene: SKScene {
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         for touch in touches {
             if touch == playerMovingTouch {
-                let location = touch.locationInNode(camera!)
-                let angle = (location - originalMovingTouchPositionInCamera!).angle
                 
+                let location = touch.locationInNode(camera!)
+                let angle = (location - originalPlayerMovingTouchPositionInCamera!).angle
+                print(angle)
                 player.velocity.angle = angle
+                
+//                let location = touch.locationInNode(camera!)
+//                let targetAngle = (location - originalPlayerMovingTouchPositionInCamera!).angle.radiansToDegrees()
+//                let playerAngle = player.velocity.angle.radiansToDegrees()
+//                var posDist: CGFloat, negDist: CGFloat
+//                if targetAngle > playerAngle {
+//                    posDist = targetAngle - playerAngle
+//                    negDist = playerAngle + 360 - targetAngle
+//                } else if targetAngle < playerAngle {
+//                    negDist = playerAngle - targetAngle
+//                    posDist = 360 - playerAngle + targetAngle
+//                } else {
+//                    negDist = 0
+//                    posDist = 0
+//                }
+//                //convert the degree measures back to radians
+//                negDist = negDist.degreesToRadians()
+//                posDist = posDist.degreesToRadians()
+//                if posDist > negDist {
+//                    //Change the player's angle in the POSITIVE WAY. By increasing the angle!
+//                    player.velocity.angle += posDist / 100 //dividing by 10 gives smooth look
+//                } else {
+//                    //Change the player's angle in the NEGATIVE WAY. By DECREASING the angle!
+//                    player.velocity.angle -= negDist / 100
+//                }
+                
+                
                 
                 if prefs.showArrow {
                     // My means of determining the position of the arrow:
                     // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
-                    var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalMovingTouchPositionInCamera!), y: 0)
+                    var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
                     pointInRelationToPlayer.x.clamp(player.size.width + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
                     directionArrow.position = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: player), toNode: camera!)
                     directionArrow.zRotation = player.velocity.angle - CGFloat(90).degreesToRadians()
+                    
+                    directionArrow.position.x.clamp(-frame.width/2, frame.width/2)
+                    directionArrow.position.y.clamp(-frame.height/2, frame.height/2)
                 }
                 
                 if prefs.showJoyStick {
                     //Move controlStick based on finger movement. Also add a distance cap
-                    controlStick.position = location - originalMovingTouchPositionInCamera!
-                    if location.distanceTo(originalMovingTouchPositionInCamera!) > maxControlStickDistance {
+                    controlStick.position = location - originalPlayerMovingTouchPositionInCamera!
+                    if location.distanceTo(originalPlayerMovingTouchPositionInCamera!) > maxControlStickDistance {
                         let angle = atan2(controlStick.position.y, controlStick.position.x)
                         controlStick.position.x = cos(angle) * maxControlStickDistance
                         controlStick.position.y = sin(angle) * maxControlStickDistance
@@ -98,7 +131,7 @@ class GameScene: SKScene {
         for touch in touches {
             if touch == playerMovingTouch {
                 playerMovingTouch = nil
-                originalMovingTouchPositionInCamera = nil
+                originalPlayerMovingTouchPositionInCamera = nil
                 if prefs.showArrow {
                     directionArrow.hidden = true
                 }

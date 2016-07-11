@@ -15,7 +15,7 @@ class PlayerCreature: SKSpriteNode {
         didSet {
             size.width = 2*radius
             size.height = 2*radius
-            zPosition = radius/100 //Big creatures eat up smaller ones in terms of zPosition
+            zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
         }
     }
     
@@ -32,32 +32,23 @@ class PlayerCreature: SKSpriteNode {
             if positionDeltas.dx != desiredDx {positionDeltas.dx = desiredDx}
             if positionDeltas.dy != desiredDy {positionDeltas.dy = desiredDy}
             
-            self.zRotation = velocity.angle
+            zRotation = velocity.angle
+            
+            //print(zRotation)
         }
     }
     
     var positionDeltas: (dx: CGFloat, dy: CGFloat) = (
         dx: 0,
         dy: 0
-        )
-//    {
-//        didSet {
-//            print("positionDeltas didSet")
-//            // Change velocity.angle and velocity.speed to match
-//            let desiredAngle = atan2(positionDeltas.dy, positionDeltas.dx)
-//            let desiredSpeed = CGPoint(x: 0, y: 0).distanceTo(CGPoint(x: positionDeltas.dx, y: positionDeltas.dy))
-//            
-//            // Only set the velocity if the velocity has not already been set (avoiding recursion)
-//            if velocity.angle != desiredAngle {velocity.angle = desiredAngle}
-//            if velocity.speed != desiredSpeed {velocity.speed = desiredSpeed}
-//        }
-//    }
+    )
     
     init(name: String) {
         let texture = SKTexture.init(imageNamed: "red circle.png") //placeholderTexture
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
+        radius = 50
     }
     
     /* You are required to implement this for your subclass to work */
