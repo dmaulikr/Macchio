@@ -23,6 +23,7 @@ class GameScene: SKScene {
     var playerPreviousAngle: CGFloat!
     let playerMaxAngleChangePerSecond: CGFloat = 180
     var playerMovingTouch: UITouch? = nil
+    var playerTargetAngle: CGFloat!
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
@@ -37,6 +38,7 @@ class GameScene: SKScene {
         directionArrow.zPosition = 100
         directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
         directionArrow.zRotation = player.velocity.angle
+        playerTargetAngle = player.velocity.angle
         directionArrow.hidden = true
         camera!.addChild(directionArrow)
         
@@ -54,6 +56,8 @@ class GameScene: SKScene {
                 
                 if prefs.showArrow {
                     directionArrow.hidden = false
+                    directionArrow.removeAllActions()
+                    directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
                     directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer, y: 0), fromNode: player), toNode: camera!)
                     directionArrow.zRotation = player.velocity.angle - CGFloat(90).degreesToRadians()
                 }
@@ -72,34 +76,8 @@ class GameScene: SKScene {
                 
                 let location = touch.locationInNode(camera!)
                 let angle = (location - originalPlayerMovingTouchPositionInCamera!).angle
-                print(angle)
-                player.velocity.angle = angle
-                
-//                let location = touch.locationInNode(camera!)
-//                let targetAngle = (location - originalPlayerMovingTouchPositionInCamera!).angle.radiansToDegrees()
-//                let playerAngle = player.velocity.angle.radiansToDegrees()
-//                var posDist: CGFloat, negDist: CGFloat
-//                if targetAngle > playerAngle {
-//                    posDist = targetAngle - playerAngle
-//                    negDist = playerAngle + 360 - targetAngle
-//                } else if targetAngle < playerAngle {
-//                    negDist = playerAngle - targetAngle
-//                    posDist = 360 - playerAngle + targetAngle
-//                } else {
-//                    negDist = 0
-//                    posDist = 0
-//                }
-//                //convert the degree measures back to radians
-//                negDist = negDist.degreesToRadians()
-//                posDist = posDist.degreesToRadians()
-//                if posDist > negDist {
-//                    //Change the player's angle in the POSITIVE WAY. By increasing the angle!
-//                    player.velocity.angle += posDist / 100 //dividing by 10 gives smooth look
-//                } else {
-//                    //Change the player's angle in the NEGATIVE WAY. By DECREASING the angle!
-//                    player.velocity.angle -= negDist / 100
-//                }
-                
+                //player.velocity.angle = angle
+                playerTargetAngle = angle
                 
                 
                 if prefs.showArrow {
@@ -133,7 +111,11 @@ class GameScene: SKScene {
                 playerMovingTouch = nil
                 originalPlayerMovingTouchPositionInCamera = nil
                 if prefs.showArrow {
-                    directionArrow.hidden = true
+                    directionArrow.removeAllActions()
+                    directionArrow.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.7), SKAction.runBlock {
+                            self.directionArrow.hidden = true
+                        }]))
+                    
                 }
                 if prefs.showJoyStick {
                     joyStickBox.hidden = true
@@ -149,6 +131,34 @@ class GameScene: SKScene {
         
         player.update(deltaTime)
         
+        //make the players angle APPROACH playerTargetAngle. I wish. See all that commented out code below. That's me giving up FTMP (for the most part)
+        player.velocity.angle = playerTargetAngle
+        
+//        let targetAngle = playerTargetAngle.radiansToDegrees()
+//        let playerAngle = player.velocity.angle.radiansToDegrees()
+//        var posDist: CGFloat, negDist: CGFloat
+//        if targetAngle > playerAngle {
+//            posDist = targetAngle - playerAngle
+//            negDist = playerAngle + 360 - targetAngle
+//        } else if targetAngle < playerAngle {
+//            negDist = playerAngle - targetAngle
+//            posDist = 360 - playerAngle + targetAngle
+//        } else {
+//            negDist = 0
+//            posDist = 0
+//        }
+//        //convert the degree measures back to radians
+//        negDist = negDist.degreesToRadians()
+//        posDist = posDist.degreesToRadians()
+//        if posDist > negDist {
+//            //Change the player's angle in the POSITIVE WAY. By increasing the angle!
+//            player.velocity.angle += posDist/2 //dividing by 10 gives smooth look
+//        } else {
+//            //Change the player's angle in the NEGATIVE WAY. By DECREASING the angle!
+//            player.velocity.angle -= negDist/2
+//        }
+
+
         camera!.position = player.position
     }
 }

@@ -29,6 +29,7 @@
 		83957BC21D33FBEC00BF4450 /* SKTEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB41D33FBEC00BF4450 /* SKTEffects.swift */; };
 		83957BC31D33FBEC00BF4450 /* SKTTimingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */; };
 		83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB61D33FBEC00BF4450 /* Vector3.swift */; };
+		839710061D34650A00696814 /* EnergyOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839710051D34650A00696814 /* EnergyOrb.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		83957BB41D33FBEC00BF4450 /* SKTEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTEffects.swift; sourceTree = "<group>"; };
 		83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTTimingFunctions.swift; sourceTree = "<group>"; };
 		83957BB61D33FBEC00BF4450 /* Vector3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3.swift; sourceTree = "<group>"; };
+		839710051D34650A00696814 /* EnergyOrb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnergyOrb.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				83957B911D32FDDE00BF4450 /* GameScene.sks */,
 				83957B931D32FDDE00BF4450 /* GameScene.swift */,
 				83957BA51D3302F700BF4450 /* PlayerCreature.swift */,
+				839710051D34650A00696814 /* EnergyOrb.swift */,
 				83957B951D32FDDE00BF4450 /* GameViewController.swift */,
 				83957B971D32FDDE00BF4450 /* Main.storyboard */,
 				83957B9A1D32FDDE00BF4450 /* Assets.xcassets */,
@@ -216,6 +219,7 @@
 				83957BC01D33FBEC00BF4450 /* SKNode+Extensions.swift in Sources */,
 				83957BBD1D33FBEC00BF4450 /* SKAction+Extensions.swift in Sources */,
 				83957BBE1D33FBEC00BF4450 /* SKAction+SpecialEffects.swift in Sources */,
+				839710061D34650A00696814 /* EnergyOrb.swift in Sources */,
 				83957BB71D33FBEC00BF4450 /* MSButtonNode.swift in Sources */,
 				83957BB81D33FBEC00BF4450 /* MSReferenceNode.swift in Sources */,
 				83957BC21D33FBEC00BF4450 /* SKTEffects.swift in Sources */,
@@ -379,6 +383,7 @@
 				83957BA41D32FDDE00BF4450 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
