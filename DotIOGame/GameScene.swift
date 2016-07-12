@@ -23,13 +23,18 @@ class GameScene: SKScene {
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
-    let minDirectionArrowDistanceFromPlayer: CGFloat = 30, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
+    let minDirectionArrowDistanceFromPlayer: CGFloat = 60, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
+    var directionArrowWidthToPlayerRadiusRatio: CGFloat!
+    var directionArrowHeightToPlayerRadiusRatio: CGFloat!
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
     
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
+    var joyStickBoxXScaleToPlayerRadiusRatio: CGFloat!
+    var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
+
     
     var orbs: [EnergyOrb] = []
     
@@ -37,8 +42,8 @@ class GameScene: SKScene {
         player = PlayerCreature(name: "Yoloz Boy 123")
         player.position = spawnPosition
         self.addChild(player)
-        cameraWidthToPlayerRadiusRatio = frame.width / player.radius
-        cameraHeightToPlayerRadiusRatio = frame.height / player.radius
+        cameraWidthToPlayerRadiusRatio = self.size.width / player.radius
+        cameraHeightToPlayerRadiusRatio = self.size.height / player.radius
 
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
@@ -52,10 +57,14 @@ class GameScene: SKScene {
         directionArrowAnchor.position = player.position
         directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
         self.addChild(directionArrowAnchor)
+        directionArrowWidthToPlayerRadiusRatio = directionArrow.size.width / player.radius
+        directionArrowHeightToPlayerRadiusRatio = directionArrow.size.height / player.radius
         
         joyStickBox = childNodeWithName("//joyStickBox")
         controlStick = childNodeWithName("//controlStick")
         joyStickBox.hidden = true
+        joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
+        joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
         
         var orbNode = EnergyOrb()
         addChild(orbNode)
@@ -165,8 +174,6 @@ class GameScene: SKScene {
             // In addition to being removed, the player's size and other relevant properties must be updated here
             orb.removeFromParent()
             player.targetRadius += 100
-            
-            //TODO changearrow size to compensate
         }
         
         
@@ -178,8 +185,20 @@ class GameScene: SKScene {
             directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
         }
         
+        //maintain direction arrow scale
+        if prefs.showArrow {
+            directionArrow.size.width = directionArrowWidthToPlayerRadiusRatio * player.radius
+            directionArrow.size.height = directionArrowHeightToPlayerRadiusRatio * player.radius
+        }
+        
+        //maintain joyStickBox scale
+        if prefs.showJoyStick {
+            joyStickBox.xScale = joyStickBoxXScaleToPlayerRadiusRatio * player.radius
+            joyStickBox.yScale = joyStickBoxYScaleToPlayerRadiusRatio * player.radius
+        }
+        
         camera!.position = player.position
-        size.width = cameraWidthToPlayerRadiusRatio * player.radius
+        size.width = cameraWidthToPlayerRadiusRatio * player.radius //maintain the camera scale
         size.height = cameraHeightToPlayerRadiusRatio * player.radius
     }
     
