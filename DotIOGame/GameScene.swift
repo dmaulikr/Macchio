@@ -15,6 +15,7 @@ class GameScene: SKScene {
         showArrow: true
     )
     var previousTime: CFTimeInterval? = nil
+    var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
     
     var player: PlayerCreature!
     let spawnPosition = CGPoint(x: 200, y: 200)
@@ -36,6 +37,9 @@ class GameScene: SKScene {
         player = PlayerCreature(name: "Yoloz Boy 123")
         player.position = spawnPosition
         self.addChild(player)
+        cameraWidthToPlayerRadiusRatio = frame.width / player.radius
+        cameraHeightToPlayerRadiusRatio = frame.height / player.radius
+
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
@@ -161,7 +165,8 @@ class GameScene: SKScene {
             // In addition to being removed, the player's size and other relevant properties must be updated here
             orb.removeFromParent()
             player.targetRadius += 100
-            //TODO update camera to compensate for size change
+            
+            //TODO changearrow size to compensate
         }
         
         
@@ -174,6 +179,8 @@ class GameScene: SKScene {
         }
         
         camera!.position = player.position
+        size.width = cameraWidthToPlayerRadiusRatio * player.radius
+        size.height = cameraHeightToPlayerRadiusRatio * player.radius
     }
     
     func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
