@@ -11,7 +11,7 @@ import SpriteKit
 class GameScene: SKScene {
     
     var prefs = (
-        showJoyStick: false,
+        showJoyStick: true,
         showArrow: true
     )
     var previousTime: CFTimeInterval? = nil
@@ -20,6 +20,7 @@ class GameScene: SKScene {
     let spawnPosition = CGPoint(x: 200, y: 200)
 
     var directionArrow: SKSpriteNode!
+    var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
     let minDirectionArrowDistanceFromPlayer: CGFloat = 0, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
     
     var playerMovingTouch: UITouch? = nil

@@ -78,7 +78,31 @@ class PlayerCreature: SKSpriteNode {
         position.y += positionDeltas.dy * CGFloat(deltaTime)
         
         //ideally, the player should APPRROACH the target angle
-        velocity.angle = playerTargetAngle
+        let myAngle = velocity.angle
+        let targetAngle = playerTargetAngle
+        var posDist: CGFloat, negDist: CGFloat
+        if targetAngle > myAngle {
+            posDist = targetAngle - myAngle
+            negDist = myAngle + 360 - targetAngle
+        } else if targetAngle < myAngle {
+            negDist = myAngle - targetAngle
+            posDist = 360 - myAngle + targetAngle
+        } else {
+            negDist = 0
+            posDist = 0
+        }
+        
+        if posDist < negDist {
+            // Since the positive distance is less than the negative distance, the player will be turned the positive way. The /10's are for smoothness
+            velocity.angle += posDist / 10
+        } else if negDist < posDist {
+            velocity.angle -= negDist / 10
+        } else {
+            //no turning made
+        }
+
+        
+        //velocity.angle = playerTargetAngle
         //velocity.angle += 1
 
     }
