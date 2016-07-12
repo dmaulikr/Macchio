@@ -6,17 +6,26 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
+            condition = "playerTargetAngle &gt; 181"
             continueAfterRunningActions = "No"
-            filePath = "DotIOGame/GameScene.swift"
-            timestampString = "489974245.465284"
+            filePath = "DotIOGame/PlayerCreature.swift"
+            timestampString = "490039993.351409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "update(_:)"
             landmarkType = "5">
+            <Actions>
+               <BreakpointActionProxy
+                  ActionExtensionID = "Xcode.BreakpointAction.DebuggerCommand">
+                  <ActionContent
+                     consoleCommand = "">
+                  </ActionContent>
+               </BreakpointActionProxy>
+            </Actions>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

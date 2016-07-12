@@ -15,30 +15,28 @@ class GameScene: SKScene {
         showArrow: true
     )
     var previousTime: CFTimeInterval? = nil
+    
     var player: PlayerCreature!
-    var directionArrow: SKSpriteNode!
-    let minDirectionArrowDistanceFromPlayer: CGFloat = 3, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
     let spawnPosition = CGPoint(x: 200, y: 200)
-    let playerSpeed: CGFloat = 100
-    var playerPreviousAngle: CGFloat!
-    let playerMaxAngleChangePerSecond: CGFloat = 180
+
+    var directionArrow: SKSpriteNode!
+    let minDirectionArrowDistanceFromPlayer: CGFloat = 0, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
+    
     var playerMovingTouch: UITouch? = nil
-    var playerTargetAngle: CGFloat!
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
+    
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
         player.position = spawnPosition
-        player.velocity.speed = playerSpeed
         addChild(player)
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
         directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
-        directionArrow.zRotation = player.velocity.angle
-        playerTargetAngle = player.velocity.angle
+        directionArrow.zRotation = player.velocity.angle.degreesToRadians()
         directionArrow.hidden = true
         camera!.addChild(directionArrow)
         
@@ -58,13 +56,13 @@ class GameScene: SKScene {
                     directionArrow.hidden = false
                     directionArrow.removeAllActions()
                     directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                    directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer, y: 0), fromNode: player), toNode: camera!)
-                    directionArrow.zRotation = player.velocity.angle - CGFloat(90).degreesToRadians()
+                    directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: player), toNode: camera!)
+                    directionArrow.zRotation = player.velocity.angle.degreesToRadians() - CGFloat(90).degreesToRadians()
                 }
                 
                 if prefs.showJoyStick {
-                    joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
                     joyStickBox.hidden = false
+                    joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
                 }
             }
         }
@@ -75,10 +73,8 @@ class GameScene: SKScene {
             if touch == playerMovingTouch {
                 
                 let location = touch.locationInNode(camera!)
-                let angle = (location - originalPlayerMovingTouchPositionInCamera!).angle
-                //player.velocity.angle = angle
-                playerTargetAngle = angle
-                
+                player.playerTargetAngle = mapRadiansToDegrees0to360((location - originalPlayerMovingTouchPositionInCamera!).angle)
+                //player.velocity.angle = playerTargetAngle
                 
                 if prefs.showArrow {
                     // My means of determining the position of the arrow:
@@ -86,7 +82,7 @@ class GameScene: SKScene {
                     var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
                     pointInRelationToPlayer.x.clamp(player.size.width + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
                     directionArrow.position = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: player), toNode: camera!)
-                    directionArrow.zRotation = player.velocity.angle - CGFloat(90).degreesToRadians()
+                    directionArrow.zRotation = player.velocity.angle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
                     directionArrow.position.x.clamp(-frame.width/2, frame.width/2)
                     directionArrow.position.y.clamp(-frame.height/2, frame.height/2)
@@ -131,34 +127,16 @@ class GameScene: SKScene {
         
         player.update(deltaTime)
         
-        //make the players angle APPROACH playerTargetAngle. I wish. See all that commented out code below. That's me giving up FTMP (for the most part)
-        player.velocity.angle = playerTargetAngle
-        
-//        let targetAngle = playerTargetAngle.radiansToDegrees()
-//        let playerAngle = player.velocity.angle.radiansToDegrees()
-//        var posDist: CGFloat, negDist: CGFloat
-//        if targetAngle > playerAngle {
-//            posDist = targetAngle - playerAngle
-//            negDist = playerAngle + 360 - targetAngle
-//        } else if targetAngle < playerAngle {
-//            negDist = playerAngle - targetAngle
-//            posDist = 360 - playerAngle + targetAngle
-//        } else {
-//            negDist = 0
-//            posDist = 0
-//        }
-//        //convert the degree measures back to radians
-//        negDist = negDist.degreesToRadians()
-//        posDist = posDist.degreesToRadians()
-//        if posDist > negDist {
-//            //Change the player's angle in the POSITIVE WAY. By increasing the angle!
-//            player.velocity.angle += posDist/2 //dividing by 10 gives smooth look
-//        } else {
-//            //Change the player's angle in the NEGATIVE WAY. By DECREASING the angle!
-//            player.velocity.angle -= negDist/2
-//        }
-
 
         camera!.position = player.position
     }
+    
+    func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
+        var deg = rad.radiansToDegrees()
+        if deg < 0 {
+            deg += 360
+        }
+        return deg
+    }
+
 }

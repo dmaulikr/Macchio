@@ -26,4 +26,6 @@ class EnergyOrb: SKSpriteNode {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    
 }
