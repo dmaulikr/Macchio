@@ -23,6 +23,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
         }
     }
+    var targetRadius: CGFloat = 50 //This is here so the player can grow the SMOOOOTH way
     
     var velocity: (speed: CGFloat, angle: CGFloat) = (
         speed: 0,
@@ -66,6 +67,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = playerSpeed
+            targetRadius = 50
             radius = 50
         }
         playerTargetAngle = velocity.angle
@@ -112,6 +114,10 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         
         //velocity.angle = playerTargetAngle
         //velocity.angle -= 1
+        
+        //Approach targetRadius. So the player can grow the SMOOOOOTH way
+        let deltaRadius = targetRadius - radius
+        radius += deltaRadius / 10
 
     }
     

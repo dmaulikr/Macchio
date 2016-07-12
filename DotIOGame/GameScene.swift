@@ -75,7 +75,7 @@ class GameScene: SKScene {
                     directionArrow.hidden = false
                     directionArrow.removeAllActions()
                     directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                    directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
+                    directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
                     directionArrowAnchor.position = player.position
@@ -101,8 +101,8 @@ class GameScene: SKScene {
                 if prefs.showArrow {
                     // My means of determining the position of the arrow:
                     // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
-                    var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
-                    pointInRelationToPlayer.x.clamp(player.size.width + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
+                    var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
+                    pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
                     directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
@@ -154,6 +154,17 @@ class GameScene: SKScene {
         for orb in orbs {
             orb.update(deltaTime)
         }
+        let killList = orbs.filter { $0.overlappingCircle(player) }
+        orbs = orbs.filter { !killList.contains($0) }
+        for orb in killList {
+            // Basically, the orbs can do something fancy here and then be removed by parent.
+            // In addition to being removed, the player's size and other relevant properties must be updated here
+            orb.removeFromParent()
+            player.targetRadius += 100
+            //TODO update camera to compensate for size change
+        }
+        
+        
         
         //Update the directionArrow's position with directionArrowTargetPosition. The smooth way
         if prefs.showArrow {
