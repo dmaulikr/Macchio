@@ -22,13 +22,15 @@ class GameScene: SKScene {
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
-    let minDirectionArrowDistanceFromPlayer: CGFloat = 0, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
+    let minDirectionArrowDistanceFromPlayer: CGFloat = 30, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
     
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
+    
+    var orbs: [EnergyOrb] = []
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
@@ -50,6 +52,16 @@ class GameScene: SKScene {
         joyStickBox = childNodeWithName("//joyStickBox")
         controlStick = childNodeWithName("//controlStick")
         joyStickBox.hidden = true
+        
+        var orbNode = EnergyOrb()
+        addChild(orbNode)
+        orbNode.position = CGPoint(x: 500, y: 200)
+        orbs.append(orbNode)
+        var orbNode2 = EnergyOrb()
+        addChild(orbNode2)
+        orbNode2.position = CGPoint(x: 500, y: 400)
+        orbs.append(orbNode2)
+
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -139,6 +151,9 @@ class GameScene: SKScene {
         previousTime = currentTime
         
         player.update(deltaTime)
+        for orb in orbs {
+            orb.update(deltaTime)
+        }
         
         //Update the directionArrow's position with directionArrowTargetPosition. The smooth way
         if prefs.showArrow {
@@ -154,6 +169,8 @@ class GameScene: SKScene {
         var deg = rad.radiansToDegrees()
         if deg < 0 {
             deg += 360
+        } else if deg > 360 {
+            deg = deg % 360
         }
         return deg
     }

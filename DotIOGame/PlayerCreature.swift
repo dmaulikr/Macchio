@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class PlayerCreature: SKSpriteNode {
+class PlayerCreature: SKSpriteNode, BoundByCircle {
     
     let playerSpeed: CGFloat = 100
     let playerMaxAngleChangePerSecond: CGFloat = 180
@@ -64,8 +64,10 @@ class PlayerCreature: SKSpriteNode {
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
         
-        velocity.speed = playerSpeed
-        radius = 50
+        defer { //This keyword ensures that the didSet code is called
+            velocity.speed = playerSpeed
+            radius = 50
+        }
         playerTargetAngle = velocity.angle
 
     }
@@ -94,14 +96,18 @@ class PlayerCreature: SKSpriteNode {
             posDist = 0
         }
         
+        let deltaAngle: CGFloat
         if posDist < negDist {
             // Since the positive distance is less than the negative distance, the player will be turned the positive way. The /10's are for smoothness
-            velocity.angle += posDist / 10
+            deltaAngle = posDist / 10
         } else if negDist < posDist {
-            velocity.angle -= negDist / 10
+            deltaAngle = -negDist / 10
         } else {
-            //no turning made
+            //No turning made
+            deltaAngle = 0
         }
+        
+        velocity.angle += deltaAngle
 
         
         //velocity.angle = playerTargetAngle
