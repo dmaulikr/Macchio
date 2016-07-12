@@ -19,6 +19,8 @@ class GameScene: SKScene {
     
     var player: PlayerCreature!
     let spawnPosition = CGPoint(x: 200, y: 200)
+    
+    var score = 0
 
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -34,9 +36,10 @@ class GameScene: SKScene {
     let maxControlStickDistance: CGFloat = 20
     var joyStickBoxXScaleToPlayerRadiusRatio: CGFloat!
     var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
-
     
     var orbs: [EnergyOrb] = []
+    let orbSpawnRadius: CGFloat = 600
+    let orbConcentrationWithinSpawnRadius: Int = 50
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
@@ -66,14 +69,14 @@ class GameScene: SKScene {
         joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
         joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
         
-        var orbNode = EnergyOrb()
-        addChild(orbNode)
-        orbNode.position = CGPoint(x: 500, y: 200)
-        orbs.append(orbNode)
-        var orbNode2 = EnergyOrb()
-        addChild(orbNode2)
-        orbNode2.position = CGPoint(x: 500, y: 400)
-        orbs.append(orbNode2)
+//        var orbNode = EnergyOrb()
+//        addChild(orbNode)
+//        orbNode.position = CGPoint(x: 500, y: 200)
+//        orbs.append(orbNode)
+//        var orbNode2 = EnergyOrb()
+//        addChild(orbNode2)
+//        orbNode2.position = CGPoint(x: 500, y: 400)
+//        orbs.append(orbNode2)
 
     }
     
@@ -163,28 +166,49 @@ class GameScene: SKScene {
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
         
+        
+        //      ----Call update methods----
         player.update(deltaTime)
         for orb in orbs {
             orb.update(deltaTime)
         }
+        
+        //      ----Check for collisions----
         let killList = orbs.filter { $0.overlappingCircle(player) }
         orbs = orbs.filter { !killList.contains($0) }
         for orb in killList {
             // Basically, the orbs can do something fancy here and then be removed by parent.
             // In addition to being removed, the player's size and other relevant properties must be updated here
             orb.removeFromParent()
-            player.targetRadius += 100
+            score += orb.pointValue
+            player.targetRadius += CGFloat(orb.pointValue)
         }
         
-        
-        
-        //Update the directionArrow's position with directionArrowTargetPosition. The smooth way
-        if prefs.showArrow {
-            let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
-            let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
-            directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+        //      ----Orb Spawning----
+        let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius }
+        let numOfNeededOrbs = orbConcentrationWithinSpawnRadius - orbsInRadius.count
+        if numOfNeededOrbs > 0 {
+            for _ in 0..<numOfNeededOrbs {
+                // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
+                let randAngle = CGFloat.random(min: 0, max: 360)
+                let randDist = CGFloat.random(min: 0, max: orbSpawnRadius)
+                let newOrb = EnergyOrb()
+                newOrb.position.x = player.position.x + cos(randAngle) * randDist
+                newOrb.position.y = player.position.y + sin(randAngle) * randDist
+                orbs.append(newOrb)
+                addChild(newOrb)
+            }
         }
         
+        // Destroy the orbs that aren't in the radius to preserve memory space
+        let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > orbSpawnRadius }
+        orbs = orbs.filter { !orbsNotInRadius.contains($0) }
+        for orb in orbsNotInRadius {
+            orb.removeFromParent()
+        }
+        
+        //      ---- UI-ey things ----
+        //The following code consists of ton of scaling. ----
         //maintain direction arrow scale
         if prefs.showArrow {
             directionArrow.size.width = directionArrowWidthToPlayerRadiusRatio * player.radius
@@ -197,9 +221,19 @@ class GameScene: SKScene {
             joyStickBox.yScale = joyStickBoxYScaleToPlayerRadiusRatio * player.radius
         }
         
-        camera!.position = player.position
-        size.width = cameraWidthToPlayerRadiusRatio * player.radius //maintain the camera scale
+        //maintain the camera scale
+        size.width = cameraWidthToPlayerRadiusRatio * player.radius
         size.height = cameraHeightToPlayerRadiusRatio * player.radius
+        
+        camera!.position = player.position //Follow player
+        //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way
+        if prefs.showArrow {
+            let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
+            let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
+            directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+        }
+
+
     }
     
     func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
