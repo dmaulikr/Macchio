@@ -33,6 +33,8 @@ class PlayerCreature: SKSpriteNode {
             //I want velocity.angle to operate in degrees from 0 to 360
             if velocity.angle > 360 {
                 velocity.angle = velocity.angle % 360
+            } else if velocity.angle < 0 {
+                velocity.angle += 360
             }
             
             // Change positionDeltas to match
