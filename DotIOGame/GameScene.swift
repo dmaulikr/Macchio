@@ -20,6 +20,7 @@ class GameScene: SKScene {
     let spawnPosition = CGPoint(x: 200, y: 200)
 
     var directionArrow: SKSpriteNode!
+    var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
     let minDirectionArrowDistanceFromPlayer: CGFloat = 0, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
     
@@ -39,6 +40,7 @@ class GameScene: SKScene {
         directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
         directionArrow.zRotation = player.velocity.angle.degreesToRadians()
         directionArrow.hidden = true
+        directionArrowTargetPosition = directionArrow.position
         camera!.addChild(directionArrow)
         directionArrowAnchor = SKNode()
         directionArrowAnchor.position = player.position
@@ -61,7 +63,7 @@ class GameScene: SKScene {
                     directionArrow.hidden = false
                     directionArrow.removeAllActions()
                     directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                    directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
+                    directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
                     directionArrowAnchor.position = player.position
@@ -89,11 +91,11 @@ class GameScene: SKScene {
                     // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
                     var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
                     pointInRelationToPlayer.x.clamp(player.size.width + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
-                    directionArrow.position = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
+                    directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
-                    directionArrow.position.x.clamp(-frame.width/2, frame.width/2)
-                    directionArrow.position.y.clamp(-frame.height/2, frame.height/2)
+                    directionArrowTargetPosition.x.clamp(-frame.width/2, frame.width/2)
+                    directionArrowTargetPosition.y.clamp(-frame.height/2, frame.height/2)
                     
                     directionArrowAnchor.position = player.position
                     directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
@@ -138,7 +140,13 @@ class GameScene: SKScene {
         
         player.update(deltaTime)
         
-
+        //Update the directionArrow's position with directionArrowTargetPosition. The smooth way
+        if prefs.showArrow {
+            let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
+            let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
+            directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+        }
+        
         camera!.position = player.position
     }
     

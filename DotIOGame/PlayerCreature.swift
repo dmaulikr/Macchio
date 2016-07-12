@@ -103,7 +103,7 @@ class PlayerCreature: SKSpriteNode {
 
         
         //velocity.angle = playerTargetAngle
-        //velocity.angle += 1
+        //velocity.angle -= 1
 
     }
     
