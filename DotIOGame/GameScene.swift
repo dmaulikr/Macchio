@@ -32,7 +32,7 @@ class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
         player.position = spawnPosition
-        addChild(player)
+        self.addChild(player)
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
@@ -40,6 +40,10 @@ class GameScene: SKScene {
         directionArrow.zRotation = player.velocity.angle.degreesToRadians()
         directionArrow.hidden = true
         camera!.addChild(directionArrow)
+        directionArrowAnchor = SKNode()
+        directionArrowAnchor.position = player.position
+        directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+        self.addChild(directionArrowAnchor)
         
         joyStickBox = childNodeWithName("//joyStickBox")
         controlStick = childNodeWithName("//controlStick")
@@ -57,8 +61,11 @@ class GameScene: SKScene {
                     directionArrow.hidden = false
                     directionArrow.removeAllActions()
                     directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                    directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: player), toNode: camera!)
-                    directionArrow.zRotation = player.velocity.angle.degreesToRadians() - CGFloat(90).degreesToRadians()
+                    directionArrow.position = convertPoint(convertPoint(CGPoint(x: player.size.width + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
+                    directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
+                    
+                    directionArrowAnchor.position = player.position
+                    directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
                 }
                 
                 if prefs.showJoyStick {
@@ -82,11 +89,14 @@ class GameScene: SKScene {
                     // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
                     var pointInRelationToPlayer = CGPoint(x: player.size.width + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
                     pointInRelationToPlayer.x.clamp(player.size.width + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
-                    directionArrow.position = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: player), toNode: camera!)
-                    directionArrow.zRotation = player.velocity.angle.degreesToRadians() - CGFloat(90).degreesToRadians()
+                    directionArrow.position = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
+                    directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
                     directionArrow.position.x.clamp(-frame.width/2, frame.width/2)
                     directionArrow.position.y.clamp(-frame.height/2, frame.height/2)
+                    
+                    directionArrowAnchor.position = player.position
+                    directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
                 }
                 
                 if prefs.showJoyStick {
