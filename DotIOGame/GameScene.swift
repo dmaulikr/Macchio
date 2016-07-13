@@ -28,7 +28,7 @@ class GameScene: SKScene {
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
-    let minDirectionArrowDistanceFromPlayer: CGFloat = 60, maxDirectionArrowDistanceFromPlayer: CGFloat = 200
+    let minDirectionArrowDistanceFromPlayer: CGFloat = 60
     var directionArrowWidthToPlayerRadiusRatio: CGFloat!
     var directionArrowHeightToPlayerRadiusRatio: CGFloat!
     
@@ -40,9 +40,11 @@ class GameScene: SKScene {
     var joyStickBoxXScaleToPlayerRadiusRatio: CGFloat!
     var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
     
+    var boostButton: BoostButton!
+    
     var orbs: [EnergyOrb] = []
     var orbSpawnRadius: CGFloat = 888
-    var numOfOrbsToSpawnInRadius: Int = 50
+    var numOfOrbsToSpawnInRadius: Int = 30
     var orbsToAreaRatio: CGFloat!
     
     override func didMoveToView(view: SKView) {
@@ -72,6 +74,15 @@ class GameScene: SKScene {
         joyStickBox.hidden = true
         joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
         joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
+        
+        boostButton = BoostButton()
+        boostButton.position = CGPoint(x: 234, y: -110)
+        camera!.addChild(boostButton)
+        boostButton.addButtonIconToParent()
+        boostButton.onPressed = player.startBoost
+        boostButton.onReleased = player.stopBoost
+        
+        
         
         orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
@@ -113,7 +124,7 @@ class GameScene: SKScene {
                     // My means of determining the position of the arrow:
                     // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
                     var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
-                    pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, player.size.width + maxDirectionArrowDistanceFromPlayer)
+                    pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width + size.height)
                     directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
@@ -235,6 +246,7 @@ class GameScene: SKScene {
         numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
     }
+    
     
     func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
         var deg = rad.radiansToDegrees()

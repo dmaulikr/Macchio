@@ -11,7 +11,14 @@ import SpriteKit
 
 class PlayerCreature: SKSpriteNode, BoundByCircle {
     
-    let playerSpeed: CGFloat = 100
+    
+    var normalSpeed: CGFloat = 100
+    var boostingSpeed: CGFloat { return normalSpeed * 2 } //The multiplier is a constant to be played with
+    var currentSpeed: CGFloat = 100 {
+        didSet { velocity.speed = currentSpeed }
+    }
+    var isBoosting = false
+    
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
     var playerTargetAngle: CGFloat! //Should operate in degrees 0 to 360
@@ -66,7 +73,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         super.init(texture: texture, color: color, size: size)
         
         defer { //This keyword ensures that the didSet code is called
-            velocity.speed = playerSpeed
+            velocity.speed = currentSpeed
             targetRadius = 50
             radius = 50
         }
@@ -83,7 +90,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         position.x += positionDeltas.dx * CGFloat(deltaTime)
         position.y += positionDeltas.dy * CGFloat(deltaTime)
         
-        //ideally, the player should APPRROACH the target angle
+        // The player's current angle approaches its target angle
         let myAngle = velocity.angle
         let targetAngle = playerTargetAngle
         var posDist: CGFloat, negDist: CGFloat
@@ -120,11 +127,22 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         //Approach targetRadius. So the player can grow the SMOOOOOTH way
         let deltaRadius = targetRadius - radius
         radius += deltaRadius / 10
+        
+        // Change the speeds if necessary
+        if isBoosting { currentSpeed = boostingSpeed }
+        else { currentSpeed = normalSpeed }
 
     }
     
-    func handleMovingTouch(touch: UITouch) {
-        
+    func startBoost() {
+        isBoosting = true
+        blendMode = SKBlendMode.Add
     }
+    
+    func stopBoost() {
+        isBoosting = false
+        blendMode = SKBlendMode.Alpha
+    }
+    
     
 }
