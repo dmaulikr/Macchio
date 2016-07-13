@@ -68,15 +68,6 @@ class GameScene: SKScene {
         joyStickBox.hidden = true
         joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
         joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
-        
-//        var orbNode = EnergyOrb()
-//        addChild(orbNode)
-//        orbNode.position = CGPoint(x: 500, y: 200)
-//        orbs.append(orbNode)
-//        var orbNode2 = EnergyOrb()
-//        addChild(orbNode2)
-//        orbNode2.position = CGPoint(x: 500, y: 400)
-//        orbs.append(orbNode2)
 
     }
     
@@ -94,8 +85,6 @@ class GameScene: SKScene {
                     directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
                     directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                     
-                    directionArrowAnchor.position = player.position
-                    directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
                 }
                 
                 if prefs.showJoyStick {
@@ -125,8 +114,7 @@ class GameScene: SKScene {
                     directionArrowTargetPosition.x.clamp(-frame.width/2, frame.width/2)
                     directionArrowTargetPosition.y.clamp(-frame.height/2, frame.height/2)
                     
-                    directionArrowAnchor.position = player.position
-                    directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+                    
                 }
                 
                 if prefs.showJoyStick {
@@ -173,15 +161,15 @@ class GameScene: SKScene {
             orb.update(deltaTime)
         }
         
-        //      ----Check for collisions----
-        let killList = orbs.filter { $0.overlappingCircle(player) }
-        orbs = orbs.filter { !killList.contains($0) }
-        for orb in killList {
+        //      ----Handle collisions----
+        let orbKillList = orbs.filter { $0.overlappingCircle(player) }
+        orbs = orbs.filter { !orbKillList.contains($0) }
+        for orb in orbKillList {
             // Basically, the orbs can do something fancy here and then be removed by parent.
             // In addition to being removed, the player's size and other relevant properties must be updated here
             orb.removeFromParent()
             score += orb.pointValue
-            player.targetRadius += CGFloat(orb.pointValue)
+            player.targetRadius += orb.growAmount
         }
         
         //      ----Orb Spawning----
@@ -213,6 +201,9 @@ class GameScene: SKScene {
         if prefs.showArrow {
             directionArrow.size.width = directionArrowWidthToPlayerRadiusRatio * player.radius
             directionArrow.size.height = directionArrowHeightToPlayerRadiusRatio * player.radius
+            
+            directionArrowAnchor.position = player.position
+            directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
         }
         
         //maintain joyStickBox scale

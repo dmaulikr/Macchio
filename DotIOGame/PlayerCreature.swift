@@ -98,7 +98,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             posDist = 0
         }
         
-        let deltaAngle: CGFloat
+        var deltaAngle: CGFloat
         if posDist < negDist {
             // Since the positive distance is less than the negative distance, the player will be turned the positive way. The /10's are for smoothness
             deltaAngle = posDist / 10
@@ -109,8 +109,13 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             deltaAngle = 0
         }
         
-        velocity.angle += deltaAngle
+        // cap with slew rate
+        // find the max angle change for this frame based on deltaTime
+        // and ensure delta angle is no greater
+        let maxAngleChangeThisFrame = playerMaxAngleChangePerSecond * CGFloat(deltaTime)
+        deltaAngle.clamp(-maxAngleChangeThisFrame, maxAngleChangeThisFrame)
 
+        velocity.angle += deltaAngle
         
         //velocity.angle = playerTargetAngle
         //velocity.angle -= 1
