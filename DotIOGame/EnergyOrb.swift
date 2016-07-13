@@ -11,6 +11,13 @@ import SpriteKit
 
 class EnergyOrb: SKSpriteNode, BoundByCircle {
     
+    static let orbTextures: [SKTexture] = [
+        SKTexture.init(imageNamed: "blue circle.png"),
+        SKTexture.init(imageNamed: "red orb.png"),
+        SKTexture.init(imageNamed: "green orb.png"),
+        SKTexture.init(imageNamed: "yellow orb.png")
+    ]
+    
     var radius: CGFloat = 15 {
         didSet {
             size = CGSize(width: radius * 2, height: radius * 2)
@@ -20,12 +27,12 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     var pointValue = 1
     var growAmount: CGFloat { return CGFloat(pointValue) / 5 }
     
-    var growing = false
+    var growing = true
     
     init() {
-        let texture = SKTexture.init(imageNamed: "blue circle.png")
+        let texture = EnergyOrb.orbTextures[Int(CGFloat.random(min: 0, max: CGFloat(EnergyOrb.orbTextures.count)))]
         let color = SKColor.whiteColor()
-        defer { radius = CGFloat.random(min: minRadius, max: maxRadius) }
+        defer { radius = 0 }
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
         zPosition = 0

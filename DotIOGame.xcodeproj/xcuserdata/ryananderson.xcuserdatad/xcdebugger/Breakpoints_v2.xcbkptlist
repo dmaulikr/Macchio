@@ -11,11 +11,11 @@
             condition = "playerTargetAngle &gt; 181"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/PlayerCreature.swift"
-            timestampString = "490121486.43479"
+            timestampString = "490123934.069348"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "update(_:)"
             landmarkType = "5">
             <Actions>

@@ -7,6 +7,9 @@
 //
 
 import SpriteKit
+import Darwin
+
+let pi = M_PI
 
 class GameScene: SKScene {
     
@@ -38,8 +41,9 @@ class GameScene: SKScene {
     var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
     
     var orbs: [EnergyOrb] = []
-    let orbSpawnRadius: CGFloat = 600
-    let orbConcentrationWithinSpawnRadius: Int = 50
+    var orbSpawnRadius: CGFloat = 888
+    var numOfOrbsToSpawnInRadius: Int = 50
+    var orbsToAreaRatio: CGFloat!
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
@@ -68,6 +72,8 @@ class GameScene: SKScene {
         joyStickBox.hidden = true
         joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
         joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
+        
+        orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
     }
     
@@ -174,12 +180,12 @@ class GameScene: SKScene {
         
         //      ----Orb Spawning----
         let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius }
-        let numOfNeededOrbs = orbConcentrationWithinSpawnRadius - orbsInRadius.count
+        let numOfNeededOrbs = numOfOrbsToSpawnInRadius - orbsInRadius.count
         if numOfNeededOrbs > 0 {
             for _ in 0..<numOfNeededOrbs {
                 // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
                 let randAngle = CGFloat.random(min: 0, max: 360)
-                let randDist = CGFloat.random(min: 0, max: orbSpawnRadius)
+                let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
                 let newOrb = EnergyOrb()
                 newOrb.position.x = player.position.x + cos(randAngle) * randDist
                 newOrb.position.y = player.position.y + sin(randAngle) * randDist
@@ -223,7 +229,10 @@ class GameScene: SKScene {
             let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
             directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
         }
-
+        
+        // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
+        orbSpawnRadius = size.width + size.height
+        numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
     }
     

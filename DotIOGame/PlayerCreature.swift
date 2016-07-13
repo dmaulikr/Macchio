@@ -117,9 +117,6 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
 
         velocity.angle += deltaAngle
         
-        //velocity.angle = playerTargetAngle
-        //velocity.angle -= 1
-        
         //Approach targetRadius. So the player can grow the SMOOOOOTH way
         let deltaRadius = targetRadius - radius
         radius += deltaRadius / 10
