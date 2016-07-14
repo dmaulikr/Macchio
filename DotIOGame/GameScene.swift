@@ -49,6 +49,10 @@ class GameScene: SKScene {
     var boostButtonXScaleToPlayerRadiusRatio: CGFloat!
     var boostButtonYScaleToPlayerRadiusRatio: CGFloat!
     
+    var leaveMineButton: MineButton!
+    var leaveMineButtonXScaleToPlayerRadiusRatio: CGFloat!
+    var leaveMineButtonYScaleToPlayerRadiusRatio: CGFloat!
+    
     var orbs: [EnergyOrb] = []
     var orbSpawnRadius: CGFloat = 888
     var numOfOrbsToSpawnInRadius: Int = 30
@@ -63,7 +67,6 @@ class GameScene: SKScene {
         cameraWidthToPlayerRadiusRatio = self.size.width / player.radius
         cameraHeightToPlayerRadiusRatio = self.size.height / player.radius
 
-        
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
         directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
@@ -94,8 +97,16 @@ class GameScene: SKScene {
         boostButtonXScaleToPlayerRadiusRatio = boostButton.xScale / player.radius
         boostButtonYScaleToPlayerRadiusRatio = boostButton.yScale / player.radius
         
-        orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+        leaveMineButton = MineButton()
+        leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
+        leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
+        camera!.addChild(leaveMineButton)
+        leaveMineButton.addButtonIconToParent()
+        leaveMineButton.onPressed = player.leaveMine
+        leaveMineButtonXScaleToPlayerRadiusRatio = leaveMineButton.xScale / player.radius
+        leaveMineButtonYScaleToPlayerRadiusRatio = leaveMineButton.yScale / player.radius
         
+        orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
     }
     
@@ -286,6 +297,12 @@ class GameScene: SKScene {
         boostButton.yScale = boostButtonYScaleToPlayerRadiusRatio * player.radius
         boostButton.position.x = size.width/2 - boostButton.size.width/2
         boostButton.position.y = -size.height/2 + boostButton.size.height/2
+        
+        //Rescale the mine button
+        leaveMineButton.xScale = leaveMineButtonXScaleToPlayerRadiusRatio * player.radius
+        leaveMineButton.yScale = leaveMineButtonYScaleToPlayerRadiusRatio * player.radius
+        leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
+        leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
         
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
         orbSpawnRadius = size.width + size.height

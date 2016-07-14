@@ -33,6 +33,38 @@
             endingLineNumber = "176"
             landmarkName = "startBoost()"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DotIOGame.PlayerCreature.startBoost () -&gt; ()"
+                  moduleName = "DotIOGame"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/PlayerCreature.swift"
+                  timestampString = "490233125.478333"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "179"
+                  endingLineNumber = "179"
+                  offsetFromSymbolStart = "104">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DotIOGame.PlayerCreature.startBoost () -&gt; ()"
+                  moduleName = "DotIOGame"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/PlayerCreature.swift"
+                  timestampString = "490233125.478445"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "179"
+                  endingLineNumber = "179"
+                  offsetFromSymbolStart = "96">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -90,27 +122,27 @@
                   moduleName = "DotIOGame"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/PlayerCreature.swift"
-                  timestampString = "490227319.009933"
+                  timestampString = "490233125.480225"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
-                  offsetFromSymbolStart = "120">
+                  startingLineNumber = "179"
+                  endingLineNumber = "179"
+                  offsetFromSymbolStart = "104">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "DotIOGame.PlayerCreature.stopBoost () -&gt; ()"
+                  symbolName = "DotIOGame.PlayerCreature.startBoost () -&gt; ()"
                   moduleName = "DotIOGame"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/PlayerCreature.swift"
-                  timestampString = "490227319.010088"
+                  timestampString = "490233125.48043"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "161"
-                  endingLineNumber = "161"
-                  offsetFromSymbolStart = "12">
+                  startingLineNumber = "179"
+                  endingLineNumber = "179"
+                  offsetFromSymbolStart = "96">
                </Location>
             </Locations>
          </BreakpointContent>

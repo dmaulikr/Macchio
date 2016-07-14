@@ -174,8 +174,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         isBoosting = true
         blendMode = SKBlendMode.Add
         
-        //Spawn mine for yoloz
-        leaveMine()
+//        //Spawn mine for yoloz
+//        leaveMine()
     }
     
     func stopBoost() {
