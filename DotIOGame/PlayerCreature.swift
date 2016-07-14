@@ -11,18 +11,21 @@ import SpriteKit
 
 class PlayerCreature: SKSpriteNode, BoundByCircle {
     
-    
+    var playerColor: Color = .Red
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 } //The multiplier is a constant to be played with
     var currentSpeed: CGFloat = 100 {
         didSet { velocity.speed = currentSpeed }
     }
     var isBoosting = false
+    var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
+    let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
     
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
     var playerTargetAngle: CGFloat! //Should operate in degrees 0 to 360
     
+    let minRadius: CGFloat = 50
     var radius: CGFloat = 50 {
         didSet {
             size.width = 2*radius
@@ -30,7 +33,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
         }
     }
-    var prevRadius: CGFloat = 50 // TEMPorary variable
+    //var prevRadius: CGFloat = 50 // TEMPorary variable
     
     var targetRadius: CGFloat = 50 //This is here so the player can grow the SMOOOOTH way
     
@@ -68,7 +71,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         dy: 0
     )
     
-    init(name: String) {
+    init(name: String, color: Color) {
+        playerColor = color
         let texture = SKTexture.init(imageNamed: "red circle.png") //placeholderTexture
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
@@ -76,8 +80,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed
-            targetRadius = 50
-            radius = 50
+            targetRadius = minRadius
+            radius = minRadius
         }
         playerTargetAngle = velocity.angle
 
@@ -138,10 +142,10 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         if isBoosting { currentSpeed = boostingSpeed }
         else { currentSpeed = normalSpeed }
         
-        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
-        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")
-        print("\n")
-        prevRadius = radius
+//        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
+//        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")
+//        print("\n")
+//        prevRadius = radius
 
     }
     
@@ -152,12 +156,28 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
     func startBoost() {
         isBoosting = true
         blendMode = SKBlendMode.Add
+        
+        //Spawn mine for yoloz
+        leaveMine()
     }
     
     func stopBoost() {
         isBoosting = false
         blendMode = SKBlendMode.Alpha
     }
+    
+    func leaveMine() {
+        // Firstly, don't allow the leaving of mines if the player is simply too small
+        if targetRadius * (1-percentSizeSacrificeToLeaveMine) <= minRadius { return }
+        spawnMineAtMyTail = true // GameScene will see that this has turned true and spawn the mine for us
+        // do the things the player does after leaving a mine
+        
+    }
+    
+    func mineSpawned() {
+        targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
+    }
+    
     
     
 }

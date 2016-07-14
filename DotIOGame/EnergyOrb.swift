@@ -24,10 +24,10 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         }
     }
     var minRadius: CGFloat = 10, maxRadius: CGFloat = 15
-    var pointValue = 1
-    var growAmount: CGFloat { return CGFloat(pointValue) / 5 }
+    var growAmount: CGFloat = 1/5
     
     var growing = true
+    var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
     
     init() {
         let texture = EnergyOrb.orbTextures[Int(CGFloat.random(min: 0, max: CGFloat(EnergyOrb.orbTextures.count)))]

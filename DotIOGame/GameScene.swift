@@ -12,6 +12,10 @@ import Darwin
 
 let pi = M_PI
 
+enum Color {
+    case Red, Green, Blue, Yellow
+}
+
 class GameScene: SKScene {
     
     var prefs = (
@@ -24,7 +28,7 @@ class GameScene: SKScene {
     var player: PlayerCreature!
     let spawnPosition = CGPoint(x: 200, y: 200)
     
-    var score = 0
+    var score: Int = 0
 
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -53,7 +57,7 @@ class GameScene: SKScene {
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123")
+        player = PlayerCreature(name: "Yoloz Boy 123", color: .Red)
         player.position = spawnPosition
         self.addChild(player)
         cameraWidthToPlayerRadiusRatio = self.size.width / player.radius
@@ -92,10 +96,6 @@ class GameScene: SKScene {
         
         orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
         
-        let mine = GoopMine(radius: CGFloat(50))
-        mine.position = player.position
-        addChild(mine)
-        goopMines.append(mine)
 
     }
     
@@ -191,13 +191,7 @@ class GameScene: SKScene {
         for mine in goopMines {
             mine.update(deltaTime)
         }
-        // get rid of the old mines and seed orbs in their place
-        let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
-        goopMines = goopMines.filter { !mineKillList.contains($0) }
-        for mine in mineKillList {
-            // Kill the mines
-            mine.removeFromParent()
-        }
+        
         
         //      ----Handle collisions----
         let orbKillList = orbs.filter { $0.overlappingCircle(player) }
@@ -208,23 +202,41 @@ class GameScene: SKScene {
             let fadeAction = SKAction.fadeOutWithDuration(0.4)
             let remove = SKAction.runBlock { self.removeFromParent() }
             orb.runAction(SKAction.sequence([fadeAction, remove]))
-            score += orb.pointValue
+            score += growAmountToPoints(orb.growAmount)
             player.targetRadius += orb.growAmount
         }
         
+        //      ----DESPAWNING of decayed mines----
+        // get rid of the decayed mines and seed orbs in their place
+        let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
+        goopMines = goopMines.filter { !mineKillList.contains($0) }
+        for mine in mineKillList {
+            // Kill the mines
+            seedOrbClusterWithBudget(mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius)
+            mine.removeFromParent()
+            
+        }
+        
+        //      ----SPAWNING of mines (behind players with their flags on)--- 👹 💣
+        //For now just our one player.....
+        if player.spawnMineAtMyTail {
+            player.spawnMineAtMyTail = false
+            spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor)
+            player.mineSpawned()
+        }
+
+        
         //      ----Orb Spawning----
-        let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius }
+        let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius && !$0.artificiallySpawned}
         let numOfNeededOrbs = numOfOrbsToSpawnInRadius - orbsInRadius.count
         if numOfNeededOrbs > 0 {
             for _ in 0..<numOfNeededOrbs {
                 // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
                 let randAngle = CGFloat.random(min: 0, max: 360)
                 let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
-                let newOrb = EnergyOrb()
-                newOrb.position.x = player.position.x + cos(randAngle) * randDist
-                newOrb.position.y = player.position.y + sin(randAngle) * randDist
-                orbs.append(newOrb)
-                addChild(newOrb)
+                let orbX = player.position.x + cos(randAngle) * randDist
+                let orbY = player.position.y + sin(randAngle) * randDist
+                seedOrb(CGPoint(x: orbX, y: orbY))
             }
         }
         
@@ -276,23 +288,74 @@ class GameScene: SKScene {
 
     }
     
-    func seedOrb(position: CGPoint) {
-        //TODO implement
+    func seedOrb(position: CGPoint,)
+    
+    func seedOrb(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+        let newOrb = EnergyOrb()
+        newOrb.position = position
+        //newOrb.growAmount = 10
+        newOrb.growAmount = 0.2
+        newOrb.minRadius = 5
+        newOrb.maxRadius = 7
+        newOrb.artificiallySpawned = artificiallySpawned
+        orbs.append(newOrb)
+        addChild(newOrb)
+        return newOrb
     }
     
-    func seedRichOrb(position: CGPoint) {
-        //TODO implement
+    func seedRichOrb(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+        let newOrb = EnergyOrb()
+        newOrb.position = position
+        newOrb.growAmount = 5
+        newOrb.minRadius = 10
+        newOrb.maxRadius = 14
+        newOrb.artificiallySpawned = artificiallySpawned
+        orbs.append(newOrb)
+        addChild(newOrb)
+        return newOrb
     }
     
-    
-    func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
-        var deg = rad.radiansToDegrees()
-        if deg < 0 {
-            deg += 360
-        } else if deg > 360 {
-            deg = deg % 360
+    func seedOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+        //Budget is the growAmount quantity that once existed in the entity that spawned the orbs. Mostly, this will be from dead players or old mines.
+        var budget = growAmount
+        while budget > 0 {
+            let randAngle = CGFloat.random(min: 0, max: 360)
+            let randDist = CGFloat.random(min: 0, max: radius)
+            let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
+            let newOrb: EnergyOrb
+//            if CGFloat.random() > 0.9 {
+//                newOrb = seedRichOrb(position, artificiallySpawned: true)
+//            } else {
+                newOrb = seedOrb(position, artificiallySpawned: true)
+//            }
+            budget -= newOrb.growAmount
         }
-        return deg
+        
     }
+    
+    
+    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color) {
+        let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color)
+        mine.position = atPosition
+        addChild(mine)
+        goopMines.append(mine)
+    }
+    
+    
+    
+}
 
+func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
+    var deg = rad.radiansToDegrees()
+    if deg < 0 {
+        deg += 360
+    } else if deg > 360 {
+        deg = deg % 360
+    }
+    return deg
+}
+
+
+func growAmountToPoints(growAmount: CGFloat) -> Int {
+    return Int(growAmount * 5)
 }

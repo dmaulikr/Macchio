@@ -11,23 +11,40 @@ import SpriteKit
 
 class GoopMine: SKSpriteNode, BoundByCircle {
     
-    let textureA = SKTexture(imageNamed: "goop_mine_texture_a")
-    let textureB = SKTexture(imageNamed: "goop_mine_texture_b")
+    static let shurikenTextures: [String: SKTexture] = [
+        "red" : SKTexture(imageNamed: "shuriken_red"),
+        "green" : SKTexture(imageNamed: "shuriken_green"),
+        "blue" : SKTexture(imageNamed: "shuriken_blue"),
+        "yellow" : SKTexture(imageNamed: "shuriken_yellow")
+    ]
     
-    var radius: CGFloat = 100 //BS default value
+    var radius: CGFloat = 100 //BS default values
+    var growAmount: CGFloat = 100
     let lifeSpan: CGFloat = 4 //Constant to be tweaked
     var lifeCounter: CGFloat = 0
+    var rps: CGFloat = 1 // Rotations per second
 
-    init(radius: CGFloat) {
+    init(radius: CGFloat, growAmount: CGFloat, color: Color, rps: CGFloat? = nil) {
         self.radius = radius
-        super.init(texture: textureA, color: SKColor.whiteColor(), size: CGSize(width: 2*radius, height: 2*radius))
-        let actionSequence = SKAction.sequence([SKAction.runBlock {
-            self.texture = self.textureA
-            }, SKAction.waitForDuration(0.1),
-            SKAction.runBlock {
-                self.texture = self.textureB
-            }, SKAction.waitForDuration(0.1)])
-        runAction(SKAction.repeatActionForever(actionSequence))
+        self.growAmount = growAmount
+        if let rps = rps { self.rps = rps }
+        else {
+            self.rps = CGFloat.random(min: 0.3, max: 1)
+            if CGFloat.random() > 0.5 { self.rps *= -1 }
+        }
+        let keyString: String
+        switch color {
+        case .Red:
+            keyString = "red"
+        case .Green:
+            keyString = "green"
+        case .Blue:
+            keyString = "blue"
+        case .Yellow:
+            keyString = "yellow"
+        }
+        let myTexture = GoopMine.shurikenTextures[keyString]
+        super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius, height: 2*radius))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -36,6 +53,7 @@ class GoopMine: SKSpriteNode, BoundByCircle {
     
     func update(deltaTime: CFTimeInterval) {
         lifeCounter += CGFloat(deltaTime)
+        zRotation += CGFloat(360 * rps).degreesToRadians() * CGFloat(deltaTime)
     }
     
 }
