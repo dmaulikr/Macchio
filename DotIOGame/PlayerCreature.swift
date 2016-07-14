@@ -20,6 +20,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
     var isBoosting = false
     var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
+    let mineCoolDown: CGFloat = 2
+    var mineCoolDownCounter: CGFloat = 2
     
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
@@ -142,6 +144,11 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         if isBoosting { currentSpeed = boostingSpeed }
         else { currentSpeed = normalSpeed }
         
+        // Mine cooldown
+        if mineCoolDownCounter < mineCoolDown {
+            mineCoolDownCounter += CGFloat(deltaTime)
+        }
+        
 //        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
 //        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")
 //        print("\n")
@@ -167,15 +174,18 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
     }
     
     func leaveMine() {
-        // Firstly, don't allow the leaving of mines if the player is simply too small
+        // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
         if targetRadius * (1-percentSizeSacrificeToLeaveMine) <= minRadius { return }
+        if mineCoolDownCounter < mineCoolDown {return}
         spawnMineAtMyTail = true // GameScene will see that this has turned true and spawn the mine for us
         // do the things the player does after leaving a mine
         
     }
     
     func mineSpawned() {
+        //Called by GameScene after a mine has successfully been spawned at the player's tail
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
+        mineCoolDownCounter = 0
     }
     
     
