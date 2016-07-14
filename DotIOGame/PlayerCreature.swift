@@ -14,14 +14,18 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
     var playerColor: Color = .Red
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 } //The multiplier is a constant to be played with
+    var minePropulsionSpeed: CGFloat { return normalSpeed * 5 }
     var currentSpeed: CGFloat = 100 {
         didSet { velocity.speed = currentSpeed }
     }
     var isBoosting = false
     var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
-    let mineCoolDown: CGFloat = 2
-    var mineCoolDownCounter: CGFloat = 2
+    let mineCoolDown: CGFloat = 4
+    var mineCoolDownCounter: CGFloat = 4
+    let minePropulsionSpeedActiveTime: CGFloat = 0.4
+    var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.4
+    
     
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
@@ -141,12 +145,18 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         radius += deltaRadius / 10
         
         // Change the speeds if necessary
-        if isBoosting { currentSpeed = boostingSpeed }
+        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime { currentSpeed = minePropulsionSpeed }
+        else if isBoosting { currentSpeed = boostingSpeed }
         else { currentSpeed = normalSpeed }
         
         // Mine cooldown
         if mineCoolDownCounter < mineCoolDown {
             mineCoolDownCounter += CGFloat(deltaTime)
+        }
+        
+        // Mine propulsion speed counter
+        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime {
+            minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
         
 //        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
@@ -186,6 +196,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         //Called by GameScene after a mine has successfully been spawned at the player's tail
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
         mineCoolDownCounter = 0
+        minePropulsionSpeedActiveTimeCounter = 0
     }
     
     
