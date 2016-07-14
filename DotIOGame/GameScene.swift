@@ -236,7 +236,12 @@ class GameScene: SKScene {
                 let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
                 let orbX = player.position.x + cos(randAngle) * randDist
                 let orbY = player.position.y + sin(randAngle) * randDist
-                seedOrb(CGPoint(x: orbX, y: orbY))
+                let orbPos = CGPoint(x: orbX, y: orbY)
+                if CGFloat.random() > 0.9 {
+                    seedRichOrbAtPosition(orbPos)
+                } else {
+                    seedSmallOrbAtPosition(orbPos)
+                }
             }
         }
         
@@ -288,31 +293,24 @@ class GameScene: SKScene {
 
     }
     
-    func seedOrb(position: CGPoint,)
-    
-    func seedOrb(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool) -> EnergyOrb {
         let newOrb = EnergyOrb()
         newOrb.position = position
-        //newOrb.growAmount = 10
-        newOrb.growAmount = 0.2
-        newOrb.minRadius = 5
-        newOrb.maxRadius = 7
+        newOrb.growAmount = growAmount
+        newOrb.minRadius = minRadius
+        newOrb.maxRadius = maxRadius
         newOrb.artificiallySpawned = artificiallySpawned
         orbs.append(newOrb)
         addChild(newOrb)
         return newOrb
     }
     
-    func seedRichOrb(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
-        let newOrb = EnergyOrb()
-        newOrb.position = position
-        newOrb.growAmount = 5
-        newOrb.minRadius = 10
-        newOrb.maxRadius = 14
-        newOrb.artificiallySpawned = artificiallySpawned
-        orbs.append(newOrb)
-        addChild(newOrb)
-        return newOrb
+    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+        return seedOrbAtPosition(position, growAmount: 0.2, minRadius: 5, maxRadius: 7, artificiallySpawned: artificiallySpawned)
+    }
+    
+    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+        return seedOrbAtPosition(position, growAmount: 5, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
     }
     
     func seedOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
@@ -326,7 +324,7 @@ class GameScene: SKScene {
 //            if CGFloat.random() > 0.9 {
 //                newOrb = seedRichOrb(position, artificiallySpawned: true)
 //            } else {
-                newOrb = seedOrb(position, artificiallySpawned: true)
+                newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true)
 //            }
             budget -= newOrb.growAmount
         }
