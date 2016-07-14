@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
+		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
 		83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */; };
 		83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 83957B911D32FDDE00BF4450 /* GameScene.sks */; };
 		83957B941D32FDDE00BF4450 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B931D32FDDE00BF4450 /* GameScene.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
+		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
 		83957B8C1D32FDDE00BF4450 /* DotIOGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotIOGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83957B911D32FDDE00BF4450 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -79,7 +81,6 @@
 			isa = PBXGroup;
 			children = (
 				83957B8E1D32FDDE00BF4450 /* DotIOGame */,
-				83957B8D1D32FDDE00BF4450 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,6 +90,7 @@
 				83957B8C1D32FDDE00BF4450 /* DotIOGame.app */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		83957B8E1D32FDDE00BF4450 /* DotIOGame */ = {
@@ -99,10 +101,12 @@
 				83957B931D32FDDE00BF4450 /* GameScene.swift */,
 				83957BA51D3302F700BF4450 /* PlayerCreature.swift */,
 				839710051D34650A00696814 /* EnergyOrb.swift */,
+				836713181D36F8300062D8C0 /* GoopMine.swift */,
 				836713141D358D3D0062D8C0 /* BoundByCircle.swift */,
 				836713161D36CFA40062D8C0 /* BoostButton.swift */,
 				83957B951D32FDDE00BF4450 /* GameViewController.swift */,
 				83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */,
+				83957B8D1D32FDDE00BF4450 /* Products */,
 				83957B971D32FDDE00BF4450 /* Main.storyboard */,
 				83957B9A1D32FDDE00BF4450 /* Assets.xcassets */,
 				83957B9C1D32FDDE00BF4450 /* LaunchScreen.storyboard */,
@@ -232,6 +236,7 @@
 				83957BC21D33FBEC00BF4450 /* SKTEffects.swift in Sources */,
 				836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */,
 				83957BBC1D33FBEC00BF4450 /* Int+Extensions.swift in Sources */,
+				836713191D36F8300062D8C0 /* GoopMine.swift in Sources */,
 				83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */,
 				83957BBF1D33FBEC00BF4450 /* SKColor+Extensions.swift in Sources */,
 			);

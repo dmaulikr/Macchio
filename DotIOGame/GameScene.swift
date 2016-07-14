@@ -6,6 +6,7 @@
 //  Copyright (c) 2016 Ryan Anderson. All rights reserved.
 //
 
+import Foundation
 import SpriteKit
 import Darwin
 
@@ -41,11 +42,15 @@ class GameScene: SKScene {
     var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
     
     var boostButton: BoostButton!
+    var boostButtonXScaleToPlayerRadiusRatio: CGFloat!
+    var boostButtonYScaleToPlayerRadiusRatio: CGFloat!
     
     var orbs: [EnergyOrb] = []
     var orbSpawnRadius: CGFloat = 888
     var numOfOrbsToSpawnInRadius: Int = 30
     var orbsToAreaRatio: CGFloat!
+    
+    var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123")
@@ -76,15 +81,21 @@ class GameScene: SKScene {
         joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
         
         boostButton = BoostButton()
-        boostButton.position = CGPoint(x: 234, y: -110)
+        boostButton.position.x = size.width/2 - boostButton.size.width/2
+        boostButton.position.y = -size.height/2 + boostButton.size.height/2
         camera!.addChild(boostButton)
         boostButton.addButtonIconToParent()
         boostButton.onPressed = player.startBoost
         boostButton.onReleased = player.stopBoost
-        
-        
+        boostButtonXScaleToPlayerRadiusRatio = boostButton.xScale / player.radius
+        boostButtonYScaleToPlayerRadiusRatio = boostButton.yScale / player.radius
         
         orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+        
+        let mine = GoopMine(radius: CGFloat(50))
+        mine.position = player.position
+        addChild(mine)
+        goopMines.append(mine)
 
     }
     
@@ -177,6 +188,16 @@ class GameScene: SKScene {
         for orb in orbs {
             orb.update(deltaTime)
         }
+        for mine in goopMines {
+            mine.update(deltaTime)
+        }
+        // get rid of the old mines and seed orbs in their place
+        let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
+        goopMines = goopMines.filter { !mineKillList.contains($0) }
+        for mine in mineKillList {
+            // Kill the mines
+            mine.removeFromParent()
+        }
         
         //      ----Handle collisions----
         let orbKillList = orbs.filter { $0.overlappingCircle(player) }
@@ -184,7 +205,9 @@ class GameScene: SKScene {
         for orb in orbKillList {
             // Basically, the orbs can do something fancy here and then be removed by parent.
             // In addition to being removed, the player's size and other relevant properties must be updated here
-            orb.removeFromParent()
+            let fadeAction = SKAction.fadeOutWithDuration(0.4)
+            let remove = SKAction.runBlock { self.removeFromParent() }
+            orb.runAction(SKAction.sequence([fadeAction, remove]))
             score += orb.pointValue
             player.targetRadius += orb.growAmount
         }
@@ -241,10 +264,24 @@ class GameScene: SKScene {
             directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
         }
         
+        //Rescale the boost button!
+        boostButton.xScale = boostButtonXScaleToPlayerRadiusRatio * player.radius
+        boostButton.yScale = boostButtonYScaleToPlayerRadiusRatio * player.radius
+        boostButton.position.x = size.width/2 - boostButton.size.width/2
+        boostButton.position.y = -size.height/2 + boostButton.size.height/2
+        
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
         orbSpawnRadius = size.width + size.height
         numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
+    }
+    
+    func seedOrb(position: CGPoint) {
+        //TODO implement
+    }
+    
+    func seedRichOrb(position: CGPoint) {
+        //TODO implement
     }
     
     

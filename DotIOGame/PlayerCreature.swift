@@ -30,6 +30,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
         }
     }
+    var prevRadius: CGFloat = 50 // TEMPorary variable
+    
     var targetRadius: CGFloat = 50 //This is here so the player can grow the SMOOOOTH way
     
     var velocity: (speed: CGFloat, angle: CGFloat) = (
@@ -110,6 +112,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             // Since the positive distance is less than the negative distance, the player will be turned the positive way. The /10's are for smoothness
             deltaAngle = posDist / 10
         } else if negDist < posDist {
+            // Since the negative way is shorter, the player will turn the negative way. Again /10 allows smoothness
             deltaAngle = -negDist / 10
         } else {
             //No turning made
@@ -124,6 +127,9 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
 
         velocity.angle += deltaAngle
         
+        //Before having the radius approach the target radius, apply the passive size loss to target radius
+        if !(radius <= 80) { targetRadius -= passiveSizeLoss * CGFloat(deltaTime) }
+        
         //Approach targetRadius. So the player can grow the SMOOOOOTH way
         let deltaRadius = targetRadius - radius
         radius += deltaRadius / 10
@@ -131,7 +137,16 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         // Change the speeds if necessary
         if isBoosting { currentSpeed = boostingSpeed }
         else { currentSpeed = normalSpeed }
+        
+        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
+        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")
+        print("\n")
+        prevRadius = radius
 
+    }
+    
+    var passiveSizeLoss: CGFloat {
+        return CGFloat(pow(2, (radius - 50) / 75)) / 10
     }
     
     func startBoost() {
