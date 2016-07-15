@@ -33,7 +33,7 @@ class GameScene: SKScene {
     //var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
     
-    var player: PlayerCreature!
+    var player: PlayerCreature?
     let spawnPosition = CGPoint(x: 200, y: 200)
     
     var score: Int = 0
@@ -61,67 +61,72 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red)
-        player.position = spawnPosition
-        self.addChild(player)
-        cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
-        cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
+        if let player = player {
+            player.position = spawnPosition
+            self.addChild(player)
+            cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
+            cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
 
-        directionArrow = SKSpriteNode(imageNamed: "arrow.png")
-        directionArrow.zPosition = 100
-        directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
-        directionArrow.zRotation = player.velocity.angle.degreesToRadians()
-        directionArrow.hidden = true
-        directionArrowTargetPosition = directionArrow.position
-        camera!.addChild(directionArrow)
-        directionArrowAnchor = SKNode()
-        directionArrowAnchor.position = player.position
-        directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
-        self.addChild(directionArrowAnchor)
-        
-        joyStickBox = childNodeWithName("//joyStickBox")
-        controlStick = childNodeWithName("//controlStick")
-        joyStickBox.hidden = true
-        
-        boostButton = BoostButton()
-        boostButton.position.x = size.width/2 - boostButton.size.width/2
-        boostButton.position.y = -size.height/2 + boostButton.size.height/2
-        camera!.addChild(boostButton)
-        boostButton.addButtonIconToParent()
-        boostButton.onPressed = player.startBoost
-        boostButton.onReleased = player.stopBoost
-        
-        leaveMineButton = MineButton()
-        leaveMineButton.position.x = -size.width/2 + leaveMineButton.size.width / 2
-        leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
-        camera!.addChild(leaveMineButton)
-        leaveMineButton.addButtonIconToParent()
-        leaveMineButton.onPressed = player.leaveMine
-        leaveMineButton.onReleased = { return }
-        
-        orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+            directionArrow = SKSpriteNode(imageNamed: "arrow.png")
+            directionArrow.zPosition = 100
+            directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
+            directionArrow.zRotation = player.velocity.angle.degreesToRadians()
+            directionArrow.hidden = true
+            directionArrowTargetPosition = directionArrow.position
+            camera!.addChild(directionArrow)
+            directionArrowAnchor = SKNode()
+            directionArrowAnchor.position = player.position
+            directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+            self.addChild(directionArrowAnchor)
+            
+            joyStickBox = childNodeWithName("//joyStickBox")
+            controlStick = childNodeWithName("//controlStick")
+            joyStickBox.hidden = true
+            
+            boostButton = BoostButton()
+            boostButton.position.x = size.width/2 - boostButton.size.width/2
+            boostButton.position.y = -size.height/2 + boostButton.size.height/2
+            camera!.addChild(boostButton)
+            boostButton.addButtonIconToParent()
+            boostButton.onPressed = player.startBoost
+            boostButton.onReleased = player.stopBoost
+            
+            leaveMineButton = MineButton()
+            leaveMineButton.position.x = -size.width/2 + leaveMineButton.size.width / 2
+            leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
+            camera!.addChild(leaveMineButton)
+            leaveMineButton.addButtonIconToParent()
+            leaveMineButton.onPressed = player.leaveMine
+            leaveMineButton.onReleased = { return }
+            
+            orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+                
+            }
 
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if gameState == .GameOver { return }
-        for touch in touches {
-            if playerMovingTouch == nil {
-                playerMovingTouch = touch
-                let location = touch.locationInNode(camera!)
-                originalPlayerMovingTouchPositionInCamera = location
-                
-                if prefs.showArrow {
-                    directionArrow.hidden = false
-                    directionArrow.removeAllActions()
-                    directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                    directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
-                    directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
+        if let player = player {
+            for touch in touches {
+                if playerMovingTouch == nil {
+                    playerMovingTouch = touch
+                    let location = touch.locationInNode(camera!)
+                    originalPlayerMovingTouchPositionInCamera = location
                     
-                }
-                
-                if prefs.showJoyStick {
-                    joyStickBox.hidden = false
-                    joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
+                    if prefs.showArrow {
+                        directionArrow.hidden = false
+                        directionArrow.removeAllActions()
+                        directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
+                        directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
+                        directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
+                        
+                    }
+                    
+                    if prefs.showJoyStick {
+                        joyStickBox.hidden = false
+                        joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
+                    }
                 }
             }
         }
@@ -129,34 +134,36 @@ class GameScene: SKScene {
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if gameState == .GameOver { return }
-        for touch in touches {
-            if touch == playerMovingTouch {
-                
-                let location = touch.locationInNode(camera!)
-                player.playerTargetAngle = mapRadiansToDegrees0to360((location - originalPlayerMovingTouchPositionInCamera!).angle)
-                //player.velocity.angle = playerTargetAngle
-                
-                if prefs.showArrow {
-                    // My means of determining the position of the arrow:
-                    // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
-                    var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
-                    pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width + size.height)
-                    directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
-                    directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
+        if let player = player {
+            for touch in touches {
+                if touch == playerMovingTouch {
                     
-                    directionArrowTargetPosition.x.clamp(-frame.width/2, frame.width/2)
-                    directionArrowTargetPosition.y.clamp(-frame.height/2, frame.height/2)
+                    let location = touch.locationInNode(camera!)
+                    player.playerTargetAngle = mapRadiansToDegrees0to360((location - originalPlayerMovingTouchPositionInCamera!).angle)
+                    //player.velocity.angle = playerTargetAngle
                     
+                    if prefs.showArrow {
+                        // My means of determining the position of the arrow:
+                        // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
+                        var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
+                        pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width + size.height)
+                        directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
+                        directionArrow.zRotation = player.playerTargetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
+                        
+                        directionArrowTargetPosition.x.clamp(-frame.width/2, frame.width/2)
+                        directionArrowTargetPosition.y.clamp(-frame.height/2, frame.height/2)
+                        
+                        
+                    }
                     
-                }
-                
-                if prefs.showJoyStick {
-                    //Move controlStick based on finger movement. Also add a distance cap
-                    controlStick.position = location - originalPlayerMovingTouchPositionInCamera!
-                    if location.distanceTo(originalPlayerMovingTouchPositionInCamera!) > maxControlStickDistance {
-                        let angle = atan2(controlStick.position.y, controlStick.position.x)
-                        controlStick.position.x = cos(angle) * maxControlStickDistance
-                        controlStick.position.y = sin(angle) * maxControlStickDistance
+                    if prefs.showJoyStick {
+                        //Move controlStick based on finger movement. Also add a distance cap
+                        controlStick.position = location - originalPlayerMovingTouchPositionInCamera!
+                        if location.distanceTo(originalPlayerMovingTouchPositionInCamera!) > maxControlStickDistance {
+                            let angle = atan2(controlStick.position.y, controlStick.position.x)
+                            controlStick.position.x = cos(angle) * maxControlStickDistance
+                            controlStick.position.y = sin(angle) * maxControlStickDistance
+                        }
                     }
                 }
             }
@@ -189,7 +196,7 @@ class GameScene: SKScene {
         previousTime = currentTime
         
         //      ----Call update methods----
-        player.update(deltaTime)
+        if let player = player { player.update(deltaTime) }
         for orb in orbs {
             orb.update(deltaTime)
         }
@@ -200,27 +207,33 @@ class GameScene: SKScene {
         
         //      ----Handle collisions----
         // Orb collisions with players (for now just one player)
-        let orbKillList = orbs.filter { $0.overlappingCircle(player) }
-        orbs = orbs.filter { !orbKillList.contains($0) }
-        for orb in orbKillList {
-            // Basically, the orbs can do something fancy here and then be removed by parent.
-            // In addition to being removed, the player's size and other relevant properties must be updated here
-            let fadeAction = SKAction.fadeOutWithDuration(0.4)
-            let remove = SKAction.runBlock { self.removeFromParent() }
-            orb.runAction(SKAction.sequence([fadeAction, remove]))
-            score += growAmountToPoints(orb.growAmount)
-            player.targetRadius += orb.growAmount
+        if gameState != .GameOver {
+            if let player = player {
+                let orbKillList = orbs.filter { $0.overlappingCircle(player) }
+                orbs = orbs.filter { !orbKillList.contains($0) }
+                for orb in orbKillList {
+                    // Basically, the orbs can do something fancy here and then be removed by parent.
+                    // In addition to being removed, the player's size and other relevant properties must be updated here
+                    let fadeAction = SKAction.fadeOutWithDuration(0.4)
+                    let remove = SKAction.runBlock { self.removeFromParent() }
+                    orb.runAction(SKAction.sequence([fadeAction, remove]))
+                    score += growAmountToPoints(orb.growAmount)
+                    player.targetRadius += orb.growAmount
+                }
+            }
         }
         
         // Mines collisions with players (for now just 1 player)
-        for mine in goopMines {
-            if mine.overlappingCircle(player) {
-                // if the mine belongs to the player and the player is going at mine impulse speed, then it means they just left the mine and are boosting away in which case the player shouldn't be killed. Otherwise, GameOver
-                if mine === player.freshlySpawnedMine {
-                    // Do nothing
-                } else {
-                    gameOver()
-                    seedOrbClusterWithBudget(player.radius, aboutPoint: player.position, withinRadius: player.radius)
+        if let player = player {
+            for mine in goopMines {
+                if mine.overlappingCircle(player) {
+                    // if the mine belongs to the player and the player is going at mine impulse speed, then it means they just left the mine and are boosting away in which case the player shouldn't be killed. Otherwise, GameOver
+                    if mine === player.freshlySpawnedMine {
+                        // Do nothing
+                    } else {
+                        gameOver()
+                        seedOrbClusterWithBudget(player.radius, aboutPoint: player.position, withinRadius: player.radius * 1.5)
+                    }
                 }
             }
         }
@@ -239,69 +252,78 @@ class GameScene: SKScene {
         
         //      ----SPAWNING of mines (behind players with their flags on)--- 👹 💣
         //For now just our one player.....
-        if player.spawnMineAtMyTail {
-            player.spawnMineAtMyTail = false
-            let freshMine = spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
-            player.freshlySpawnedMine = freshMine
-            player.mineSpawned()
-        }
-        
-        // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
-        if let freshlySpawnedMine = player.freshlySpawnedMine {
-            if !freshlySpawnedMine.overlappingCircle(player) { player.freshlySpawnedMine = nil }
+        if let player = player {
+            if player.spawnMineAtMyTail {
+                player.spawnMineAtMyTail = false
+                let freshMine = spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
+                player.freshlySpawnedMine = freshMine
+                player.mineSpawned()
+            }
+            
+            // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
+            if let freshlySpawnedMine = player.freshlySpawnedMine {
+                if !freshlySpawnedMine.overlappingCircle(player) { player.freshlySpawnedMine = nil }
+            }
         }
 
         
         //      ----Orb Spawning----
-        let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius && !$0.artificiallySpawned}
-        let numOfNeededOrbs = numOfOrbsToSpawnInRadius - orbsInRadius.count
-        if numOfNeededOrbs > 0 {
-            for _ in 0..<numOfNeededOrbs {
-                // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
-                let randAngle = CGFloat.random(min: 0, max: 360)
-                let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
-                let orbX = player.position.x + cos(randAngle) * randDist
-                let orbY = player.position.y + sin(randAngle) * randDist
-                let orbPos = CGPoint(x: orbX, y: orbY)
-                if CGFloat.random() > 0.9 {
-                    seedRichOrbAtPosition(orbPos)
-                } else {
-                    seedSmallOrbAtPosition(orbPos)
+        if let player = player {
+            let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius && !$0.artificiallySpawned}
+            let numOfNeededOrbs = numOfOrbsToSpawnInRadius - orbsInRadius.count
+            if numOfNeededOrbs > 0 {
+                for _ in 0..<numOfNeededOrbs {
+                    // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
+                    let randAngle = CGFloat.random(min: 0, max: 360)
+                    let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
+                    let orbX = player.position.x + cos(randAngle) * randDist
+                    let orbY = player.position.y + sin(randAngle) * randDist
+                    let orbPos = CGPoint(x: orbX, y: orbY)
+                    if CGFloat.random() > 0.9 {
+                        seedRichOrbAtPosition(orbPos)
+                    } else {
+                        seedSmallOrbAtPosition(orbPos)
+                    }
                 }
             }
-        }
         
-        // Destroy the orbs that aren't in the radius to preserve memory space
-        let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > orbSpawnRadius }
-        orbs = orbs.filter { !orbsNotInRadius.contains($0) }
-        for orb in orbsNotInRadius {
-            orb.removeFromParent()
+        
+            // Destroy the orbs that aren't in the radius to preserve memory space
+            let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > orbSpawnRadius }
+            orbs = orbs.filter { !orbsNotInRadius.contains($0) }
+            for orb in orbsNotInRadius {
+                orb.removeFromParent()
+            }
         }
         
         //      ---- UI-ey things ----
-        if gameState != .GameOver {
-            camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius // Follow player on z axis (by rescaling 😀)
-            camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius
-            camera!.position = player.position //Follow player on the x axis and y axis
-        
-            //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
-            if prefs.showArrow {
-                directionArrowAnchor.position = player.position
-                directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+        if let player = player {
+            if gameState != .GameOver {
+                camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius // Follow player on z axis (by rescaling 😀)
+                camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius
+                camera!.position = player.position //Follow player on the x axis and y axis
+            
+                //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
+                if prefs.showArrow {
+                    directionArrowAnchor.position = player.position
+                    directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+                    
+                    let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
+                    let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
+                    directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+                }
                 
-                let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
-                let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
-                directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+                // Change mine buttons image to can leave or can't
+                if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
+                else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
+                
             }
-            
-            // Change mine buttons image to can leave or can't
-            if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
-            else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
-            
         }
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
-        orbSpawnRadius = size.width + size.height
-        numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+        if let player = player {
+            orbSpawnRadius = size.width + size.height
+            numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+        }
 
     }
     
@@ -339,6 +361,19 @@ class GameScene: SKScene {
         
     }
     
+    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+        var budget = growAmount
+        while budget > 0 {
+            let randAngle = CGFloat.random(min: 0, max: 360)
+            let randDist = CGFloat.random(min: 0, max: radius)
+            let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
+            let newOrb: EnergyOrb
+            newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true)
+            budget -= newOrb.growAmount
+        }
+
+    }
+    
     
     func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
         let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
@@ -355,12 +390,13 @@ class GameScene: SKScene {
             var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
             touchesEnded(fakeTouches, withEvent: nil)
         }
-        player.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.3), SKAction.runBlock {
-            self.hidden = true
-        }, SKAction.waitForDuration(2)]), completion: {
-            self.restart()
-        })
-        
+        let destroyPlayerAction = SKAction.runBlock {
+            self.player!.removeFromParent()
+            self.player = nil
+        }
+        let wait = SKAction.waitForDuration(2)
+        let sequence = SKAction.sequence([destroyPlayerAction, wait])
+        runAction(sequence, completion: restart)
         
     }
     
