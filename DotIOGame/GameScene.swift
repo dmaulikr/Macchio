@@ -23,6 +23,12 @@ class GameScene: SKScene {
         showArrow: true
     )
     
+    enum State {
+        case Playing, GameOver
+        //case Tutorial //Do later
+    }
+    var gameState: State = .Playing
+    
     var previousTime: CFTimeInterval? = nil
     //var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -97,6 +103,7 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if gameState == .GameOver { return }
         for touch in touches {
             if playerMovingTouch == nil {
                 playerMovingTouch = touch
@@ -121,6 +128,7 @@ class GameScene: SKScene {
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if gameState == .GameOver { return }
         for touch in touches {
             if touch == playerMovingTouch {
                 
@@ -176,9 +184,9 @@ class GameScene: SKScene {
     }
    
     override func update(currentTime: CFTimeInterval) {
+        
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
-        
         
         //      ----Call update methods----
         player.update(deltaTime)
@@ -212,8 +220,7 @@ class GameScene: SKScene {
                 if mine.belongsToCreature(player) && player.minePropulsionSpeedActiveTimeCounter < player.minePropulsionSpeedActiveTime {
                     continue
                 } else {
-                    print("player dead")
-                    
+                    gameOver()
                 }
             }
         }
@@ -266,22 +273,21 @@ class GameScene: SKScene {
         }
         
         //      ---- UI-ey things ----
-        //The following code consists of ton of scaling. ----
-        camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius
-        camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius
+        if gameState != .GameOver {
+            camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius // Follow player on z axis (by rescaling 😀)
+            camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius
+            camera!.position = player.position //Follow player on the x axis and y axis
         
-        camera!.position = player.position //Follow player
-        
-        //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
-        if prefs.showArrow {
-            directionArrowAnchor.position = player.position
-            directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
-            
-            let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
-            let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
-            directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+            //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
+            if prefs.showArrow {
+                directionArrowAnchor.position = player.position
+                directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+                
+                let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
+                let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
+                directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+            }
         }
-        
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
         orbSpawnRadius = size.width + size.height
         numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
@@ -332,6 +338,29 @@ class GameScene: SKScene {
         mine.position = atPosition
         addChild(mine)
         goopMines.append(mine)
+    }
+    
+    func gameOver() {
+        gameState = .GameOver
+        
+        if let playerMovingTouch = playerMovingTouch {
+            var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
+            touchesEnded(fakeTouches, withEvent: nil)
+        }
+        player.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.3), SKAction.runBlock {
+            self.hidden = true
+        }]), completion: {
+            self.restart()
+        })
+        
+        
+    }
+    
+    func restart() {
+        let skView = self.view as SKView!
+        let scene = GameScene(fileNamed:"GameScene") as GameScene!
+        scene.scaleMode = .AspectFill
+        skView.presentScene(scene)
     }
     
 }
