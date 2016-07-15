@@ -10,8 +10,10 @@ import Foundation
 import SpriteKit
 
 class MineButton: SKSpriteNode {
-    let defaultTexture = SKTexture(imageNamed: "red_circle") //TODO change the textures
-    let pressedTexture = SKTexture(imageNamed: "boost_button_pressed")
+    // This is kinda a clone of boost button lol
+    
+    let defaultTexture = SKTexture(imageNamed: "shuriken_button_default") //TODO change the textures
+    let pressedTexture = SKTexture(imageNamed: "shuriken_button_pressed")
     var onPressed: () -> Void = { print("No mine pressed action set") }
     var onReleased: () -> Void = { print("No mine realeased action set.") }
     var buttonIcon: SKSpriteNode!
@@ -27,7 +29,7 @@ class MineButton: SKSpriteNode {
     
     init() {
         super.init(texture: nil, color: SKColor.whiteColor(), size: CGSize(width: 100, height: 100))
-        alpha = 0.31 //Basically u can't see it. this is the hitbox
+        alpha = 0.001 //Basically u can't see it. this is the hitbox
         self.userInteractionEnabled = true
     }
     

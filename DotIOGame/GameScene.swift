@@ -103,6 +103,7 @@ class GameScene: SKScene {
         camera!.addChild(leaveMineButton)
         leaveMineButton.addButtonIconToParent()
         leaveMineButton.onPressed = player.leaveMine
+        leaveMineButton.onReleased = { return }
         leaveMineButtonXScaleToPlayerRadiusRatio = leaveMineButton.xScale / player.radius
         leaveMineButtonYScaleToPlayerRadiusRatio = leaveMineButton.yScale / player.radius
         
