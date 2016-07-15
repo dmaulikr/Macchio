@@ -11,10 +11,11 @@ import SpriteKit
 
 class PlayerCreature: SKSpriteNode, BoundByCircle {
     
+    var playerID: Int = 0
     var playerColor: Color = .Red
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 } //The multiplier is a constant to be played with
-    var minePropulsionSpeed: CGFloat { return normalSpeed * 5 }
+    var minePropulsionSpeed: CGFloat = 500
     var currentSpeed: CGFloat = 100 {
         didSet { velocity.speed = currentSpeed }
     }
@@ -23,9 +24,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
     let mineCoolDown: CGFloat = 4
     var mineCoolDownCounter: CGFloat = 4
-    let minePropulsionSpeedActiveTime: CGFloat = 0.4
-    var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.4
-    
+    let minePropulsionSpeedActiveTime: CGFloat = 0.25
+    var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
@@ -37,6 +37,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             size.width = 2*radius
             size.height = 2*radius
             zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
+            minePropulsionSpeed = radius * 10
         }
     }
     //var prevRadius: CGFloat = 50 // TEMPorary variable
@@ -77,7 +78,8 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         dy: 0
     )
     
-    init(name: String, color: Color) {
+    init(name: String, playerID: Int, color: Color) {
+        self.playerID = playerID
         playerColor = color
         let texture = SKTexture.init(imageNamed: "red circle.png") //placeholderTexture
         let color = SKColor.whiteColor()
@@ -158,6 +160,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime {
             minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
+        
         
 //        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
 //        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")

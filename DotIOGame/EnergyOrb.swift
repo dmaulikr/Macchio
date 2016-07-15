@@ -15,7 +15,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         SKTexture.init(imageNamed: "blue circle.png"),
         SKTexture.init(imageNamed: "red orb.png"),
         SKTexture.init(imageNamed: "green orb.png"),
-        SKTexture.init(imageNamed: "yellow orb.png")
+        //SKTexture.init(imageNamed: "yellow orb.png")
     ]
     
     var radius: CGFloat = 15 {

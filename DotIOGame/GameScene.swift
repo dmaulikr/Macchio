@@ -22,8 +22,10 @@ class GameScene: SKScene {
         showJoyStick: true,
         showArrow: true
     )
+    
     var previousTime: CFTimeInterval? = nil
-    var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
+    //var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
+    var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
     
     var player: PlayerCreature!
     let spawnPosition = CGPoint(x: 200, y: 200)
@@ -34,24 +36,15 @@ class GameScene: SKScene {
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
     let minDirectionArrowDistanceFromPlayer: CGFloat = 60
-    var directionArrowWidthToPlayerRadiusRatio: CGFloat!
-    var directionArrowHeightToPlayerRadiusRatio: CGFloat!
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
     
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
-    var joyStickBoxXScaleToPlayerRadiusRatio: CGFloat!
-    var joyStickBoxYScaleToPlayerRadiusRatio: CGFloat!
     
     var boostButton: BoostButton!
-    var boostButtonXScaleToPlayerRadiusRatio: CGFloat!
-    var boostButtonYScaleToPlayerRadiusRatio: CGFloat!
-    
     var leaveMineButton: MineButton!
-    var leaveMineButtonXScaleToPlayerRadiusRatio: CGFloat!
-    var leaveMineButtonYScaleToPlayerRadiusRatio: CGFloat!
     
     var orbs: [EnergyOrb] = []
     var orbSpawnRadius: CGFloat = 888
@@ -61,11 +54,11 @@ class GameScene: SKScene {
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123", color: .Red)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red)
         player.position = spawnPosition
         self.addChild(player)
-        cameraWidthToPlayerRadiusRatio = self.size.width / player.radius
-        cameraHeightToPlayerRadiusRatio = self.size.height / player.radius
+        cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
+        cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
 
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
@@ -78,14 +71,10 @@ class GameScene: SKScene {
         directionArrowAnchor.position = player.position
         directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
         self.addChild(directionArrowAnchor)
-        directionArrowWidthToPlayerRadiusRatio = directionArrow.size.width / player.radius
-        directionArrowHeightToPlayerRadiusRatio = directionArrow.size.height / player.radius
         
         joyStickBox = childNodeWithName("//joyStickBox")
         controlStick = childNodeWithName("//controlStick")
         joyStickBox.hidden = true
-        joyStickBoxXScaleToPlayerRadiusRatio = joyStickBox.xScale / player.radius
-        joyStickBoxYScaleToPlayerRadiusRatio = joyStickBox.yScale / player.radius
         
         boostButton = BoostButton()
         boostButton.position.x = size.width/2 - boostButton.size.width/2
@@ -94,8 +83,6 @@ class GameScene: SKScene {
         boostButton.addButtonIconToParent()
         boostButton.onPressed = player.startBoost
         boostButton.onReleased = player.stopBoost
-        boostButtonXScaleToPlayerRadiusRatio = boostButton.xScale / player.radius
-        boostButtonYScaleToPlayerRadiusRatio = boostButton.yScale / player.radius
         
         leaveMineButton = MineButton()
         leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
@@ -104,8 +91,6 @@ class GameScene: SKScene {
         leaveMineButton.addButtonIconToParent()
         leaveMineButton.onPressed = player.leaveMine
         leaveMineButton.onReleased = { return }
-        leaveMineButtonXScaleToPlayerRadiusRatio = leaveMineButton.xScale / player.radius
-        leaveMineButtonYScaleToPlayerRadiusRatio = leaveMineButton.yScale / player.radius
         
         orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
 
@@ -206,6 +191,8 @@ class GameScene: SKScene {
         
         
         //      ----Handle collisions----
+        
+        // Orb collisions with players (for now just one player)
         let orbKillList = orbs.filter { $0.overlappingCircle(player) }
         orbs = orbs.filter { !orbKillList.contains($0) }
         for orb in orbKillList {
@@ -217,6 +204,20 @@ class GameScene: SKScene {
             score += growAmountToPoints(orb.growAmount)
             player.targetRadius += orb.growAmount
         }
+        
+        // Mines collisions with players (for now just 1 player)
+        for mine in goopMines {
+            if mine.overlappingCircle(player) {
+                // if the mine belongs to the player and the player is going at mine impulse speed, then it means they just left the mine and are boosting away in which case the player shouldn't be killed. Otherwise, GameOver
+                if mine.belongsToCreature(player) && player.minePropulsionSpeedActiveTimeCounter < player.minePropulsionSpeedActiveTime {
+                    continue
+                } else {
+                    print("player dead")
+                    
+                }
+            }
+        }
+        
         
         //      ----DESPAWNING of decayed mines----
         // get rid of the decayed mines and seed orbs in their place
@@ -233,7 +234,7 @@ class GameScene: SKScene {
         //For now just our one player.....
         if player.spawnMineAtMyTail {
             player.spawnMineAtMyTail = false
-            spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor)
+            spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
             player.mineSpawned()
         }
 
@@ -266,44 +267,20 @@ class GameScene: SKScene {
         
         //      ---- UI-ey things ----
         //The following code consists of ton of scaling. ----
-        //maintain direction arrow scale
-        if prefs.showArrow {
-            directionArrow.size.width = directionArrowWidthToPlayerRadiusRatio * player.radius
-            directionArrow.size.height = directionArrowHeightToPlayerRadiusRatio * player.radius
-            
-            directionArrowAnchor.position = player.position
-            directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
-        }
-        
-        //maintain joyStickBox scale
-        if prefs.showJoyStick {
-            joyStickBox.xScale = joyStickBoxXScaleToPlayerRadiusRatio * player.radius
-            joyStickBox.yScale = joyStickBoxYScaleToPlayerRadiusRatio * player.radius
-        }
-        
-        //maintain the camera scale
-        size.width = cameraWidthToPlayerRadiusRatio * player.radius
-        size.height = cameraHeightToPlayerRadiusRatio * player.radius
+        camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius
+        camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius
         
         camera!.position = player.position //Follow player
-        //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way
+        
+        //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
         if prefs.showArrow {
+            directionArrowAnchor.position = player.position
+            directionArrowAnchor.zRotation = player.playerTargetAngle.degreesToRadians()
+            
             let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
             let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
             directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
         }
-        
-        //Rescale the boost button!
-        boostButton.xScale = boostButtonXScaleToPlayerRadiusRatio * player.radius
-        boostButton.yScale = boostButtonYScaleToPlayerRadiusRatio * player.radius
-        boostButton.position.x = size.width/2 - boostButton.size.width/2
-        boostButton.position.y = -size.height/2 + boostButton.size.height/2
-        
-        //Rescale the mine button
-        leaveMineButton.xScale = leaveMineButtonXScaleToPlayerRadiusRatio * player.radius
-        leaveMineButton.yScale = leaveMineButtonYScaleToPlayerRadiusRatio * player.radius
-        leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
-        leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
         
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
         orbSpawnRadius = size.width + size.height
@@ -350,14 +327,12 @@ class GameScene: SKScene {
     }
     
     
-    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color) {
-        let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color)
+    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) {
+        let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
         addChild(mine)
         goopMines.append(mine)
     }
-    
-    
     
 }
 

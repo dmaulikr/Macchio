@@ -11,11 +11,11 @@ import SpriteKit
 
 class GoopMine: SKSpriteNode, BoundByCircle {
     
-    static let shurikenTextures: [String: SKTexture] = [
-        "red" : SKTexture(imageNamed: "shuriken_red"),
-        "green" : SKTexture(imageNamed: "shuriken_green"),
-        "blue" : SKTexture(imageNamed: "shuriken_blue"),
-        "yellow" : SKTexture(imageNamed: "shuriken_yellow")
+    static let shurikenTextures: [Color: SKTexture] = [
+        .Red : SKTexture(imageNamed: "shuriken_red"),
+        .Green : SKTexture(imageNamed: "shuriken_green"),
+        .Blue : SKTexture(imageNamed: "shuriken_blue"),
+        .Yellow : SKTexture(imageNamed: "shuriken_yellow")
     ]
     
     var radius: CGFloat = 100 //BS default values
@@ -23,8 +23,9 @@ class GoopMine: SKSpriteNode, BoundByCircle {
     let lifeSpan: CGFloat = 4 //Constant to be tweaked
     var lifeCounter: CGFloat = 0
     var rps: CGFloat = 1 // Rotations per second
+    var leftByPlayerID: Int = 0
 
-    init(radius: CGFloat, growAmount: CGFloat, color: Color, rps: CGFloat? = nil) {
+    init(radius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerWithID: Int, rps: CGFloat? = nil) {
         self.radius = radius
         self.growAmount = growAmount
         if let rps = rps { self.rps = rps }
@@ -32,19 +33,13 @@ class GoopMine: SKSpriteNode, BoundByCircle {
             self.rps = CGFloat.random(min: 0.3, max: 1)
             if CGFloat.random() > 0.5 { self.rps *= -1 }
         }
-        let keyString: String
-        switch color {
-        case .Red:
-            keyString = "red"
-        case .Green:
-            keyString = "green"
-        case .Blue:
-            keyString = "blue"
-        case .Yellow:
-            keyString = "yellow"
-        }
-        let myTexture = GoopMine.shurikenTextures[keyString]
+        let myTexture = GoopMine.shurikenTextures[color]
+        self.leftByPlayerID = leftByPlayerWithID
         super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius, height: 2*radius))
+    }
+    
+    func belongsToCreature(creature: PlayerCreature) -> Bool {
+        return creature.playerID == self.leftByPlayerID
     }
     
     required init?(coder aDecoder: NSCoder) {
