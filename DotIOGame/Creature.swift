@@ -1,49 +1,27 @@
 //
-//  Player.swift
+//  Creature.swift
 //  DotIOGame
 //
-//  Created by Ryan Anderson on 7/10/16.
+//  Created by Ryan Anderson on 7/15/16.
 //  Copyright © 2016 Ryan Anderson. All rights reserved.
 //
 
 import Foundation
 import SpriteKit
 
-class PlayerCreature: SKSpriteNode, BoundByCircle {
-    
+class Creature: SKSpriteNode {
+    // All creatures should eventually extend this class
     var playerID: Int = 0
     var playerColor: Color = .Red
+    
+    
     var normalSpeed: CGFloat = 100
-    var boostingSpeed: CGFloat { return normalSpeed * 2 } //The multiplier is a constant to be played with
+    var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat = 500
+    
     var currentSpeed: CGFloat = 100 {
         didSet { velocity.speed = currentSpeed }
     }
-    var isBoosting = false
-    var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
-    let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
-    let mineCoolDown: CGFloat = 4
-    var mineCoolDownCounter: CGFloat = 4
-    let minePropulsionSpeedActiveTime: CGFloat = 0.25
-    var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
-    var freshlySpawnedMine: GoopMine? = nil
-    
-    let playerMaxAngleChangePerSecond: CGFloat = 180
-    
-    var playerTargetAngle: CGFloat! //Should operate in degrees 0 to 360
-    
-    let minRadius: CGFloat = 50
-    var radius: CGFloat = 50 {
-        didSet {
-            size.width = 2*radius
-            size.height = 2*radius
-            zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
-            minePropulsionSpeed = radius * 10
-        }
-    }
-    //var prevRadius: CGFloat = 50 // TEMPorary variable
-    
-    var targetRadius: CGFloat = 50 //This is here so the player can grow the SMOOOOTH way
     
     var velocity: (speed: CGFloat, angle: CGFloat) = (
         speed: 0,
@@ -68,16 +46,39 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             
             zRotation = velocity.angle.degreesToRadians()
             
-            //print(zRotation)
         }
         
     }
-    
     
     var positionDeltas: (dx: CGFloat, dy: CGFloat) = (
         dx: 0,
         dy: 0
     )
+
+
+    var isBoosting = false
+    var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
+    let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
+    let mineCoolDown: CGFloat = 4
+    var mineCoolDownCounter: CGFloat = 4
+    let minePropulsionSpeedActiveTime: CGFloat = 0.25
+    var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
+    var freshlySpawnedMine: GoopMine? = nil
+    
+    let playerMaxAngleChangePerSecond: CGFloat = 180
+    
+    var playerTargetAngle: CGFloat! //operates in degrees 0 to 360
+    
+    let minRadius: CGFloat = 50
+    var radius: CGFloat = 50 {
+        didSet {
+            size.width = 2*radius
+            size.height = 2*radius
+            zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
+            minePropulsionSpeed = radius * 10
+        }
+    }
+    var targetRadius: CGFloat = 50
     
     init(name: String, playerID: Int, color: Color) {
         self.playerID = playerID
@@ -93,10 +94,9 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             radius = minRadius
         }
         playerTargetAngle = velocity.angle
-
+        
     }
     
-    /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -137,7 +137,7 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         // and ensure delta angle is no greater
         let maxAngleChangeThisFrame = playerMaxAngleChangePerSecond * CGFloat(deltaTime)
         deltaAngle.clamp(-maxAngleChangeThisFrame, maxAngleChangeThisFrame)
-
+        
         velocity.angle += deltaAngle
         
         //Before having the radius approach the target radius, apply the passive size loss to target radius
@@ -162,12 +162,6 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
             minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
         
-        
-//        print("Radius: \(radius)") //size cap should be about at 350 player starts at 50
-//        print ("Growth/sec: \((radius - prevRadius) / CGFloat(deltaTime))")
-//        print("\n")
-//        prevRadius = radius
-
     }
     
     var passiveSizeLoss: CGFloat {
@@ -202,6 +196,10 @@ class PlayerCreature: SKSpriteNode, BoundByCircle {
         minePropulsionSpeedActiveTimeCounter = 0
     }
     
-    
+
+
+
+
+
     
 }

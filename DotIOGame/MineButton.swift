@@ -12,8 +12,8 @@ import SpriteKit
 class MineButton: SKSpriteNode {
     // This is kinda a clone of boost button lol
     
-    let defaultTexture = SKTexture(imageNamed: "shuriken_button_default") //TODO change the textures
-    let pressedTexture = SKTexture(imageNamed: "shuriken_button_pressed")
+    let canPressTexture = SKTexture(imageNamed: "shuriken_can_press") //TODO change the textures
+    let unableToPressTexture = SKTexture(imageNamed: "shuriken_unable_to_press")
     var onPressed: () -> Void = { print("No mine pressed action set") }
     var onReleased: () -> Void = { print("No mine realeased action set.") }
     var buttonIcon: SKSpriteNode!
@@ -34,7 +34,7 @@ class MineButton: SKSpriteNode {
     }
     
     func addButtonIconToParent() {
-        buttonIcon = SKSpriteNode(texture: defaultTexture, size: CGSize(width: 80, height: 80)) //This size variable doesn't matter, as the actual hitbox of the button is independant of the size of the button icon
+        buttonIcon = SKSpriteNode(texture: unableToPressTexture, size: CGSize(width: 80, height: 80)) //This size variable doesn't matter, as the actual hitbox of the button is independant of the size of the button icon
         buttonIcon.zPosition = self.zPosition - 1
         buttonIcon.alpha = 1
         buttonIcon.position = self.position
@@ -47,12 +47,10 @@ class MineButton: SKSpriteNode {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        buttonIcon.texture = pressedTexture
         onPressed()
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        buttonIcon.texture = defaultTexture
         onReleased()
     }
 

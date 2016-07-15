@@ -91,7 +91,7 @@ class GameScene: SKScene {
         boostButton.onReleased = player.stopBoost
         
         leaveMineButton = MineButton()
-        leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
+        leaveMineButton.position.x = -size.width/2 + leaveMineButton.size.width / 2
         leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
         camera!.addChild(leaveMineButton)
         leaveMineButton.addButtonIconToParent()
@@ -199,7 +199,6 @@ class GameScene: SKScene {
         
         
         //      ----Handle collisions----
-        
         // Orb collisions with players (for now just one player)
         let orbKillList = orbs.filter { $0.overlappingCircle(player) }
         orbs = orbs.filter { !orbKillList.contains($0) }
@@ -217,10 +216,11 @@ class GameScene: SKScene {
         for mine in goopMines {
             if mine.overlappingCircle(player) {
                 // if the mine belongs to the player and the player is going at mine impulse speed, then it means they just left the mine and are boosting away in which case the player shouldn't be killed. Otherwise, GameOver
-                if mine.belongsToCreature(player) && player.minePropulsionSpeedActiveTimeCounter < player.minePropulsionSpeedActiveTime {
-                    continue
+                if mine === player.freshlySpawnedMine {
+                    // Do nothing
                 } else {
                     gameOver()
+                    seedOrbClusterWithBudget(player.radius, aboutPoint: player.position, withinRadius: player.radius)
                 }
             }
         }
@@ -241,8 +241,14 @@ class GameScene: SKScene {
         //For now just our one player.....
         if player.spawnMineAtMyTail {
             player.spawnMineAtMyTail = false
-            spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
+            let freshMine = spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
+            player.freshlySpawnedMine = freshMine
             player.mineSpawned()
+        }
+        
+        // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
+        if let freshlySpawnedMine = player.freshlySpawnedMine {
+            if !freshlySpawnedMine.overlappingCircle(player) { player.freshlySpawnedMine = nil }
         }
 
         
@@ -287,6 +293,11 @@ class GameScene: SKScene {
                 let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
                 directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
             }
+            
+            // Change mine buttons image to can leave or can't
+            if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
+            else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
+            
         }
         // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
         orbSpawnRadius = size.width + size.height
@@ -322,22 +333,19 @@ class GameScene: SKScene {
             let randDist = CGFloat.random(min: 0, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
             let newOrb: EnergyOrb
-//            if CGFloat.random() > 0.9 {
-//                newOrb = seedRichOrb(position, artificiallySpawned: true)
-//            } else {
-                newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true)
-//            }
+            newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true)
             budget -= newOrb.growAmount
         }
         
     }
     
     
-    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) {
+    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
         let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
         addChild(mine)
         goopMines.append(mine)
+        return mine
     }
     
     func gameOver() {
@@ -349,7 +357,7 @@ class GameScene: SKScene {
         }
         player.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.3), SKAction.runBlock {
             self.hidden = true
-        }]), completion: {
+        }, SKAction.waitForDuration(2)]), completion: {
             self.restart()
         })
         
@@ -358,11 +366,11 @@ class GameScene: SKScene {
     
     func restart() {
         let skView = self.view as SKView!
-        let scene = GameScene(fileNamed:"GameScene") as GameScene!
+        let scene = MainScene(fileNamed:"MainScene") as MainScene!
         scene.scaleMode = .AspectFill
-        skView.presentScene(scene)
+        skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
     }
-    
+
 }
 
 func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{

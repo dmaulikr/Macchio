@@ -11,6 +11,9 @@
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
 		8367131D1D3856AA0062D8C0 /* MineButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8367131C1D3856AA0062D8C0 /* MineButton.swift */; };
+		8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 8367131E1D39700E0062D8C0 /* MainScene.sks */; };
+		836713211D3972900062D8C0 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713201D3972900062D8C0 /* MainScene.swift */; };
+		836713231D3984410062D8C0 /* Creature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713221D3984410062D8C0 /* Creature.swift */; };
 		83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */; };
 		83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 83957B911D32FDDE00BF4450 /* GameScene.sks */; };
 		83957B941D32FDDE00BF4450 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B931D32FDDE00BF4450 /* GameScene.swift */; };
@@ -41,6 +44,9 @@
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
 		8367131C1D3856AA0062D8C0 /* MineButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MineButton.swift; sourceTree = "<group>"; };
+		8367131E1D39700E0062D8C0 /* MainScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainScene.sks; sourceTree = "<group>"; };
+		836713201D3972900062D8C0 /* MainScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
+		836713221D3984410062D8C0 /* Creature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Creature.swift; sourceTree = "<group>"; };
 		83957B8C1D32FDDE00BF4450 /* DotIOGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotIOGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83957B911D32FDDE00BF4450 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -114,6 +120,9 @@
 				83957B9A1D32FDDE00BF4450 /* Assets.xcassets */,
 				83957B9C1D32FDDE00BF4450 /* LaunchScreen.storyboard */,
 				83957B9F1D32FDDE00BF4450 /* Info.plist */,
+				8367131E1D39700E0062D8C0 /* MainScene.sks */,
+				836713201D3972900062D8C0 /* MainScene.swift */,
+				836713221D3984410062D8C0 /* Creature.swift */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -209,6 +218,7 @@
 				83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */,
 				83957B9E1D32FDDE00BF4450 /* LaunchScreen.storyboard in Resources */,
 				83957B9B1D32FDDE00BF4450 /* Assets.xcassets in Resources */,
+				8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */,
 				83957B991D32FDDE00BF4450 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,6 +243,7 @@
 				83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */,
 				83957BC01D33FBEC00BF4450 /* SKNode+Extensions.swift in Sources */,
 				83957BBD1D33FBEC00BF4450 /* SKAction+Extensions.swift in Sources */,
+				836713231D3984410062D8C0 /* Creature.swift in Sources */,
 				83957BBE1D33FBEC00BF4450 /* SKAction+SpecialEffects.swift in Sources */,
 				839710061D34650A00696814 /* EnergyOrb.swift in Sources */,
 				83957BB71D33FBEC00BF4450 /* MSButtonNode.swift in Sources */,
@@ -241,6 +252,7 @@
 				836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */,
 				83957BBC1D33FBEC00BF4450 /* Int+Extensions.swift in Sources */,
 				836713191D36F8300062D8C0 /* GoopMine.swift in Sources */,
+				836713211D3972900062D8C0 /* MainScene.swift in Sources */,
 				83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */,
 				83957BBF1D33FBEC00BF4450 /* SKColor+Extensions.swift in Sources */,
 			);
