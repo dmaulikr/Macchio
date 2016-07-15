@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "boost_button_default.png",
+      "filename" : "boost_button_pressed.png",
       "scale" : "1x"
     },
     {

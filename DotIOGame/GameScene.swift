@@ -92,8 +92,8 @@ class GameScene: SKScene {
             boostButton.onReleased = player.stopBoost
             
             leaveMineButton = MineButton()
-            leaveMineButton.position.x = -size.width/2 + leaveMineButton.size.width / 2
-            leaveMineButton.position.y = size.height/2 - leaveMineButton.size.height / 2
+            leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
+            leaveMineButton.position.y = -size.height/2 + boostButton.size.height + leaveMineButton.size.height / 2
             camera!.addChild(leaveMineButton)
             leaveMineButton.addButtonIconToParent()
             leaveMineButton.onPressed = player.leaveMine
