@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class Creature: SKSpriteNode {
+class Creature: SKSpriteNode, BoundByCircle {
     // All creatures should eventually extend this class
     var playerID: Int = 0
     var playerColor: Color = .Red
@@ -67,7 +67,7 @@ class Creature: SKSpriteNode {
     
     let playerMaxAngleChangePerSecond: CGFloat = 180
     
-    var playerTargetAngle: CGFloat! //operates in degrees 0 to 360
+    var targetAngle: CGFloat! //operates in degrees 0 to 360
     
     let minRadius: CGFloat = 50
     var radius: CGFloat = 50 {
@@ -93,7 +93,7 @@ class Creature: SKSpriteNode {
             targetRadius = minRadius
             radius = minRadius
         }
-        playerTargetAngle = velocity.angle
+        targetAngle = velocity.angle
         
     }
     
@@ -107,7 +107,6 @@ class Creature: SKSpriteNode {
         
         // The player's current angle approaches its target angle
         let myAngle = velocity.angle
-        let targetAngle = playerTargetAngle
         var posDist: CGFloat, negDist: CGFloat
         if targetAngle > myAngle {
             posDist = targetAngle - myAngle
@@ -162,6 +161,13 @@ class Creature: SKSpriteNode {
             minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
         
+        thinkAndAct()
+        
+    }
+    
+    func thinkAndAct() {
+        // Classes that extend creature can override thinkAndAct() and can change targetAngle
+        // boost, and leaveMine()
     }
     
     var passiveSizeLoss: CGFloat {
@@ -194,6 +200,10 @@ class Creature: SKSpriteNode {
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
         mineCoolDownCounter = 0
         minePropulsionSpeedActiveTimeCounter = 0
+    }
+    
+    func angleToNode(node: SKNode) -> CGFloat {
+        return mapRadiansToDegrees0to360((node.position - self.position).angle)
     }
     
 
