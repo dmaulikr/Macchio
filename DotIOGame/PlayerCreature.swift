@@ -12,7 +12,7 @@ import SpriteKit
 class PlayerCreature: Creature {
     //TBH, all the player creature really is as of now is a Creature. That's treated specially bty game scene.
     
-    override init(name: String, playerID: Int, color: Color) {
+    override init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
         super.init(name: name, playerID: playerID, color: color)
     }
     

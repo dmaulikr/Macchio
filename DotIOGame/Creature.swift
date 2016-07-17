@@ -85,7 +85,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     var targetRadius: CGFloat = 50
     
-    init(name: String, playerID: Int, color: Color) {
+    init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
         self.playerID = playerID
         playerColor = color
         let texture = textures[color]
@@ -95,8 +95,8 @@ class Creature: SKSpriteNode, BoundByCircle {
         
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed
-            targetRadius = minRadius
-            radius = minRadius
+            targetRadius = startRadius
+            radius = startRadius
         }
         targetAngle = velocity.angle
         

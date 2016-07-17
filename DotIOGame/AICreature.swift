@@ -12,6 +12,13 @@ import SpriteKit
 class AICreature: Creature {
     
     var gameScene: GameScene!
+    enum CreatureState {
+        case EatOrbs
+        case RunningAway
+        case Hunting
+    }
+    let sniffRange: CGFloat = 100
+    let dangerRange: CGFloat = 100
     
     init(name: String, playerID: Int, color: Color, gameScene: GameScene) {
         // The entire game scene is passed in to make the ai creature omniscent.
@@ -25,9 +32,27 @@ class AICreature: Creature {
     }
     
     override func thinkAndAct() {
-        print("think and act called")
+        
         if let player = gameScene.player {
-            self.targetAngle = angleToNode(player)
+            if self.position.distanceTo(player.position) <= sniffRange {
+                self.targetAngle = self.angleToNode(player)
+            } else {
+                performNextRandomAction()
+            }
+        } else {
+            performNextRandomAction()
         }
+    }
+    
+    func performNextRandomAction() {
+        if CGFloat.random() > 0.95 {
+            self.targetAngle = CGFloat.random(min: 0, max: 360)
+        }
+    }
+    
+    override func mineSpawned() {
+        // the call back for if a mine was spawned sucessfully
+        
+        super.mineSpawned()
     }
 }

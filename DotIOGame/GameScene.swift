@@ -61,10 +61,13 @@ class GameScene: SKScene {
     var boostButton: BoostButton!
     var leaveMineButton: MineButton!
     
+    var spawnRadius: CGFloat = 888
+
     var orbs: [EnergyOrb] = []
-    var orbSpawnRadius: CGFloat = 888
     var numOfOrbsToSpawnInRadius: Int = 30
     var orbsToAreaRatio: CGFloat!
+    var numOfCreaturesToSpawnInRadius: Int = 5
+    var creaturesToAreaRatio: CGFloat!
     
     var goopMines: [GoopMine] = []
     
@@ -108,11 +111,13 @@ class GameScene: SKScene {
             leaveMineButton.onPressed = player.leaveMine
             leaveMineButton.onReleased = { return }
             
-            orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
-                
-            }
+            orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
+            creaturesToAreaRatio = CGFloat(numOfCreaturesToSpawnInRadius) / (CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
+            
         
-        spawnAICreatureAtPosition(spawnPosition + CGPoint(x: 0, y: 200))
+        }
+        
+        //spawnAICreatureAtPosition(spawnPosition + CGPoint(x: 0, y: 200))
 
     }
     
@@ -265,22 +270,55 @@ class GameScene: SKScene {
         }
         
         // Mine collisions with other creatures
-        for (index, creature) in otherCreatures.enumerate() {
+        var creatureKillList: [Creature] = []
+        for creature in otherCreatures {
             for mine in goopMines {
-                if mine.overlappingCircle(creature) {
-                    if mine == creature.freshlySpawnedMine {
-                        // Do nothing
-                    } else {
-                        // This creature just died
-                        let destroyCreatureAction = SKAction.runBlock {
-                            self.otherCreatures.removeAtIndex(index)
-                            creature.removeFromParent()
-                            self.seedOrbClusterWithBudget(creature.radius, aboutPoint: creature.position, withinRadius: creature.radius * 1.5)
-                        }
-                        runAction(destroyCreatureAction)
-                    }
+                if mine.overlappingCircle(creature) && mine !== creature.freshlySpawnedMine {
+                    // creature just died
+                    creatureKillList.append(creature)
                 }
             }
+        }
+        
+        // Creatures colliding with other creatures
+        var theEaten: [Creature] = []
+        for creature in allCreatures {
+            for other in allCreatures {
+                if creature.overlappingCircle(other) && other !== creature {
+                    // Ok so there is a collision between 2 different creatures
+                    // So now we check if the bigger creature is big enough to eat the other creature, if so, then are they completely engulfing the smaller player. If the larger player wasn't larger enough to begin with, then the two players will just kinda bump into each other.
+                    let theBigger = creature.radius > other.radius ? creature : other
+                    let theSmaller = creature !== theBigger ? creature : other
+                    if theBigger.radius > theSmaller.radius * 1.11 {
+                        if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius - theSmaller.radius {
+                            // The bigger has successfully engulfed the smaller
+                            theBigger.targetRadius += theSmaller.radius
+                            theEaten.append(theSmaller)
+                            if theBigger === player {
+                                score += growAmountToPoints(theSmaller.radius)
+                            }
+                        }
+                    } else {
+                        // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap
+                        //TODO implement
+                    }
+
+                }
+            }
+        }
+        otherCreatures = otherCreatures.filter() { !theEaten.contains($0) }
+        for x in theEaten {
+            if x === player {
+                gameOver()
+            } else {
+                x.removeFromParent()
+            }
+        }
+        
+        otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
+        for x in creatureKillList {
+            x.removeFromParent()
+            seedOrbClusterWithBudget(x.radius, aboutPoint: x.position, withinRadius: x.radius * 1.5)
         }
         
         
@@ -312,15 +350,15 @@ class GameScene: SKScene {
         }
         
         
-        //      ----Orb Spawning----
+        //      ----Orb Spawning and Despawning----
         if let player = player {
-            let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= orbSpawnRadius && !$0.artificiallySpawned}
+            let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= spawnRadius && !$0.artificiallySpawned}
             let numOfNeededOrbs = numOfOrbsToSpawnInRadius - orbsInRadius.count
             if numOfNeededOrbs > 0 {
                 for _ in 0..<numOfNeededOrbs {
                     // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
                     let randAngle = CGFloat.random(min: 0, max: 360)
-                    let randDist = CGFloat.random(min: player.radius, max: orbSpawnRadius)
+                    let randDist = CGFloat.random(min: player.radius, max: spawnRadius)
                     let orbX = player.position.x + cos(randAngle) * randDist
                     let orbY = player.position.y + sin(randAngle) * randDist
                     let orbPos = CGPoint(x: orbX, y: orbY)
@@ -334,11 +372,29 @@ class GameScene: SKScene {
             
             
             // Destroy the orbs that aren't in the radius to preserve memory space
-            let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > orbSpawnRadius }
+            let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > spawnRadius }
             orbs = orbs.filter { !orbsNotInRadius.contains($0) }
             for orb in orbsNotInRadius {
                 orb.removeFromParent()
             }
+        }
+        
+        //      ----Creature Spawning and Despawning----
+        if let player = player {
+            let creaturesInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) <= spawnRadius }
+            let numOfCreaturesToSpawnNow = numOfCreaturesToSpawnInRadius - creaturesInRadius.count
+            if numOfCreaturesToSpawnNow > 0 {
+                for _ in 0..<numOfCreaturesToSpawnNow {
+                    // spawn a creature x times with random properties.
+                    let randAngle = CGFloat.random(min: 0, max: 360)
+                    let randDist = CGFloat.random(min: size.width * camera!.xScale, max: spawnRadius)
+                    spawnAICreatureAtPosition(CGPoint(x: player.position.x + cos(randAngle) * randDist, y: player.position.y + sin(randAngle) * randDist))
+                }
+            }
+            
+            let creaturesNotInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) > spawnRadius }
+            otherCreatures = otherCreatures.filter { !creaturesNotInRadius.contains($0) }
+            for c in creaturesNotInRadius { c.removeFromParent() }
         }
         
         //      ---- UI-ey things ----
@@ -364,10 +420,12 @@ class GameScene: SKScene {
                 
             }
         }
-        // update the orb spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio
+        // update the spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio. Same with other creatures.
         if let player = player {
-            orbSpawnRadius = size.width + size.height
-            numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (orbSpawnRadius * orbSpawnRadius - player.radius * player.radius))
+            spawnRadius = size.width * camera!.xScale + size.height * camera!.yScale
+            numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
+            numOfCreaturesToSpawnInRadius = Int(creaturesToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
+
         }
         
     }
