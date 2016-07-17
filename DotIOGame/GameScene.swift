@@ -300,7 +300,11 @@ class GameScene: SKScene {
                         }
                     } else {
                         // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap
-                        //TODO implement
+                        // Displacement = r1 - (dist - r2) = r1 - dist + r2
+                        let displaceDistance = theBigger.radius - theBigger.position.distanceTo(theSmaller.position) + theSmaller.radius
+                        // For now just displace theSmaller by the distance value and at the apppropriate angle
+                        let displaceAngle = (theSmaller.position - theBigger.position).angle
+                        theSmaller.position += CGPoint(x: cos(displaceAngle) * displaceDistance, y: sin(displaceAngle) * displaceDistance)
                     }
 
                 }
