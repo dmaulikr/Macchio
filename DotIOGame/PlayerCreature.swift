@@ -20,5 +20,9 @@ class PlayerCreature: Creature {
         super.init(coder: aDecoder)
     }
     
+    override func thinkAndAct() {
+        // Nothing much to do here for player, as the player is controlled by player input
+        print(targetRadius)
+    }
     
 }

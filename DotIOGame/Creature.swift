@@ -19,7 +19,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Blue: SKTexture(imageNamed: "player_blue"),
         .Yellow: SKTexture(imageNamed: "player_yellow")
     ]
-    
+    let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat = 500
@@ -84,6 +84,15 @@ class Creature: SKSpriteNode, BoundByCircle {
         }
     }
     var targetRadius: CGFloat = 50
+    var targetArea: CGFloat {
+        get {
+            return CGFloat(pi) * targetRadius * targetRadius
+        }
+        set {
+            targetRadius = sqrt(newValue / CGFloat(pi))
+        }
+    }
+    var growAmount: CGFloat { return targetArea }
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
         self.playerID = playerID

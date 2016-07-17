@@ -237,7 +237,7 @@ class GameScene: SKScene {
                 let remove = SKAction.runBlock { self.removeFromParent() }
                 orb.runAction(SKAction.sequence([fadeAction, remove]))
                 score += growAmountToPoints(orb.growAmount)
-                player.targetRadius += orb.growAmount
+                player.targetArea += orb.growAmount
             }
         }
         
@@ -249,7 +249,7 @@ class GameScene: SKScene {
                 let fadeAction = SKAction.fadeOutWithDuration(0.4)
                 let remove = SKAction.runBlock { self.removeFromParent() }
                 orb.runAction(SKAction.sequence([fadeAction, remove]))
-                c.targetRadius += orb.growAmount
+                c.targetArea += orb.growAmount
             }
         }
      
@@ -263,7 +263,7 @@ class GameScene: SKScene {
                         // Do nothing
                     } else {
                         gameOver()
-                        seedOrbClusterWithBudget(player.radius, aboutPoint: player.position, withinRadius: player.radius * 1.5)
+                        seedOrbClusterWithBudget(player.targetArea, aboutPoint: player.position, withinRadius: player.targetRadius * player.orbSpawnUponDeathRadiusMultiplier)
                     }
                 }
             }
@@ -278,7 +278,14 @@ class GameScene: SKScene {
                     creatureKillList.append(creature)
                 }
             }
+            
         }
+        otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
+        for x in creatureKillList {
+            x.removeFromParent()
+            seedOrbClusterWithBudget(x.targetArea, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
+        }
+
         
         // Creatures colliding with other creatures
         var theEaten: [Creature] = []
@@ -292,10 +299,10 @@ class GameScene: SKScene {
                     if theBigger.radius > theSmaller.radius * 1.11 {
                         if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius - theSmaller.radius {
                             // The bigger has successfully engulfed the smaller
-                            theBigger.targetRadius += theSmaller.radius
+                            theBigger.targetArea += theSmaller.targetArea
                             theEaten.append(theSmaller)
                             if theBigger === player {
-                                score += growAmountToPoints(theSmaller.radius)
+                                score += growAmountToPoints(theSmaller.targetArea)
                             }
                         }
                     } else {
@@ -319,11 +326,6 @@ class GameScene: SKScene {
             }
         }
         
-        otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
-        for x in creatureKillList {
-            x.removeFromParent()
-            seedOrbClusterWithBudget(x.radius, aboutPoint: x.position, withinRadius: x.radius * 1.5)
-        }
         
         
         //      ----DESPAWNING of decayed mines----
@@ -447,11 +449,11 @@ class GameScene: SKScene {
     }
     
     func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
-        return seedOrbAtPosition(position, growAmount: 0.2, minRadius: 5, maxRadius: 7, artificiallySpawned: artificiallySpawned)
+        return seedOrbAtPosition(position, growAmount: 50, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
     }
     
     func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
-        return seedOrbAtPosition(position, growAmount: 5, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
+        return seedOrbAtPosition(position, growAmount: 250, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned)
     }
     
     func seedOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
@@ -548,4 +550,8 @@ func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
 
 func growAmountToPoints(growAmount: CGFloat) -> Int {
     return Int(growAmount * 5)
+}
+
+func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
+    return CGFloat(pi) * r * r
 }
