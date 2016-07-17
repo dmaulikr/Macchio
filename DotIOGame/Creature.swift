@@ -13,7 +13,12 @@ class Creature: SKSpriteNode, BoundByCircle {
     // All creatures should eventually extend this class
     var playerID: Int = 0
     var playerColor: Color = .Red
-    
+    let textures: [Color: SKTexture] = [
+        .Red : SKTexture(imageNamed: "player_red"),
+        .Green: SKTexture(imageNamed: "player_green"),
+        .Blue: SKTexture(imageNamed: "player_blue"),
+        .Yellow: SKTexture(imageNamed: "player_yellow")
+    ]
     
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
@@ -83,7 +88,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     init(name: String, playerID: Int, color: Color) {
         self.playerID = playerID
         playerColor = color
-        let texture = SKTexture.init(imageNamed: "red circle.png") //placeholderTexture
+        let texture = textures[color]
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
@@ -186,8 +191,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     
     func leaveMine() {
         // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
-        if targetRadius * (1-percentSizeSacrificeToLeaveMine) <= minRadius { return }
-        if mineCoolDownCounter < mineCoolDown {return}
+        if !canLeaveMine { return }
         spawnMineAtMyTail = true // GameScene will see that this has turned true and spawn the mine for us
         // do the things the player does after leaving a mine
         

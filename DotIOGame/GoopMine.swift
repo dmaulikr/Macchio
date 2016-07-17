@@ -23,16 +23,15 @@ class GoopMine: SKSpriteNode, BoundByCircle {
     let lifeSpan: CGFloat = 4 //Constant to be tweaked
     var lifeCounter: CGFloat = 0
     var rps: CGFloat = 1 // Rotations per second
+    var deltaRPSPerSecond: CGFloat = -1
     var leftByPlayerID: Int = 0
 
-    init(radius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerWithID: Int, rps: CGFloat? = nil) {
+    init(radius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerWithID: Int, initialRPS: CGFloat = 1) {
         self.radius = radius
         self.growAmount = growAmount
-        if let rps = rps { self.rps = rps }
-        else {
-            self.rps = CGFloat.random(min: 0.3, max: 1)
-            if CGFloat.random() > 0.5 { self.rps *= -1 }
-        }
+        self.rps = initialRPS
+        self.deltaRPSPerSecond = -rps / lifeSpan
+        
         let myTexture = GoopMine.shurikenTextures[color]
         self.leftByPlayerID = leftByPlayerWithID
         super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius, height: 2*radius))
@@ -47,6 +46,8 @@ class GoopMine: SKSpriteNode, BoundByCircle {
     }
     
     func update(deltaTime: CFTimeInterval) {
+        rps += deltaRPSPerSecond * CGFloat(deltaTime)
+        
         lifeCounter += CGFloat(deltaTime)
         zRotation += CGFloat(360 * rps).degreesToRadians() * CGFloat(deltaTime)
     }

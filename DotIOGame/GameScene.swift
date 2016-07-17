@@ -41,6 +41,9 @@ class GameScene: SKScene {
     var player: PlayerCreature?
     let spawnPosition = CGPoint(x: 200, y: 200)
     var otherCreatures: [Creature] = []
+    var allCreatures: [Creature] {
+        return otherCreatures + (player != nil ? [player!] : [])
+    }
     
     var score: Int = 0
 
@@ -66,7 +69,7 @@ class GameScene: SKScene {
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Blue)
         if let player = player {
             player.position = spawnPosition
             self.addChild(player)
@@ -294,18 +297,17 @@ class GameScene: SKScene {
         
         //      ----SPAWNING of mines (behind players with their flags on)--- 👹 💣
         // Here I believe all creatures will be treated equally
-        // TODO implement for all creatures
-        if let player = player {
-            if player.spawnMineAtMyTail {
-                player.spawnMineAtMyTail = false
-                let freshMine = spawnMineAtPosition(player.position, playerRadius: player.radius, growAmount: player.radius * player.percentSizeSacrificeToLeaveMine, color: player.playerColor, leftByPlayerID: player.playerID)
-                player.freshlySpawnedMine = freshMine
-                player.mineSpawned()
+        for creature in allCreatures {
+            if creature.spawnMineAtMyTail {
+                creature.spawnMineAtMyTail = false
+                let freshMine = spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.radius * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                creature.freshlySpawnedMine = freshMine
+                creature.mineSpawned()
             }
             
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
-            if let freshlySpawnedMine = player.freshlySpawnedMine {
-                if !freshlySpawnedMine.overlappingCircle(player) { player.freshlySpawnedMine = nil }
+            if let freshMine = creature.freshlySpawnedMine {
+                if !freshMine.overlappingCircle(creature) { creature.freshlySpawnedMine = nil }
             }
         }
         
