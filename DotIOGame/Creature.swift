@@ -22,7 +22,9 @@ class Creature: SKSpriteNode, BoundByCircle {
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat = 100
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
-    var minePropulsionSpeed: CGFloat = 500
+    var minePropulsionSpeed: CGFloat {
+        return targetRadius * 10
+    }
     
     var currentSpeed: CGFloat = 100 {
         didSet { velocity.speed = currentSpeed }
@@ -80,7 +82,7 @@ class Creature: SKSpriteNode, BoundByCircle {
             size.width = 2*radius
             size.height = 2*radius
             zPosition = radius/10 //Big creatures eat up smaller ones in terms of zPosition
-            minePropulsionSpeed = radius * 10
+            //minePropulsionSpeed = radius * 10
         }
     }
     var targetRadius: CGFloat = 50

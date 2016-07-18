@@ -23,9 +23,13 @@ func randomColor() -> Color {
 
 class GameScene: SKScene {
     
-    var prefs = (
+    var prefs: (
+        showJoyStick: Bool,
+        showArrow: Bool,
+        zoomOutFactor: CGFloat) = (
         showJoyStick: true,
-        showArrow: true
+        showArrow: true,
+        zoomOutFactor: 1
     )
     
     enum State {
@@ -36,6 +40,9 @@ class GameScene: SKScene {
     
     var previousTime: CFTimeInterval? = nil
     //var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
+    
+    let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
+    
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
     
     var player: PlayerCreature?
@@ -64,7 +71,9 @@ class GameScene: SKScene {
     var spawnRadius: CGFloat = 888
 
     var orbs: [EnergyOrb] = []
-    let orbsToAreaRatio: CGFloat = 0.00001
+    //var orbChunks: [[[EnergyOrb]]] = [[[]]] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
+    let orbChunkWidth: CGFloat = 300, orbChunkHeight: CGFloat = 300
+    let orbsToAreaRatio: CGFloat = 0.000003
     let creaturesToAreaRatio: CGFloat = 0.000001
     
     var goopMines: [GoopMine] = []
@@ -89,6 +98,7 @@ class GameScene: SKScene {
             directionArrowAnchor.zRotation = player.targetAngle.degreesToRadians()
             self.addChild(directionArrowAnchor)
             
+            camera!.zPosition = 100
             joyStickBox = childNodeWithName("//joyStickBox")
             controlStick = childNodeWithName("//controlStick")
             joyStickBox.hidden = true
@@ -261,7 +271,7 @@ class GameScene: SKScene {
                         // Do nothing
                     } else {
                         gameOver()
-                        seedRichOrbClusterWithBudget(player.growAmount, aboutPoint: player.position, withinRadius: player.targetRadius * player.orbSpawnUponDeathRadiusMultiplier)
+                        seedAutoOrbClusterWithBudget(player.growAmount, aboutPoint: player.position, withinRadius: player.targetRadius * player.orbSpawnUponDeathRadiusMultiplier)
                     }
                 }
             }
@@ -269,7 +279,7 @@ class GameScene: SKScene {
         
         // Mine collisions with other creatures
         var creatureKillList: [Creature] = []
-        for creature in otherCreatures {
+        for creature in allCreatures {
             for mine in goopMines {
                 if mine.overlappingCircle(creature) && mine !== creature.freshlySpawnedMine {
                     // creature just died
@@ -278,10 +288,11 @@ class GameScene: SKScene {
             }
             
         }
+        
         otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
         for x in creatureKillList {
             x.removeFromParent()
-            seedRichOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
+            seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
         }
 
         
@@ -332,7 +343,7 @@ class GameScene: SKScene {
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
             // Kill the mines
-            seedOrbClusterWithBudget(mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius)
+            seedAutoOrbClusterWithBudget(mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius)
             mine.removeFromParent()
             
         }
@@ -342,7 +353,7 @@ class GameScene: SKScene {
         for creature in allCreatures {
             if creature.spawnMineAtMyTail {
                 creature.spawnMineAtMyTail = false
-                let freshMine = spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.radius * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMine = spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.growAmount * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 creature.mineSpawned()
             }
@@ -411,7 +422,7 @@ class GameScene: SKScene {
                 for _ in 0..<numOfCreaturesToSpawnNow {
                     // spawn a creature x times with random properties.
                     let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-                    let randDist = CGFloat.random(min: (size.width * camera!.xScale) / 5, max: spawnRadius)
+                    let randDist = CGFloat.random(min: (size.width * camera!.xScale) / prefs.zoomOutFactor, max: spawnRadius)
                     spawnAICreatureAtPosition(CGPoint(x: player.position.x + cos(randAngle) * randDist, y: player.position.y + sin(randAngle) * randDist))
                 }
             }
@@ -424,8 +435,8 @@ class GameScene: SKScene {
         //      ---- UI-ey things ----
         if let player = player {
             if gameState != .GameOver {
-                camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius * 5 // Follow player on z axis (by rescaling 😀)
-                camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius * 5
+                camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius * prefs.zoomOutFactor // Follow player on z axis (by rescaling 😀)
+                camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius * prefs.zoomOutFactor
                 camera!.position = player.position //Follow player on the x axis and y axis
                 
                 //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
@@ -445,7 +456,7 @@ class GameScene: SKScene {
             }
         }
         // update the spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio. Same with other creatures.
-        spawnRadius = (size.width * camera!.xScale) / 5 + (size.height * camera!.yScale) / 5
+        spawnRadius = (size.width * camera!.xScale) / prefs.zoomOutFactor + (size.height * camera!.yScale) / prefs.zoomOutFactor
 //            numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
 //            numOfCreaturesToSpawnInRadius = Int(creaturesToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
 
@@ -464,15 +475,17 @@ class GameScene: SKScene {
         return newOrb
     }
     
+    let smallOrbGrowAmount: CGFloat = 400
+    let richOrbGrowAmount: CGFloat = 7500
     func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
-        return seedOrbAtPosition(position, growAmount: 1500, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
+        return seedOrbAtPosition(position, growAmount: smallOrbGrowAmount, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
     }
     
     func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
-        return seedOrbAtPosition(position, growAmount: 7500, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned)
+        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned)
     }
     
-    func seedOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
         //Budget is the growAmount quantity that once existed in the entity that spawned the orbs. Mostly, this will be from dead players or old mines.
         var budget = growAmount
         while budget > 0 {
@@ -499,6 +512,18 @@ class GameScene: SKScene {
 
     }
     
+    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+        let maxNumberOfSmallOrbs = 30
+        let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * smallOrbGrowAmount
+        if growAmount < costToMaxOutSmallOrbs {
+            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius)
+        } else {
+            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius)
+            let richOrbBudget = growAmount - costToMaxOutSmallOrbs
+            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius)
+        }
+    }
+    
     
     func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
         let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
@@ -510,8 +535,9 @@ class GameScene: SKScene {
     
     
     func spawnAICreatureAtPosition(position: CGPoint) {
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 250), gameScene: self)
+        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self)
         newCreature.position = position
+        newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         addChild(newCreature)
     }

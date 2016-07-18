@@ -35,6 +35,7 @@ class GoopMine: SKSpriteNode, BoundByCircle {
         let myTexture = GoopMine.shurikenTextures[color]
         self.leftByPlayerID = leftByPlayerWithID
         super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius, height: 2*radius))
+        self.zRotation = CGFloat.random(min: 0, max: 360).degreesToRadians()
     }
     
     func belongsToCreature(creature: PlayerCreature) -> Bool {

@@ -17,8 +17,10 @@ class AICreature: Creature {
         case RunningAway
         case Hunting
     }
+    var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
     let sniffRange: CGFloat = 100
     let dangerRange: CGFloat = 100
+    
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene) {
         // The entire game scene is passed in to make the ai creature omniscent.
