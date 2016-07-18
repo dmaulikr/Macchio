@@ -20,11 +20,11 @@ class AICreature: Creature {
     let sniffRange: CGFloat = 100
     let dangerRange: CGFloat = 100
     
-    init(name: String, playerID: Int, color: Color, gameScene: GameScene) {
+    init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene) {
         // The entire game scene is passed in to make the ai creature omniscent.
         // Omniscence is ok for what I'm doing.
         self.gameScene = gameScene
-        super.init(name: name, playerID: playerID, color: color)
+        super.init(name: name, playerID: playerID, color: color, startRadius: startRadius)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -47,6 +47,9 @@ class AICreature: Creature {
     func performNextRandomAction() {
         if CGFloat.random() > 0.95 {
             self.targetAngle = CGFloat.random(min: 0, max: 360)
+        }
+        if canLeaveMine {
+            leaveMine()
         }
     }
     

@@ -74,7 +74,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
     
-    let minRadius: CGFloat = 50
+    static let minRadius: CGFloat = 50
     var radius: CGFloat = 50 {
         didSet {
             size.width = 2*radius
@@ -205,7 +205,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         // do the things the player does after leaving a mine
         
     }
-    var canLeaveMine: Bool { return targetRadius * (1-percentSizeSacrificeToLeaveMine) > minRadius &&
+    var canLeaveMine: Bool { return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
         mineCoolDownCounter >= mineCoolDown }
     
     func mineSpawned() {
@@ -219,10 +219,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         return mapRadiansToDegrees0to360((node.position - self.position).angle)
     }
     
-
-
-
-
 
     
 }
