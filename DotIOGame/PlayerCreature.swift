@@ -22,7 +22,7 @@ class PlayerCreature: Creature {
     
     override func thinkAndAct() {
         // Nothing much to do here for player, as the player is controlled by player input
-        //print(targetRadius)
+        print(targetRadius)
     }
     
 }

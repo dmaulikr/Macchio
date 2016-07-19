@@ -34,12 +34,10 @@ class GameScene: SKScene {
     
     enum State {
         case Playing, GameOver
-        //case Tutorial //Do later
     }
     var gameState: State = .Playing
     
     var previousTime: CFTimeInterval? = nil
-    //var cameraWidthToPlayerRadiusRatio: CGFloat!, cameraHeightToPlayerRadiusRatio: CGFloat!
     
     let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
     
@@ -69,9 +67,6 @@ class GameScene: SKScene {
     var boostButton: BoostButton!
     var leaveMineButton: MineButton!
     
-    var spawnRadius: CGFloat = 888
-    
-    //var orbs: [EnergyOrb] = []
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
@@ -227,13 +222,10 @@ class GameScene: SKScene {
         }
     }
     
-    
     override func update(currentTime: CFTimeInterval) {
         
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
-        
-        
         
         //      ----Call update methods----
         for c in allCreatures { //Includes player
@@ -251,11 +243,22 @@ class GameScene: SKScene {
         for mine in goopMines {
             mine.update(deltaTime)
         }
-    
-        
         
         //      ----Handle collisions----
+        handleCreatureAndOrbCollisions()
+        handleCreatureAndMineCollisions()
+        handleCreatureAndCreatureCollisions()
         
+        handleMineSpawningAndDecay()
+        handleOrbSpawning()
+        handleCreatureSpawning()
+        
+        updateUI()
+        
+    }
+
+    
+    func handleCreatureAndOrbCollisions() {
         // Orb collisions with any creature including the player
         for c in allCreatures {
             var locationsThatWillBeTested: [CGPoint] = [] //Used to make sure we don't test the same chunk twice
@@ -275,26 +278,10 @@ class GameScene: SKScene {
                 }
             }
         }
-        
-        
-        
-        // Mines collisions with player
-        if let player = player {
-            for mine in goopMines {
-                if mine.overlappingCircle(player) {
-                    // if the mine belongs to the player and the player is going at mine impulse speed, then it means they just left the mine and are boosting away in which case the player shouldn't be killed. Otherwise, GameOver
-                    if mine === player.freshlySpawnedMine {
-                        // Do nothing
-                    } else {
-                        gameOver()
-                        seedAutoOrbClusterWithBudget(player.growAmount, aboutPoint: player.position, withinRadius: player.targetRadius * player.orbSpawnUponDeathRadiusMultiplier)
-                        
-                    }
-                }
-            }
-        }
-        
-        // Mine collisions with other creatures
+    }
+    
+    func handleCreatureAndMineCollisions() {
+        // Mine collisions with creatures including player
         var creatureKillList: [Creature] = []
         for creature in allCreatures {
             for mine in goopMines {
@@ -308,11 +295,17 @@ class GameScene: SKScene {
         
         otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
         for x in creatureKillList {
-            x.removeFromParent()
+            if x === player && gameState != .GameOver {
+                gameOver()
+            } else {
+                x.removeFromParent()
+            }
             seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
         }
-        
-        
+
+    }
+    
+    func handleCreatureAndCreatureCollisions() {
         // Creatures colliding with other creatures
         var theEaten: [Creature] = []
         for creature in allCreatures {
@@ -351,10 +344,11 @@ class GameScene: SKScene {
                 x.removeFromParent()
             }
         }
-        
-        
-        
-        //      ----DESPAWNING of decayed mines----
+
+    }
+    
+    func handleMineSpawningAndDecay() {
+        // DESPAWNING of decayed mines
         // get rid of the decayed mines and seed orbs in their place
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
@@ -363,7 +357,7 @@ class GameScene: SKScene {
             mine.removeFromParent()
         }
         
-        //      ----SPAWNING of mines (behind players with their flags on)--- 👹 💣
+        // SPAWNING of mines (behind players with their flags on) 👹 💣
         // Here I believe all creatures will be treated equally
         for creature in allCreatures {
             if creature.spawnMineAtMyTail {
@@ -378,9 +372,9 @@ class GameScene: SKScene {
                 if !freshMine.overlappingCircle(creature) { creature.freshlySpawnedMine = nil }
             }
         }
-        
-        
-        //      ----Orb Spawning and Despawning----
+    }
+    
+    func handleOrbSpawning() {
         var currrentOrbCount = 0
         for chunkCol in orbChunks {
             for chunk in chunkCol {
@@ -398,36 +392,18 @@ class GameScene: SKScene {
                 seedSmallOrbAtPosition(newPosition)
             }
         }
-        
-        
-              //----Creature Spawning and Despawning----
-//        if let player = player {
-//            let creaturesInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) <= spawnRadius }
-//            var openArea = areaOfCircleWithRadius(spawnRadius)
-//            for creature in allCreatures {
-//                openArea -= areaOfCircleWithRadius(creature.radius)
-//            }
-//            let numOfCreaturesToSpawnNow = Int(creaturesToAreaRatio * openArea) - creaturesInRadius.count
-//            if numOfCreaturesToSpawnNow > 0 {
-//                for _ in 0..<numOfCreaturesToSpawnNow {
-//                    // spawn a creature x times with random properties.
-//                    let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-//                    let randDist = CGFloat.random(min: (size.width * camera!.xScale) / prefs.zoomOutFactor, max: spawnRadius)
-//                    spawnAICreatureAtPosition(CGPoint(x: player.position.x + cos(randAngle) * randDist, y: player.position.y + sin(randAngle) * randDist))
-//                }
-//            }
-//            
-//            let creaturesNotInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) + $0.radius > spawnRadius }
-//            otherCreatures = otherCreatures.filter { !creaturesNotInRadius.contains($0) }
-//            for c in creaturesNotInRadius { c.removeFromParent() }
-//        }
+    }
+    
+    func handleCreatureSpawning() {
         let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
         for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
             let x = CGFloat.random(min: 0, max: mapSize.width)
             let y = CGFloat.random(min: 0, max: mapSize.height)
             spawnAICreatureAtPosition(CGPoint(x: x, y: y))
         }
-        
+    }
+    
+    func updateUI() {
         //      ---- UI-ey things ----
         if let player = player {
             if gameState != .GameOver {
@@ -451,13 +427,11 @@ class GameScene: SKScene {
                 
             }
         }
-        // update the spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio. Same with other creatures.
-        spawnRadius = (size.width * camera!.xScale) / prefs.zoomOutFactor + (size.height * camera!.yScale) / prefs.zoomOutFactor
-        
     }
     
+    
     func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
-        // returns a list of orbs to be removed from their chunk
+        // returns a new list of orbs for the chunk without the removed ones.
         var orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) && !$0.isEaten }
         for orb in orbChunk {
             if orb.overlappingCircle(c) {

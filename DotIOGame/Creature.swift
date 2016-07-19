@@ -20,10 +20,12 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Yellow: SKTexture(imageNamed: "player_yellow")
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
-    var normalSpeed: CGFloat = 100
+    var normalSpeed: CGFloat {
+        return 50 * pow(1/2, (radius - 50) / 100) + 100
+    }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
-        return targetRadius * 10
+        return radius * 5
     }
     
     var currentSpeed: CGFloat = 100 {
@@ -187,7 +189,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     
     var passiveSizeLoss: CGFloat {
-        return CGFloat(pow(2, (radius - 50) / 75)) / 10
+        return CGFloat( 2.5 * pow(2, (radius-30)/100) - 2 )
     }
     
     func startBoost() {
