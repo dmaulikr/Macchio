@@ -14,15 +14,20 @@ class AICreature: Creature {
     var gameScene: GameScene!
     enum CreatureState {
         case EatOrbs
+        case ChasingSmallerCreature
         case RunningAway
     }
     var state: CreatureState = .EatOrbs
     var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
     let sniffRange: CGFloat = 500
-    let dangerRange: CGFloat = 500
+    let dangerRange: CGFloat = 400
     
     var biggerCreaturesNearMe: [Creature] {
-        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < dangerRange }
+        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < dangerRange && $0.radius > self.radius * 1.11 }
+    }
+    
+    var smallerCreaturesNearMe: [Creature] {
+        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < sniffRange && $0.radius * 1.11 < self.radius }
     }
     
     var myChunk: [EnergyOrb] {
@@ -51,25 +56,47 @@ class AICreature: Creature {
             performNextEatOrbsAction()
         case .RunningAway:
             performNextRunningAwayAction()
+        case .ChasingSmallerCreature:
+            performNextChasingSmallerCreatureAction()
         }
     }
     
     func performNextEatOrbsAction() {
-        var closestToMe: (distance: CGFloat, orb: EnergyOrb?) = (distance: gameScene.orbChunkWidth, orb: nil)
-        for orb in myChunk {
-            let dist = self.position.distanceTo(orb.position)
-            if dist < closestToMe.distance {
-                closestToMe = (distance: dist, orb: orb)
+        if biggerCreaturesNearMe.count > 0 {
+            state = .RunningAway
+        } else if smallerCreaturesNearMe.count > 0 {
+            state = .ChasingSmallerCreature
+        } else {
+            var closestToMe: (distance: CGFloat, orb: EnergyOrb?) = (distance: 99999, orb: nil)
+            for orb in myChunk {
+                let dist = self.position.distanceTo(orb.position)
+                if dist < closestToMe.distance {
+                    closestToMe = (distance: dist, orb: orb)
+                }
+            }
+            if let closeOrb = closestToMe.orb {
+                self.targetAngle = angleToNode(closeOrb)
             }
         }
-        if let closeOrb = closestToMe.orb {
-            self.targetAngle = angleToNode(closeOrb)
+    }
+    
+    func performNextChasingSmallerCreatureAction() {
+        var closestToMe: (distance: CGFloat, creature: Creature?) = (distance: 99999, creature: nil)
+        for c in smallerCreaturesNearMe {
+            let dist = self.position.distanceTo(c.position)
+            if dist < closestToMe.distance {
+                closestToMe = (distance: dist, creature: c)
+            }
+        }
+        if let closeCreature = closestToMe.creature {
+            self.targetAngle = angleToNode(closeCreature)
         }
     }
     
     func performNextRunningAwayAction() {
-    
+        
     }
+    
     
     override func mineSpawned() {
         // the call back for if a mine was spawned sucessfully
