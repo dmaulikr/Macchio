@@ -14,6 +14,7 @@ class BoostButton: SKSpriteNode {
     
     let defaultTexture = SKTexture(imageNamed: "boost_button_default")
     let pressedTexture = SKTexture(imageNamed: "boost_button_pressed")
+    let unableToPressTexture = SKTexture(imageNamed: "boost_button_pressed")
     var onPressed: () -> Void = { print("No boost pressed action set") }
     var onReleased: () -> Void = { print("No boost realeased action set.") }
     var buttonIcon: SKSpriteNode!
@@ -47,12 +48,10 @@ class BoostButton: SKSpriteNode {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        buttonIcon.texture = pressedTexture
         onPressed()
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        buttonIcon.texture = defaultTexture
         onReleased()
     }
     

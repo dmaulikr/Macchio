@@ -185,6 +185,11 @@ class Creature: SKSpriteNode, BoundByCircle {
             minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
         
+        // Make sure the player can't boost when "they can't boost"
+        if isBoosting && !canBoost {
+            stopBoost()
+        }
+        
         thinkAndAct()
         
     }

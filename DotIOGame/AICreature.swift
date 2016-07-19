@@ -15,11 +15,23 @@ class AICreature: Creature {
     enum CreatureState {
         case EatOrbs
         case RunningAway
-        case Hunting
     }
+    var state: CreatureState = .EatOrbs
     var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
-    let sniffRange: CGFloat = 100
-    let dangerRange: CGFloat = 100
+    let sniffRange: CGFloat = 500
+    let dangerRange: CGFloat = 500
+    
+    var biggerCreaturesNearMe: [Creature] {
+        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < dangerRange }
+    }
+    
+    var myChunk: [EnergyOrb] {
+        if let myChunkLocation = gameScene.convertWorldPointToOrbChunkLocation(self.position) {
+            let myChunk = gameScene.orbChunks[myChunkLocation.x][myChunkLocation.y]
+            return myChunk
+        }
+        return []
+    }
     
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene) {
@@ -34,25 +46,29 @@ class AICreature: Creature {
     }
     
     override func thinkAndAct() {
-        
-        if let player = gameScene.player {
-            if self.position.distanceTo(player.position) <= sniffRange {
-                self.targetAngle = self.angleToNode(player)
-            } else {
-                performNextRandomAction()
-            }
-        } else {
-            performNextRandomAction()
+        switch state {
+        case .EatOrbs:
+            performNextEatOrbsAction()
+        case .RunningAway:
+            performNextRunningAwayAction()
         }
     }
     
-    func performNextRandomAction() {
-        if CGFloat.random() > 0.95 {
-            self.targetAngle = CGFloat.random(min: 0, max: 360)
+    func performNextEatOrbsAction() {
+        var closestToMe: (distance: CGFloat, orb: EnergyOrb?) = (distance: gameScene.orbChunkWidth, orb: nil)
+        for orb in myChunk {
+            let dist = self.position.distanceTo(orb.position)
+            if dist < closestToMe.distance {
+                closestToMe = (distance: dist, orb: orb)
+            }
         }
-        if canLeaveMine {
-            leaveMine()
+        if let closeOrb = closestToMe.orb {
+            self.targetAngle = angleToNode(closeOrb)
         }
+    }
+    
+    func performNextRunningAwayAction() {
+    
     }
     
     override func mineSpawned() {

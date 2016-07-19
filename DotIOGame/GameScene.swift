@@ -47,7 +47,7 @@ class GameScene: SKScene {
     let spawnPosition = CGPoint(x: 200, y: 200)
     var otherCreatures: [Creature] = []
     var allCreatures: [Creature] {
-        return otherCreatures + (player != nil ? [player!] : [])
+        return (player != nil ? [player!] : []) + otherCreatures
     }
     
     var score: Int = 0 {
@@ -290,6 +290,26 @@ class GameScene: SKScene {
         }
     }
     
+    func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
+        // returns a new list of orbs for the chunk without the removed ones.
+        var orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) && !$0.isEaten }
+        for orb in orbChunk {
+            if orb.overlappingCircle(c) {
+                orbKillList.append(orb)
+            }
+        }
+        for orb in orbKillList {
+            let fadeAction = SKAction.fadeOutWithDuration(0.4)
+            let remove = SKAction.runBlock { self.removeFromParent() }
+            orb.runAction(SKAction.sequence([fadeAction, remove]))
+            orb.isEaten = true
+            c.targetArea += orb.growAmount
+            //            if c === player { score += growAmountToPoints(orb.growAmount) }
+        }
+        return orbChunk.filter { !orbKillList.contains($0) }
+    }
+
+    
     func handleCreatureAndMineCollisions() {
         // Mine collisions with creatures including player
         var creatureKillList: [Creature] = []
@@ -435,28 +455,17 @@ class GameScene: SKScene {
                 if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
                 else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
                 
+                // Make sure the boost button is greyed if the player can't boost
+                if !player.canBoost {
+                    boostButton.buttonIcon.texture = boostButton.unableToPressTexture
+                } else if player.isBoosting {
+                    boostButton.buttonIcon.texture = boostButton.pressedTexture
+                } else {
+                    boostButton.buttonIcon.texture = boostButton.defaultTexture
+                }
+                
             }
         }
-    }
-    
-    
-    func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
-        // returns a new list of orbs for the chunk without the removed ones.
-        var orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) && !$0.isEaten }
-        for orb in orbChunk {
-            if orb.overlappingCircle(c) {
-                orbKillList.append(orb)
-            }
-        }
-        for orb in orbKillList {
-            let fadeAction = SKAction.fadeOutWithDuration(0.4)
-            let remove = SKAction.runBlock { self.removeFromParent() }
-            orb.runAction(SKAction.sequence([fadeAction, remove]))
-            orb.isEaten = true
-            c.targetArea += orb.growAmount
-//            if c === player { score += growAmountToPoints(orb.growAmount) }
-        }
-        return orbChunk.filter { !orbKillList.contains($0) }
     }
     
     
