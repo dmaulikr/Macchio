@@ -28,6 +28,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     var growing = true
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
+    var isEaten = false
     
     init() {
         let texture = EnergyOrb.orbTextures[Int(CGFloat.random(min: 0, max: CGFloat(EnergyOrb.orbTextures.count)))]

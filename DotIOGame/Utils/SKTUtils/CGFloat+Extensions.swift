@@ -70,6 +70,7 @@ public extension CGFloat {
   public static func random() -> CGFloat {
     return CGFloat(Float(arc4random()) / 0xFFFFFFFF)
   }
+    
 
   /**
    * Returns a random floating point number in the range min...max, inclusive.

@@ -27,9 +27,9 @@ class GameScene: SKScene {
         showJoyStick: Bool,
         showArrow: Bool,
         zoomOutFactor: CGFloat) = (
-        showJoyStick: true,
-        showArrow: true,
-        zoomOutFactor: 1
+            showJoyStick: true,
+            showArrow: true,
+            zoomOutFactor: 1
     )
     
     enum State {
@@ -53,7 +53,7 @@ class GameScene: SKScene {
     }
     
     var score: Int = 0
-
+    
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
@@ -69,12 +69,21 @@ class GameScene: SKScene {
     var leaveMineButton: MineButton!
     
     var spawnRadius: CGFloat = 888
-
-    var orbs: [EnergyOrb] = []
-    //var orbChunks: [[[EnergyOrb]]] = [[[]]] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
-    let orbChunkWidth: CGFloat = 300, orbChunkHeight: CGFloat = 300
-    let orbsToAreaRatio: CGFloat = 0.000003
+    
+    //var orbs: [EnergyOrb] = []
+    var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
+    func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
+        if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
+        let x = Int(point.x / orbChunkWidth); let y = Int(point.y / orbChunkHeight)
+        return (x: x, y: y)
+    }
+    let orbChunkWidth: CGFloat = 600, orbChunkHeight: CGFloat = 600
+    var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
+    var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
+    let orbsToAreaRatio: CGFloat = 0.000012
+    var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
     let creaturesToAreaRatio: CGFloat = 0.000001
+    var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
     
@@ -85,7 +94,7 @@ class GameScene: SKScene {
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
-
+            
             directionArrow = SKSpriteNode(imageNamed: "arrow.png")
             directionArrow.zPosition = 100
             directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
@@ -119,14 +128,16 @@ class GameScene: SKScene {
             leaveMineButton.onPressed = player.leaveMine
             leaveMineButton.onReleased = { return }
             
-//            orbsToAreaRatio = CGFloat(numOfOrbsToSpawnInRadius) / (CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
-//            creaturesToAreaRatio = CGFloat(numOfCreaturesToSpawnInRadius) / (CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
+            // Initialize orbChunks with empty arrays
+            for col in 0..<numOfChunkColumns {
+                orbChunks.append([])
+                for _ in 0..<numOfChunkRows {
+                    orbChunks[col].append([])
+                }
+            }
             
-        
         }
         
-        //spawnAICreatureAtPosition(spawnPosition + CGPoint(x: 0, y: 200))
-
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -202,7 +213,7 @@ class GameScene: SKScene {
                 if prefs.showArrow {
                     directionArrow.removeAllActions()
                     directionArrow.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.7), SKAction.runBlock {
-                            self.directionArrow.hidden = true
+                        self.directionArrow.hidden = true
                         }]))
                     
                 }
@@ -213,54 +224,57 @@ class GameScene: SKScene {
             }
         }
     }
-   
+    
     
     override func update(currentTime: CFTimeInterval) {
         
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
         
+        
+        
         //      ----Call update methods----
-        if let player = player { player.update(deltaTime) }
-        for x in otherCreatures {
-            x.update(deltaTime)
+        for c in allCreatures { //Includes player
+            c.update(deltaTime)
+            c.position.x.clamp(0+c.targetRadius, mapSize.width-c.targetRadius)
+            c.position.y.clamp(0+c.targetRadius, mapSize.height-c.targetRadius)
         }
-        for orb in orbs {
-            orb.update(deltaTime)
+        for orbChunkCol in orbChunks {
+            for orbChunk in orbChunkCol {
+                for orb in orbChunk {
+                    orb.update(deltaTime)
+                }
+            }
         }
         for mine in goopMines {
             mine.update(deltaTime)
         }
+    
         
         
         //      ----Handle collisions----
-        // Orb collisions with player
-        if let player = player {
-            let orbKillList = orbs.filter { $0.overlappingCircle(player) }
-            orbs = orbs.filter { !orbKillList.contains($0) }
-            for orb in orbKillList {
-                // Basically, the orbs can do something fancy here and then be removed by parent.
-                // In addition to being removed, the player's size and other relevant properties must be updated here
-                let fadeAction = SKAction.fadeOutWithDuration(0.4)
-                let remove = SKAction.runBlock { self.removeFromParent() }
-                orb.runAction(SKAction.sequence([fadeAction, remove]))
-                score += growAmountToPoints(orb.growAmount)
-                player.targetArea += orb.growAmount
+        
+        // Orb collisions with any creature including the player
+        for c in allCreatures {
+            var locationsThatWillBeTested: [CGPoint] = [] //Used to make sure we don't test the same chunk twice
+            //var orbChunksToTest: [[EnergyOrb]] = [[]]
+            for point in c.nineNotablePoints {
+                // The nine notable points are the center and eight points on the outside
+                if let location = convertWorldPointToOrbChunkLocation(point) {
+                    let locationAsCGPoint = CGPoint(x: CGFloat(location.x), y: CGFloat(location.y))
+                    if !(locationsThatWillBeTested.contains(locationAsCGPoint)) {
+                        locationsThatWillBeTested.append(locationAsCGPoint)
+                        //orbChunksToTest.append( orbChunks[location.x][location.y] )
+                        // Test the chunk right now
+                        let testingChunk = orbChunks[location.x][location.y]
+                        let newChunkWithoutTheRemovedOrbs = handleOrbChunkCollision(testingChunk, withCreature: c)
+                        orbChunks[location.x][location.y] = newChunkWithoutTheRemovedOrbs
+                    }
+                }
             }
         }
         
-        // Orb collisions with otherCreatures
-        for c in otherCreatures {
-            let orbKillList = orbs.filter { $0.overlappingCircle(c) }
-            orbs = orbs.filter { !orbKillList.contains($0) }
-            for orb in orbKillList {
-                let fadeAction = SKAction.fadeOutWithDuration(0.4)
-                let remove = SKAction.runBlock { self.removeFromParent() }
-                orb.runAction(SKAction.sequence([fadeAction, remove]))
-                c.targetArea += orb.growAmount
-            }
-        }
-     
+        
         
         // Mines collisions with player
         if let player = player {
@@ -272,6 +286,7 @@ class GameScene: SKScene {
                     } else {
                         gameOver()
                         seedAutoOrbClusterWithBudget(player.growAmount, aboutPoint: player.position, withinRadius: player.targetRadius * player.orbSpawnUponDeathRadiusMultiplier)
+                        
                     }
                 }
             }
@@ -294,7 +309,7 @@ class GameScene: SKScene {
             x.removeFromParent()
             seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
         }
-
+        
         
         // Creatures colliding with other creatures
         var theEaten: [Creature] = []
@@ -322,7 +337,7 @@ class GameScene: SKScene {
                         let displaceAngle = (theSmaller.position - theBigger.position).angle
                         theSmaller.position += CGPoint(x: cos(displaceAngle) * displaceDistance, y: sin(displaceAngle) * displaceDistance)
                     }
-
+                    
                 }
             }
         }
@@ -342,19 +357,17 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            // Kill the mines
             seedAutoOrbClusterWithBudget(mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius)
             mine.removeFromParent()
-            
         }
         
         //      ----SPAWNING of mines (behind players with their flags on)--- 👹 💣
         // Here I believe all creatures will be treated equally
         for creature in allCreatures {
             if creature.spawnMineAtMyTail {
-                creature.spawnMineAtMyTail = false
                 let freshMine = spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.growAmount * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
+                creature.spawnMineAtMyTail = false
                 creature.mineSpawned()
             }
             
@@ -366,70 +379,51 @@ class GameScene: SKScene {
         
         
         //      ----Orb Spawning and Despawning----
-        if let player = player {
-            let orbsInRadius = orbs.filter { $0.position.distanceTo(player.position) <= spawnRadius && !$0.artificiallySpawned}
-            var openArea = areaOfCircleWithRadius(spawnRadius)
-            for creature in allCreatures { // including player
-                openArea -= areaOfCircleWithRadius(creature.radius)
-            }
-            let numOfNeededOrbs =  Int(orbsToAreaRatio * openArea) - orbsInRadius.count
-            if numOfNeededOrbs > 0 {
-                for _ in 0..<numOfNeededOrbs {
-                    // Spawn an orb x times depending on how many are needed to achieve the ideal concentration
-                    func generateRandomOrbPosition() -> CGPoint {
-                        let randAngle = CGFloat.random(min: 0, max: 360)
-                        let randDist = CGFloat.random(min: player.radius, max: spawnRadius)
-                        let orbX = player.position.x + cos(randAngle) * randDist
-                        let orbY = player.position.y + sin(randAngle) * randDist
-                        let orbPos = CGPoint(x: orbX, y: orbY)
-                        
-                        for creature in allCreatures {
-                            if creature.position.distanceTo(orbPos) < creature.radius {
-                                return generateRandomOrbPosition()
-                            }
-                        }
-                        
-                        return orbPos
-                    }
-                    let orbPos = generateRandomOrbPosition()
-                    
-                    if CGFloat.random() > 0.9 {
-                        seedRichOrbAtPosition(orbPos)
-                    } else {
-                        seedSmallOrbAtPosition(orbPos)
-                    }
+        var currrentOrbCount = 0
+        for chunkCol in orbChunks {
+            for chunk in chunkCol {
+                for orb in chunk {
+                    if orb.artificiallySpawned == false { currrentOrbCount += 1 }
                 }
-            }
-            
-            
-            // Destroy the orbs that aren't in the radius to preserve memory space
-            let orbsNotInRadius = orbs.filter { $0.position.distanceTo(player.position) > spawnRadius }
-            orbs = orbs.filter { !orbsNotInRadius.contains($0) }
-            for orb in orbsNotInRadius {
-                orb.removeFromParent()
             }
         }
         
-        //      ----Creature Spawning and Despawning----
-        if let player = player {
-            let creaturesInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) <= spawnRadius }
-            var openArea = areaOfCircleWithRadius(spawnRadius)
-            for creature in allCreatures {
-                openArea -= areaOfCircleWithRadius(creature.radius)
+        let numOfOrbsToSpawnNow = numOfOrbsThatNeedToBeInTheWorld - currrentOrbCount
+        if numOfOrbsToSpawnNow > 0 {
+            for _ in 0..<numOfOrbsToSpawnNow {
+                // x times, spawn an orb at a random world positon
+                let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
+                seedSmallOrbAtPosition(newPosition)
             }
-            let numOfCreaturesToSpawnNow = Int(creaturesToAreaRatio * openArea) - creaturesInRadius.count
-            if numOfCreaturesToSpawnNow > 0 {
-                for _ in 0..<numOfCreaturesToSpawnNow {
-                    // spawn a creature x times with random properties.
-                    let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-                    let randDist = CGFloat.random(min: (size.width * camera!.xScale) / prefs.zoomOutFactor, max: spawnRadius)
-                    spawnAICreatureAtPosition(CGPoint(x: player.position.x + cos(randAngle) * randDist, y: player.position.y + sin(randAngle) * randDist))
-                }
-            }
-            
-            let creaturesNotInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) + $0.radius > spawnRadius }
-            otherCreatures = otherCreatures.filter { !creaturesNotInRadius.contains($0) }
-            for c in creaturesNotInRadius { c.removeFromParent() }
+        }
+        
+        
+              //----Creature Spawning and Despawning----
+//        if let player = player {
+//            let creaturesInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) <= spawnRadius }
+//            var openArea = areaOfCircleWithRadius(spawnRadius)
+//            for creature in allCreatures {
+//                openArea -= areaOfCircleWithRadius(creature.radius)
+//            }
+//            let numOfCreaturesToSpawnNow = Int(creaturesToAreaRatio * openArea) - creaturesInRadius.count
+//            if numOfCreaturesToSpawnNow > 0 {
+//                for _ in 0..<numOfCreaturesToSpawnNow {
+//                    // spawn a creature x times with random properties.
+//                    let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
+//                    let randDist = CGFloat.random(min: (size.width * camera!.xScale) / prefs.zoomOutFactor, max: spawnRadius)
+//                    spawnAICreatureAtPosition(CGPoint(x: player.position.x + cos(randAngle) * randDist, y: player.position.y + sin(randAngle) * randDist))
+//                }
+//            }
+//            
+//            let creaturesNotInRadius = otherCreatures.filter { $0.position.distanceTo(player.position) + $0.radius > spawnRadius }
+//            otherCreatures = otherCreatures.filter { !creaturesNotInRadius.contains($0) }
+//            for c in creaturesNotInRadius { c.removeFromParent() }
+//        }
+        let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
+        for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
+            let x = CGFloat.random(min: 0, max: mapSize.width)
+            let y = CGFloat.random(min: 0, max: mapSize.height)
+            spawnAICreatureAtPosition(CGPoint(x: x, y: y))
         }
         
         //      ---- UI-ey things ----
@@ -457,31 +451,51 @@ class GameScene: SKScene {
         }
         // update the spawn radius and the number of orbs that ought to be spawned in that radius using a constant ratio. Same with other creatures.
         spawnRadius = (size.width * camera!.xScale) / prefs.zoomOutFactor + (size.height * camera!.yScale) / prefs.zoomOutFactor
-//            numOfOrbsToSpawnInRadius = Int(orbsToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
-//            numOfCreaturesToSpawnInRadius = Int(creaturesToAreaRatio * CGFloat(pi) * (spawnRadius * spawnRadius - player.radius * player.radius))
-
         
     }
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool) -> EnergyOrb {
-        let newOrb = EnergyOrb()
-        newOrb.position = position
-        newOrb.growAmount = growAmount
-        newOrb.minRadius = minRadius
-        newOrb.maxRadius = maxRadius
-        newOrb.artificiallySpawned = artificiallySpawned
-        orbs.append(newOrb)
-        addChild(newOrb)
-        return newOrb
+    func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
+        // returns a list of orbs to be removed from their chunk
+        var orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) && !$0.isEaten }
+        for orb in orbChunk {
+            if orb.overlappingCircle(c) {
+                orbKillList.append(orb)
+            }
+        }
+        for orb in orbKillList {
+            let fadeAction = SKAction.fadeOutWithDuration(0.4)
+            let remove = SKAction.runBlock { self.removeFromParent() }
+            orb.runAction(SKAction.sequence([fadeAction, remove]))
+            orb.isEaten = true
+            c.targetArea += orb.growAmount
+            if c === player { score += growAmountToPoints(orb.growAmount) }
+        }
+        return orbChunk.filter { !orbKillList.contains($0) }
+    }
+    
+    
+    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool) -> EnergyOrb? {
+        if let location = convertWorldPointToOrbChunkLocation(position) {
+            let newOrb = EnergyOrb()
+            newOrb.position = position
+            newOrb.growAmount = growAmount
+            newOrb.minRadius = minRadius
+            newOrb.maxRadius = maxRadius
+            newOrb.artificiallySpawned = artificiallySpawned
+            orbChunks[location.x][location.y].append(newOrb)
+            addChild(newOrb)
+            return newOrb
+        }
+        return nil
     }
     
     let smallOrbGrowAmount: CGFloat = 400
     let richOrbGrowAmount: CGFloat = 7500
-    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb? {
         return seedOrbAtPosition(position, growAmount: smallOrbGrowAmount, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
     }
     
-    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb {
+    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb? {
         return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned)
     }
     
@@ -492,9 +506,9 @@ class GameScene: SKScene {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
             let randDist = CGFloat.random(min: 0, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            let newOrb: EnergyOrb
-            newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true)
-            budget -= newOrb.growAmount
+            if let newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true) {
+                budget -= newOrb.growAmount
+            }
         }
         
     }
@@ -505,11 +519,11 @@ class GameScene: SKScene {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
             let randDist = CGFloat.random(min: 0, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            let newOrb: EnergyOrb
-            newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true)
-            budget -= newOrb.growAmount
+            if let newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true) {
+                budget -= newOrb.growAmount
+            }
         }
-
+        
     }
     
     func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
@@ -575,7 +589,7 @@ class GameScene: SKScene {
         scene.scaleMode = .AspectFill
         skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
     }
-
+    
 }
 
 func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
@@ -596,3 +610,14 @@ func growAmountToPoints(growAmount: CGFloat) -> Int {
 func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
     return CGFloat(pi) * r * r
 }
+
+//func fastRandom(min: CGFloat, max: CGFloat) -> {
+//    rand()
+//}
+
+func contains(a:[(x: Int, y: Int)], v:(x: Int, y: Int)) -> Bool {
+    let (c1, c2) = v
+    for (v1, v2) in a { if v1 == c1 && v2 == c2 { return true } }
+    return false
+}
+
