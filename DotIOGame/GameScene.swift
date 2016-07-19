@@ -50,7 +50,10 @@ class GameScene: SKScene {
         return otherCreatures + (player != nil ? [player!] : [])
     }
     
-    var score: Int = 0
+    var score: Int = 0 {
+        didSet { scoreLabel.text = String(score) }
+    }
+    var scoreLabel: SKLabelNode!
     
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -90,6 +93,9 @@ class GameScene: SKScene {
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
+            
+            scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
+            scoreLabel.horizontalAlignmentMode = .Left
             
             directionArrow = SKSpriteNode(imageNamed: "arrow.png")
             directionArrow.zPosition = 100
@@ -255,6 +261,10 @@ class GameScene: SKScene {
         
         updateUI()
         
+        if let player = player {
+            score = Int(player.radius * 100000) / 100
+        }
+        
     }
 
     
@@ -320,9 +330,9 @@ class GameScene: SKScene {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount
                             theEaten.append(theSmaller)
-                            if theBigger === player {
-                                score += growAmountToPoints(theSmaller.growAmount)
-                            }
+//                            if theBigger === player {
+//                                score += growAmountToPoints(theSmaller.growAmount)
+//                            }
                         }
                     } else {
                         // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap
@@ -444,7 +454,7 @@ class GameScene: SKScene {
             orb.runAction(SKAction.sequence([fadeAction, remove]))
             orb.isEaten = true
             c.targetArea += orb.growAmount
-            if c === player { score += growAmountToPoints(orb.growAmount) }
+//            if c === player { score += growAmountToPoints(orb.growAmount) }
         }
         return orbChunk.filter { !orbKillList.contains($0) }
     }
@@ -579,9 +589,9 @@ func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
 }
 
 
-func growAmountToPoints(growAmount: CGFloat) -> Int {
-    return Int(growAmount * 5)
-}
+//func growAmountToPoints(growAmount: CGFloat) -> Int {
+//    return Int(growAmount / 100)
+//}
 
 func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
     return CGFloat(pi) * r * r

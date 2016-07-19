@@ -158,7 +158,13 @@ class Creature: SKSpriteNode, BoundByCircle {
         velocity.angle += deltaAngle
         
         //Before having the radius approach the target radius, apply the passive size loss to target radius
-        if !(radius <= 80) { targetRadius -= passiveSizeLoss * CGFloat(deltaTime) }
+        if radius > 50 {
+            if isBoosting {
+                targetArea -= boostingSizeLoss * CGFloat(deltaTime)
+            } else {
+                targetRadius -= passiveSizeLoss * CGFloat(deltaTime)
+            }
+        }
         
         //Approach targetRadius. So the player can grow the SMOOOOOTH way
         let deltaRadius = targetRadius - radius
@@ -188,11 +194,20 @@ class Creature: SKSpriteNode, BoundByCircle {
         // boost, and leaveMine()
     }
     
-    var passiveSizeLoss: CGFloat {
+    var passiveSizeLoss: CGFloat { // (per second)
         return CGFloat( 2.5 * pow(2, (radius-30)/100) - 2 )
     }
     
+    var boostingSizeLoss: CGFloat { // (per second)
+        return targetArea / 20
+    }
+    
+    var canBoost: Bool {
+        return radius > 60
+    }
+    
     func startBoost() {
+        if !canBoost { return }
         isBoosting = true
         blendMode = SKBlendMode.Add
     }
