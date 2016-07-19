@@ -67,34 +67,41 @@ class AICreature: Creature {
         } else if smallerCreaturesNearMe.count > 0 {
             state = .ChasingSmallerCreature
         } else {
-            var closestToMe: (distance: CGFloat, orb: EnergyOrb?) = (distance: 99999, orb: nil)
-            for orb in myChunk {
-                let dist = self.position.distanceTo(orb.position)
-                if dist < closestToMe.distance {
-                    closestToMe = (distance: dist, orb: orb)
-                }
-            }
-            if let closeOrb = closestToMe.orb {
+            if let closeOrb = findClosestNodeToMeInList(myChunk) {
                 self.targetAngle = angleToNode(closeOrb)
             }
         }
     }
     
     func performNextChasingSmallerCreatureAction() {
-        var closestToMe: (distance: CGFloat, creature: Creature?) = (distance: 99999, creature: nil)
-        for c in smallerCreaturesNearMe {
-            let dist = self.position.distanceTo(c.position)
-            if dist < closestToMe.distance {
-                closestToMe = (distance: dist, creature: c)
-            }
-        }
-        if let closeCreature = closestToMe.creature {
-            self.targetAngle = angleToNode(closeCreature)
+        
+        if let closestFoodCreature = findClosestNodeToMeInList(smallerCreaturesNearMe) {
+            self.targetAngle = angleToNode(closestFoodCreature)
+        } else {
+            state = .EatOrbs
         }
     }
     
     func performNextRunningAwayAction() {
         
+        if let closestPredator = findClosestNodeToMeInList(biggerCreaturesNearMe) {
+            self.targetAngle = 360 - angleToNode(closestPredator)
+        } else {
+            state = .EatOrbs
+        }
+        
+    }
+
+    
+    func findClosestNodeToMeInList(nodes: [SKNode]) -> SKNode? {
+        var closestToMe: (distance: CGFloat, node: SKNode?) = (distance: 99999, node: nil)
+        for thing in nodes {
+            let dist = self.position.distanceTo(thing.position)
+            if dist < closestToMe.distance {
+                closestToMe = (distance: dist, node: thing)
+            }
+        }
+        return closestToMe.node
     }
     
     
