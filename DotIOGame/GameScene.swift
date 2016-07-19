@@ -58,6 +58,7 @@ class GameScene: SKScene {
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
     let minDirectionArrowDistanceFromPlayer: CGFloat = 60
+    var directionArrowDragMultiplierToPlayerRadiusRatio: CGFloat!
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
@@ -105,6 +106,7 @@ class GameScene: SKScene {
             directionArrowAnchor = SKNode()
             directionArrowAnchor.position = player.position
             directionArrowAnchor.zRotation = player.targetAngle.degreesToRadians()
+            directionArrowDragMultiplierToPlayerRadiusRatio = 1 / player.radius
             self.addChild(directionArrowAnchor)
             
             camera!.zPosition = 100
@@ -180,8 +182,8 @@ class GameScene: SKScene {
                     if prefs.showArrow {
                         // My means of determining the position of the arrow:
                         // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
-                        var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + location.distanceTo(originalPlayerMovingTouchPositionInCamera!), y: 0)
-                        pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width + size.height)
+                        var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + (location.distanceTo(originalPlayerMovingTouchPositionInCamera!))*directionArrowDragMultiplierToPlayerRadiusRatio * player.radius, y: 0)
+                        pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width * camera!.xScale + size.height * camera!.yScale)
                         directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
                         directionArrow.zRotation = player.targetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                         
