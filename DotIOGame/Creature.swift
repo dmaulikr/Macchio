@@ -161,7 +161,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         if radius > 50 {
             if isBoosting {
                 targetArea -= boostingSizeLoss * CGFloat(deltaTime)
-            } else {
+            } else if targetRadius > 80 {
                 targetRadius -= passiveSizeLoss * CGFloat(deltaTime)
             }
         }
@@ -190,11 +190,11 @@ class Creature: SKSpriteNode, BoundByCircle {
             stopBoost()
         }
         
-        thinkAndAct()
+        thinkAndAct(CGFloat(deltaTime))
         
     }
     
-    func thinkAndAct() {
+    func thinkAndAct(deltaTime: CGFloat) {
         // Classes that extend creature can override thinkAndAct() and can change targetAngle
         // boost, and leaveMine()
     }
@@ -238,11 +238,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         mineCoolDownCounter = 0
         minePropulsionSpeedActiveTimeCounter = 0
     }
-    
-    func angleToNode(node: SKNode) -> CGFloat {
-        return mapRadiansToDegrees0to360((node.position - self.position).angle)
-    }
-    
 
     
 }

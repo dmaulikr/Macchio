@@ -79,9 +79,9 @@ class GameScene: SKScene {
     let orbChunkWidth: CGFloat = 600, orbChunkHeight: CGFloat = 600
     var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
-    let orbsToAreaRatio: CGFloat = 0.000012
+    let orbsToAreaRatio: CGFloat = 0.000010
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
-    let creaturesToAreaRatio: CGFloat = 0.000001
+    let creaturesToAreaRatio: CGFloat = 0.000002
     var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
@@ -544,7 +544,7 @@ class GameScene: SKScene {
     
     
     func spawnAICreatureAtPosition(position: CGPoint) {
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self)
+        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.02, max: 0.5))
         newCreature.position = position
         newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
