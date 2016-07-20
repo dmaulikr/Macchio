@@ -81,15 +81,15 @@ class GameScene: SKScene {
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     let orbsToAreaRatio: CGFloat = 0.000010
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
-    let creaturesToAreaRatio: CGFloat = 0.000002
+    let creaturesToAreaRatio: CGFloat = 0.0000013
     var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Blue)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red)
         if let player = player {
-            player.position = spawnPosition
+            player.position = computeValidCreatureSpawnPoint()
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
@@ -141,6 +141,20 @@ class GameScene: SKScene {
             
         }
         
+    }
+    
+    func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = Creature.minRadius) -> CGPoint {
+        // This function assumes the creature has not been spawned yet
+        print("compute valid spawn point function called")
+        let randX = CGFloat.random(min: 0, max: mapSize.width)
+        let randY = CGFloat.random(min: 0, max: mapSize.height)
+        let randPoint = CGPoint(x: randX, y: randY)
+        for otherLiveCreature in allCreatures {
+            if otherLiveCreature.position.distanceTo(randPoint) - creatureStartRadius - otherLiveCreature.radius < 200 {
+                return computeValidCreatureSpawnPoint()
+            }
+        }
+        return randPoint
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -330,7 +344,7 @@ class GameScene: SKScene {
             } else {
                 x.removeFromParent()
             }
-            seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier)
+            seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
         }
 
     }
@@ -427,9 +441,7 @@ class GameScene: SKScene {
     func handleCreatureSpawning() {
         let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
         for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
-            let x = CGFloat.random(min: 0, max: mapSize.width)
-            let y = CGFloat.random(min: 0, max: mapSize.height)
-            spawnAICreatureAtPosition(CGPoint(x: x, y: y))
+            spawnAICreatureAtPosition(computeValidCreatureSpawnPoint())
         }
     }
     
@@ -469,9 +481,9 @@ class GameScene: SKScene {
     }
     
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool) -> EnergyOrb? {
+    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color) -> EnergyOrb? {
         if let location = convertWorldPointToOrbChunkLocation(position) {
-            let newOrb = EnergyOrb()
+            let newOrb = EnergyOrb(orbColor: inColor)
             newOrb.position = position
             newOrb.growAmount = growAmount
             newOrb.minRadius = minRadius
@@ -486,50 +498,68 @@ class GameScene: SKScene {
     
     let smallOrbGrowAmount: CGFloat = 400
     let richOrbGrowAmount: CGFloat = 7500
-    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb? {
-        return seedOrbAtPosition(position, growAmount: smallOrbGrowAmount, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned)
+    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
+        let orbColor: Color
+        if let _ = inColor { orbColor = inColor! }
+        else { orbColor = randomColor() }
+        return seedOrbAtPosition(position, growAmount: smallOrbGrowAmount, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned, inColor: orbColor)
     }
     
-    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false) -> EnergyOrb? {
-        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned)
+    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
+        let orbColor: Color
+        if let _ = inColor { orbColor = inColor! }
+        else { orbColor = randomColor() }
+        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned, inColor: orbColor)
     }
     
-    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
         //Budget is the growAmount quantity that once existed in the entity that spawned the orbs. Mostly, this will be from dead players or old mines.
         var budget = growAmount
         while budget > 0 {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
             let randDist = CGFloat.random(min: 0, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            if let newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true) {
+            let newOrbColor: Color
+            if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
+            else { newOrbColor = randomColor() }
+            if let newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true, inColor: newOrbColor) {
                 budget -= newOrb.growAmount
             }
         }
         
     }
     
-    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
         var budget = growAmount
         while budget > 0 {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
             let randDist = CGFloat.random(min: 0, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            if let newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true) {
+            let newOrbColor: Color
+            if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
+            else { newOrbColor = randomColor() }
+            if let newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true, inColor: newOrbColor) {
                 budget -= newOrb.growAmount
             }
         }
         
     }
     
-    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat) {
+    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
         let maxNumberOfSmallOrbs = 30
         let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * smallOrbGrowAmount
-        if growAmount < costToMaxOutSmallOrbs {
-            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius)
+        let orbColor: Color?
+        if let exclusivelyInColor = exclusivelyInColor {
+            orbColor = exclusivelyInColor
         } else {
-            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius)
+            orbColor = nil
+        }
+        if growAmount < costToMaxOutSmallOrbs {
+            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
+        } else {
+            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
             let richOrbBudget = growAmount - costToMaxOutSmallOrbs
-            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius)
+            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
         }
     }
     

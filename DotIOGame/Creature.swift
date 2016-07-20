@@ -149,7 +149,7 @@ class Creature: SKSpriteNode, BoundByCircle {
             deltaAngle = 0
         }
         
-        // cap with slew rate
+        // cap the angle change per second
         // find the max angle change for this frame based on deltaTime
         // and ensure delta angle is no greater
         let maxAngleChangeThisFrame = playerMaxAngleChangePerSecond * CGFloat(deltaTime)

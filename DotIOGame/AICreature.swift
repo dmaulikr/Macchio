@@ -148,13 +148,21 @@ class AICreature: Creature {
     )
     func computeNextWaitForMineAction() {
         if waitingOnMineStateProperties.mine == nil {
-            waitingOnMineStateProperties.mine = findClosestNodeToMeInList(gameScene.goopMines) as! GoopMine
+            let closest: GoopMine? = findClosestNodeToMeInList(gameScene.goopMines) as? GoopMine
+            if let closest = closest {
+                waitingOnMineStateProperties.mine = closest
+            }
         }
         if waitingOnMineStateProperties.stayAtPoint == nil {
             waitingOnMineStateProperties.stayAtPoint = self.position
         }
-        if let _ = waitingOnMineStateProperties.mine {
-            resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
+        
+        if let mine = waitingOnMineStateProperties.mine {
+            if mine.parent == nil {
+                waitingOnMineStateProperties.mine = nil
+            } else {
+                resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
+            }
         } else if biggerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.RunningAway)
         } else if smallerCreaturesNearMe.count > 0 {

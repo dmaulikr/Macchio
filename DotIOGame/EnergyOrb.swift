@@ -11,11 +11,11 @@ import SpriteKit
 
 class EnergyOrb: SKSpriteNode, BoundByCircle {
     
-    static let orbTextures: [SKTexture] = [
-        SKTexture.init(imageNamed: "blue circle.png"),
-        SKTexture.init(imageNamed: "red orb.png"),
-        SKTexture.init(imageNamed: "green orb.png"),
-        SKTexture.init(imageNamed: "yellow orb.png")
+    static let orbTextures: [Color : SKTexture] = [
+        .Blue: SKTexture.init(imageNamed: "blue circle.png"),
+        .Red: SKTexture.init(imageNamed: "red orb.png"),
+        .Green: SKTexture.init(imageNamed: "green orb.png"),
+        .Yellow: SKTexture.init(imageNamed: "yellow orb.png")
     ]
     
     var radius: CGFloat = 15 {
@@ -30,8 +30,8 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
     var isEaten = false
     
-    init() {
-        let texture = EnergyOrb.orbTextures[Int(CGFloat.random(min: 0, max: CGFloat(EnergyOrb.orbTextures.count)))]
+    init(orbColor: Color) {
+        let texture = EnergyOrb.orbTextures[orbColor]
         let color = SKColor.whiteColor()
         defer { radius = 0 }
         let size = CGSize(width: 2*radius, height: 2*radius)
