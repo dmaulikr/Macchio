@@ -15,7 +15,6 @@
 		836713211D3972900062D8C0 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713201D3972900062D8C0 /* MainScene.swift */; };
 		836713231D3984410062D8C0 /* Creature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713221D3984410062D8C0 /* Creature.swift */; };
 		836713251D3AC7A10062D8C0 /* AICreature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713241D3AC7A10062D8C0 /* AICreature.swift */; };
-		838DE7821D3ED2A2001C3D12 /* FlyingNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838DE7811D3ED2A2001C3D12 /* FlyingNumber.swift */; };
 		83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */; };
 		83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 83957B911D32FDDE00BF4450 /* GameScene.sks */; };
 		83957B941D32FDDE00BF4450 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B931D32FDDE00BF4450 /* GameScene.swift */; };
@@ -50,7 +49,6 @@
 		836713201D3972900062D8C0 /* MainScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
 		836713221D3984410062D8C0 /* Creature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Creature.swift; sourceTree = "<group>"; };
 		836713241D3AC7A10062D8C0 /* AICreature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreature.swift; sourceTree = "<group>"; };
-		838DE7811D3ED2A2001C3D12 /* FlyingNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlyingNumber.swift; sourceTree = "<group>"; };
 		83957B8C1D32FDDE00BF4450 /* DotIOGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotIOGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83957B911D32FDDE00BF4450 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -120,7 +118,6 @@
 				836713161D36CFA40062D8C0 /* BoostButton.swift */,
 				8367131C1D3856AA0062D8C0 /* MineButton.swift */,
 				83957B951D32FDDE00BF4450 /* GameViewController.swift */,
-				838DE7811D3ED2A2001C3D12 /* FlyingNumber.swift */,
 				83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */,
 				83957B8D1D32FDDE00BF4450 /* Products */,
 				83957B971D32FDDE00BF4450 /* Main.storyboard */,
@@ -256,7 +253,6 @@
 				83957BB81D33FBEC00BF4450 /* MSReferenceNode.swift in Sources */,
 				836713251D3AC7A10062D8C0 /* AICreature.swift in Sources */,
 				83957BC21D33FBEC00BF4450 /* SKTEffects.swift in Sources */,
-				838DE7821D3ED2A2001C3D12 /* FlyingNumber.swift in Sources */,
 				836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */,
 				83957BBC1D33FBEC00BF4450 /* Int+Extensions.swift in Sources */,
 				836713191D36F8300062D8C0 /* GoopMine.swift in Sources */,

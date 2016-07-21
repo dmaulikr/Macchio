@@ -29,7 +29,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1
+            zoomOutFactor: 10
     )
     
     enum State {
@@ -71,6 +71,7 @@ class GameScene: SKScene {
     var leaveMineButton: MineButton!
     
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
+    var orbBeacons: [OrbBeacon] = []
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
         let x = Int(point.x / orbChunkWidth); let y = Int(point.y / orbChunkHeight)
@@ -81,15 +82,15 @@ class GameScene: SKScene {
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     let orbsToAreaRatio: CGFloat = 0.000010
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
-    let creaturesToAreaRatio: CGFloat = 0.0000013
+    let creaturesToAreaRatio: CGFloat = 0.0000011
     var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
         if let player = player {
-            player.position = computeValidCreatureSpawnPoint()
+            player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
@@ -140,18 +141,16 @@ class GameScene: SKScene {
             }
             
         }
-        
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = Creature.minRadius) -> CGPoint {
         // This function assumes the creature has not been spawned yet
-        print("compute valid spawn point function called")
-        let randX = CGFloat.random(min: 0, max: mapSize.width)
-        let randY = CGFloat.random(min: 0, max: mapSize.height)
+        let randX = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.width - creatureStartRadius )
+        let randY = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.height - creatureStartRadius)
         let randPoint = CGPoint(x: randX, y: randY)
         for otherLiveCreature in allCreatures {
             if otherLiveCreature.position.distanceTo(randPoint) - creatureStartRadius - otherLiveCreature.radius < 200 {
-                return computeValidCreatureSpawnPoint()
+                return computeValidCreatureSpawnPoint(creatureStartRadius)
             }
         }
         return randPoint
@@ -250,8 +249,8 @@ class GameScene: SKScene {
         //      ----Call update methods----
         for c in allCreatures { //Includes player
             c.update(deltaTime)
-            c.position.x.clamp(0+c.targetRadius, mapSize.width-c.targetRadius)
-            c.position.y.clamp(0+c.targetRadius, mapSize.height-c.targetRadius)
+            c.position.x.clamp(0 + c.targetRadius, mapSize.width-c.targetRadius)
+            c.position.y.clamp(0 + c.targetRadius, mapSize.height-c.targetRadius)
         }
         for orbChunkCol in orbChunks {
             for orbChunk in orbChunkCol {
@@ -276,9 +275,13 @@ class GameScene: SKScene {
         updateUI()
         
         if let player = player {
-            score = Int(player.radius * 100000) / 100
+            score = convertAreaToScore(player.targetArea)
         }
         
+    }
+    
+    func convertAreaToScore(area: CGFloat) -> Int {
+        return Int(radiusOfCircleWithArea(area) * 100) / 100
     }
 
     
@@ -302,6 +305,11 @@ class GameScene: SKScene {
                 }
             }
         }
+        
+        // After all the orb collisions have been handled, itereate through the beacons to see if there are any that should be removed..
+        orbBeacons = orbBeacons.filter { $0.totalValue > 10000 }
+        print (orbBeacons.count)
+        
     }
     
     func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
@@ -318,7 +326,12 @@ class GameScene: SKScene {
             orb.runAction(SKAction.sequence([fadeAction, remove]))
             orb.isEaten = true
             c.targetArea += orb.growAmount
-            //            if c === player { score += growAmountToPoints(orb.growAmount) }
+            if c === player {
+                spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
+            }
+            for beacon in orbBeacons {
+                if beacon.overlappingCircle(orb) { beacon.totalValue -= orb.growAmount }
+            }
         }
         return orbChunk.filter { !orbKillList.contains($0) }
     }
@@ -364,9 +377,10 @@ class GameScene: SKScene {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount
                             theEaten.append(theSmaller)
-//                            if theBigger === player {
-//                                score += growAmountToPoints(theSmaller.growAmount)
-//                            }
+                            if theBigger === player {
+                                // add a flying number
+                                spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
+                            }
                         }
                     } else {
                         // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap
@@ -405,10 +419,13 @@ class GameScene: SKScene {
         // Here I believe all creatures will be treated equally
         for creature in allCreatures {
             if creature.spawnMineAtMyTail {
-                let freshMine = spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.growAmount * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                creature.freshlySpawnedMine = freshMine
                 creature.spawnMineAtMyTail = false
                 creature.mineSpawned()
+                let freshMine = self.spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.growAmount * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                creature.freshlySpawnedMine = freshMine
+                if creature === player {
+                    spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
+                }
             }
             
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
@@ -441,7 +458,7 @@ class GameScene: SKScene {
     func handleCreatureSpawning() {
         let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
         for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
-            spawnAICreatureAtPosition(computeValidCreatureSpawnPoint())
+            spawnAICreature()
         }
     }
     
@@ -497,7 +514,7 @@ class GameScene: SKScene {
     }
     
     let smallOrbGrowAmount: CGFloat = 400
-    let richOrbGrowAmount: CGFloat = 7500
+    let richOrbGrowAmount: CGFloat = 1200
     func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
@@ -509,7 +526,7 @@ class GameScene: SKScene {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
         else { orbColor = randomColor() }
-        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 15, maxRadius: 20, artificiallySpawned: artificiallySpawned, inColor: orbColor)
+        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 16, maxRadius: 20, artificiallySpawned: artificiallySpawned, inColor: orbColor)
     }
     
     func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
@@ -561,6 +578,19 @@ class GameScene: SKScene {
             let richOrbBudget = growAmount - costToMaxOutSmallOrbs
             seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
         }
+        
+        orbBeacons.append(OrbBeacon(totalValue: growAmount, radius: radius, position: aboutPoint))
+    }
+    
+    class OrbBeacon: BoundByCircle {
+        var totalValue: CGFloat
+        var radius: CGFloat
+        var position: CGPoint
+        init(totalValue: CGFloat, radius: CGFloat, position: CGPoint) {
+            self.totalValue = totalValue
+            self.radius = radius
+            self.position = position
+        }
     }
     
     
@@ -573,12 +603,33 @@ class GameScene: SKScene {
     }
     
     
-    func spawnAICreatureAtPosition(position: CGPoint) {
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.02, max: 0.5))
-        newCreature.position = position
+    func spawnAICreature() {
+        print("new AI creature spawned")
+        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.02, max: 0.3))
+        newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         addChild(newCreature)
+        newCreature.runAction(SKAction.fadeInWithDuration(0.5))
+    }
+    
+    func spawnFlyingNumberOnPlayerMouth(points: Int) {
+        if let player = player {
+            let labelNode = SKLabelNode(fontNamed: "Geneva 37.0")
+            var text: String = String(points)
+            if points > 0 { text = "+\(text)" }
+            labelNode.text = text
+            let pointOnPlayersMouth = convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player)
+            labelNode.position = pointOnPlayersMouth
+            labelNode.zPosition = 100
+            labelNode.xScale = camera!.xScale
+            labelNode.yScale = camera!.yScale
+            addChild(labelNode)
+            labelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.6))
+            labelNode.runAction(SKAction.fadeOutWithDuration(0.6), completion: {
+                self.removeFromParent()
+            })
+        }
     }
     
     func randomID() -> Int {
@@ -634,6 +685,13 @@ func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
 
 func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
     return CGFloat(pi) * r * r
+}
+
+func radiusOfCircleWithArea(a: CGFloat) -> CGFloat {
+    // a = pi * r**2
+    // a / pi = r**2
+    // r = sqrt(a / pi)
+    return CGFloat(sqrt( a / CGFloat(pi) ))
 }
 
 //func fastRandom(min: CGFloat, max: CGFloat) -> {

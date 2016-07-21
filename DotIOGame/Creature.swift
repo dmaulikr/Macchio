@@ -25,7 +25,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
-        return radius * 5
+        return radius * 10
     }
     
     var currentSpeed: CGFloat = 100 {
@@ -74,7 +74,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     var freshlySpawnedMine: GoopMine? = nil
     
-    let playerMaxAngleChangePerSecond: CGFloat = 180
+    let playerMaxAngleChangePerSecond: CGFloat = 90
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
     
@@ -208,7 +208,8 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     
     var canBoost: Bool {
-        return radius > 60
+        //return radius > 60
+        return true
     }
     
     func startBoost() {
@@ -225,9 +226,12 @@ class Creature: SKSpriteNode, BoundByCircle {
     func leaveMine() {
         // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
         if !canLeaveMine { return }
-        spawnMineAtMyTail = true // GameScene will see that this has turned true and spawn the mine for us
-        // do the things the player does after leaving a mine
-        
+        let waitAction = SKAction.waitForDuration(0.2)
+        runAction(waitAction, completion: {
+            if self.canLeaveMine { self.spawnMineAtMyTail = true }
+            // GameScene will see that this has turned true and spawn the mine for us
+            // do the things the player does after leaving a mine
+        })
     }
     var canLeaveMine: Bool { return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
         mineCoolDownCounter >= mineCoolDown }
