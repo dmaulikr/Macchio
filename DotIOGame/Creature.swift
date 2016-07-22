@@ -21,7 +21,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {
-        return 30 * pow(1/2, (radius - 50) / 100) + 60
+        return 20 * pow(1/2, (radius - 50) / 100) + 40
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
@@ -74,6 +74,8 @@ class Creature: SKSpriteNode, BoundByCircle {
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     var freshlySpawnedMine: GoopMine? = nil
     
+    var speedDebuffTimeCounter: CGFloat = 0
+    
     let playerMaxAngleChangePerSecond: CGFloat = 270
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
@@ -107,7 +109,8 @@ class Creature: SKSpriteNode, BoundByCircle {
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
-        currentSpeed = normalSpeed
+        self.currentSpeed = normalSpeed
+        self.speedDebuffTimeCounter = C.creature_speedDebuffTime
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed
             targetRadius = startRadius
@@ -188,6 +191,8 @@ class Creature: SKSpriteNode, BoundByCircle {
             minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
         }
         
+        // Speed debuff counter
+        
         // Make sure the player can't boost when "they can't boost"
         if isBoosting && !canBoost {
             stopBoost()
@@ -229,11 +234,12 @@ class Creature: SKSpriteNode, BoundByCircle {
     func leaveMine() {
         // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
         if !canLeaveMine { return }
-        let waitAction = SKAction.waitForDuration(0.2)
+        let waitAction = SKAction.waitForDuration(0.01)
         runAction(waitAction, completion: {
             if self.canLeaveMine { self.spawnMineAtMyTail = true }
             // GameScene will see that this has turned true and spawn the mine for us
             // do the things the player does after leaving a mine
+            self.speedDebuffTimeCounter = 0
         })
     }
     var canLeaveMine: Bool {

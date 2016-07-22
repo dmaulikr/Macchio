@@ -203,7 +203,7 @@ class AICreature: Creature {
             }
         } else {
             if let closeOrb = findClosestNodeToMeInList(myChunk) {
-                print("resolving to change angle to nearest orb")
+//                print("resolving to change angle to nearest orb")
                 resolveSetTargetAngleTo(angleToNode(closeOrb))
             }
         }
@@ -275,7 +275,7 @@ class AICreature: Creature {
         // Keep the creature at an angle that will ensure it will not hit a mine or wall
         // Test by synthesizing a scanner ( all that's needed is an angle variable )
         var scannerAngle: CGFloat = CGFloat(self.targetAngle)
-        for _ in 0...10 {
+        for _ in 0...30 {
             let detectedMines = getMinesDetectedByScanner(withAngle: scannerAngle)
             //let closestMine = findClosestNodeToMeInList(detectedMines)
             let detectedWalls = getWallsDetectedByScanner(withAngle: scannerAngle)

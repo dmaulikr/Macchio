@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				83957B9F1D32FDDE00BF4450 /* Info.plist */,
 				8367131E1D39700E0062D8C0 /* MainScene.sks */,
 				836713201D3972900062D8C0 /* MainScene.swift */,
+				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				836713211D3972900062D8C0 /* MainScene.swift in Sources */,
 				83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */,
 				83957BBF1D33FBEC00BF4450 /* SKColor+Extensions.swift in Sources */,
+				831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

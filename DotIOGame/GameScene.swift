@@ -84,7 +84,7 @@ class GameScene: SKScene {
     let orbChunkWidth: CGFloat = 600, orbChunkHeight: CGFloat = 600
     var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
-    let orbsToAreaRatio: CGFloat = 0.000010
+    let orbsToAreaRatio: CGFloat = 0.00002
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
     let creaturesToAreaRatio: CGFloat = 0.0000011
     var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
@@ -439,8 +439,11 @@ class GameScene: SKScene {
                 } else {
                     valueForMine = 0
                 }
-//                let freshMineX = 
-                let freshMine = self.spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
+                let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
+                let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
+                let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+//                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 if creature === player {
                     spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
@@ -449,7 +452,10 @@ class GameScene: SKScene {
             
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
             if let freshMine = creature.freshlySpawnedMine {
-                if !freshMine.overlappingCircle(creature) { creature.freshlySpawnedMine = nil }
+                if !freshMine.overlappingCircle(creature) {
+                    creature.freshlySpawnedMine?.zPosition = 99
+                    creature.freshlySpawnedMine = nil
+                }
             }
         }
     }
@@ -615,10 +621,10 @@ class GameScene: SKScene {
     }
     
     
-    func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
-        let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
+    func spawnMineAtPosition(atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
+        let mine = GoopMine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
-        mine.zPosition = 99
+        mine.zPosition = 1
         addChild(mine)
         goopMines.append(mine)
         return mine
