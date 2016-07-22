@@ -44,7 +44,7 @@ class GameScene: SKScene {
     
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
     
-    var player: PlayerCreature?
+    var player: Creature?
     let spawnPosition = CGPoint(x: 200, y: 200)
     var otherCreatures: [Creature] = []
     var allCreatures: [Creature] {
@@ -91,7 +91,9 @@ class GameScene: SKScene {
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
+        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
+        //player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
+
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)

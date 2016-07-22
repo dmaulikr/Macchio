@@ -28,7 +28,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         return radius * 8
     }
     
-    var currentSpeed: CGFloat = 100 {
+    var currentSpeed: CGFloat = 0 {
         didSet { velocity.speed = currentSpeed }
     }
     
@@ -105,7 +105,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
-        
+        currentSpeed = normalSpeed
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed
             targetRadius = startRadius
@@ -117,6 +117,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        currentSpeed = self.normalSpeed
     }
     
     func update(deltaTime: CFTimeInterval) {

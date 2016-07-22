@@ -76,6 +76,7 @@ class AICreature: Creature {
     }
     var collisionProbe: CollisionProbe
     var minesDetectedByProbe: [GoopMine] {
+        print("mines detected by probe called")
         var mines: [GoopMine] = []
         for mine in gameScene.goopMines {
             if mine.overlappingCircle(collisionProbe) { mines.append(mine) }
@@ -90,8 +91,8 @@ class AICreature: Creature {
         return false
     }
     var probeWorldPositionBasedOnAICreature: CGPoint {
-        let probeX = cos(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
-        let probeY = sin(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
+        let probeX = self.position.x  + cos(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
+        let probeY = self.position.y + sin(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
         return CGPoint(x: probeX, y: probeY)
     }
     
@@ -157,10 +158,10 @@ class AICreature: Creature {
         
         if minesDetectedByProbe.count > 0 || probeDetectingWall{
             evadeMinesAndWall(minesDetectedByProbe)
-        } else if let _ = closestOrbBeacon {
-            resolveChangeStateTo(.GoingToCluster)
         } else if biggerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.RunningAway)
+        } else if let _ = closestOrbBeacon {
+            resolveChangeStateTo(.GoingToCluster)
         } else if smallerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.ChasingSmallerCreature)
         } else if let closestMine = findClosestNodeToMeInList(gameScene.goopMines) {
@@ -180,11 +181,11 @@ class AICreature: Creature {
         if minesDetectedByProbe.count > 0 || probeDetectingWall {
             if isBoosting { resolveStopBoost() }
             evadeMinesAndWall(minesDetectedByProbe)
-        } else if let closestOrbBeacon = closestOrbBeacon {
-            resolveChangeStateTo(.GoingToCluster)
         } else if biggerCreaturesNearMe.count > 0 {
             //if !isBoosting && canBoost { resolveStartBoost() }
             resolveChangeStateTo(.RunningAway)
+        } else if let closestOrbBeacon = closestOrbBeacon {
+            resolveChangeStateTo(.GoingToCluster)
         } else if let closestFoodCreature = findClosestNodeToMeInList(smallerCreaturesNearMe) {
             if !isBoosting && canBoost { resolveStartBoost() }
             else if isBoosting && canLeaveMine && position.distanceTo(closestFoodCreature.position) < mineTravelDistance {
@@ -243,21 +244,23 @@ class AICreature: Creature {
     
     func evadeMinesAndWall(minesInProbe: [GoopMine]) {
         // Using the information from collision probe, make the player turn the right direction to avoid mines. Or a wall.
-        var closest: GoopMine?
-        for eachMine in minesInProbe {
-            if let closeOne = closest {
-                if collisionProbe.position.distanceTo(eachMine.position) < collisionProbe.position.distanceTo(closeOne.position) {
+        while minesDetectedByProbe.count > 0 {
+            var closest: GoopMine?
+            for eachMine in minesInProbe {
+                if let closeOne = closest {
+                    if collisionProbe.position.distanceTo(eachMine.position) < collisionProbe.position.distanceTo(closeOne.position) {
+                        closest = eachMine
+                    }
+                } else {
                     closest = eachMine
                 }
-            } else {
-                closest = eachMine
             }
-        }
-        if let closest = closest {
-            if self.angleToPoint(closest.position) > self.angleToPoint(collisionProbe.position) {
-                resolveSetTargetAngleTo(self.targetAngle - 90)
-            } else {
-                resolveSetTargetAngleTo(self.targetAngle + 90)
+            if let closest = closest {
+                if self.angleToPoint(closest.position) > self.angleToPoint(collisionProbe.position) {
+                    resolveSetTargetAngleTo(self.targetAngle - 90)
+                } else {
+                    resolveSetTargetAngleTo(self.targetAngle + 90)
+                }
             }
         }
         
@@ -290,7 +293,7 @@ class AICreature: Creature {
                 resolveChangeStateTo(.EatOrbs)
             } else {
                 resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
-                if minesDetectedByProbe.count > 0 { evadeMinesAndWall(minesDetectedByProbe) }
+                if minesDetectedByProbe.count > 0 || probeDetectingWall { evadeMinesAndWall(minesDetectedByProbe) }
             }
         } else {
             resolveChangeStateTo(.EatOrbs)
