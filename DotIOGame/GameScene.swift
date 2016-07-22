@@ -21,6 +21,7 @@ func randomColor() -> Color {
     return allTheColors[randIndex]
 }
 
+
 class GameScene: SKScene {
     
     var prefs: (
@@ -29,7 +30,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1.4
+            zoomOutFactor: 1.3
     )
     
     enum State {
@@ -91,8 +92,8 @@ class GameScene: SKScene {
     var goopMines: [GoopMine] = []
     
     override func didMoveToView(view: SKView) {
-        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
-        //player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
+//        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
 
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
@@ -368,7 +369,7 @@ class GameScene: SKScene {
             } else {
                 x.removeFromParent()
             }
-            seedAutoOrbClusterWithBudget(x.growAmount, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
+            seedAutoOrbClusterWithBudget(x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
         }
 
     }
@@ -386,7 +387,7 @@ class GameScene: SKScene {
                     if theBigger.radius > theSmaller.radius * 1.11 {
                         if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
                             // The bigger has successfully engulfed the smaller
-                            theBigger.targetArea += theSmaller.growAmount
+                            theBigger.targetArea += theSmaller.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath
                             theEaten.append(theSmaller)
                             if theBigger === player {
                                 // add a flying number
@@ -422,7 +423,7 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            seedAutoOrbClusterWithBudget(mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius)
+            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
             mine.removeFromParent()
         }
         
@@ -438,6 +439,7 @@ class GameScene: SKScene {
                 } else {
                     valueForMine = 0
                 }
+//                let freshMineX = 
                 let freshMine = self.spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 if creature === player {
@@ -532,8 +534,8 @@ class GameScene: SKScene {
         return nil
     }
     
-    let smallOrbGrowAmount: CGFloat = 400
-    let richOrbGrowAmount: CGFloat = 5000
+    let smallOrbGrowAmount: CGFloat = 800
+    let richOrbGrowAmount: CGFloat = 2500
     func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
@@ -616,6 +618,7 @@ class GameScene: SKScene {
     func spawnMineAtPosition(atPosition: CGPoint, playerRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
         let mine = GoopMine(radius: playerRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
+        mine.zPosition = 99
         addChild(mine)
         goopMines.append(mine)
         return mine
@@ -635,7 +638,7 @@ class GameScene: SKScene {
     func spawnFlyingNumberOnPlayerMouth(points: Int) {
         if points == 0 { return }
         if let player = player {
-            let labelNode = SKLabelNode(fontNamed: "Geneva 37.0")
+            let labelNode = SKLabelNode(fontNamed: "Chalkboard SE Regular 32.0")
             var text: String = String(points)
             if points > 0 { text = "+\(text)" }
             labelNode.text = text

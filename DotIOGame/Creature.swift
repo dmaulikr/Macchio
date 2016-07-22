@@ -21,7 +21,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {
-        return 50 * pow(1/2, (radius - 50) / 100) + 100
+        return 30 * pow(1/2, (radius - 50) / 100) + 60
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
@@ -96,6 +96,8 @@ class Creature: SKSpriteNode, BoundByCircle {
             targetRadius = sqrt(newValue / CGFloat(pi))
         }
     }
+    
+    static let percentGrowAmountToBeDepositedUponDeath: CGFloat = 0.50
     var growAmount: CGFloat { return targetArea }
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
@@ -201,7 +203,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     
     var passiveSizeLoss: CGFloat { // (per second)
-        return CGFloat( 2.5 * pow(2, (radius-30)/100) - 2 )
+        return CGFloat( 1.25 * pow(2, (radius-30)/100) - 1 )
     }
     
     var boostingSizeLoss: CGFloat { // (per second)

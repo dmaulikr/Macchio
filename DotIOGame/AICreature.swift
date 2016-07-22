@@ -38,13 +38,12 @@ class AICreature: Creature {
     var buttonActionQueue: [ActionIdentifier] = [] // used exclusively for button related actions (start boost, stop boost, leave mine )
     var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
     
-    static let sniffRange: CGFloat = 500
+    static let sniffRange: CGFloat = 300
     static let dangerRange: CGFloat = 400
     static let leaveMineRange: CGFloat = 300
     static let waitingOnMineRange: CGFloat = 400
-    static let probeDistance: CGFloat = 20
-    static let goToBeaconRange: CGFloat = 750
-
+    static let scanDistance: CGFloat = 300
+    static let goToBeaconRange: CGFloat = 600
     
     var biggerCreaturesNearMe: [Creature] {
         return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < AICreature.dangerRange && $0.radius > self.radius * 1.11 }
@@ -62,38 +61,71 @@ class AICreature: Creature {
         return []
     }
     
-    class CollisionProbe: BoundByCircle {
-        weak var aicreature: AICreature?
-        var radius: CGFloat {
-            return aicreature?.radius ?? 0
-        }
-        var position: CGPoint {
-            return aicreature?.probeWorldPositionBasedOnAICreature ?? CGPoint(x: 0, y: 0)
-        }
-        func setUpProbe(aiCreature: AICreature) {
-            self.aicreature = aiCreature
-        }
+//    class CollisionProbe: BoundByCircle {
+//        weak var aicreature: AICreature?
+//        var radius: CGFloat {
+//            return aicreature?.radius ?? 0
+//        }
+//        var position: CGPoint {
+//            return aicreature?.probeWorldPositionBasedOnAICreature ?? CGPoint(x: 0, y: 0)
+//        }
+//        func setUpProbe(aiCreature: AICreature) {
+//            self.aicreature = aiCreature
+//        }
+//    }
+//    var collisionProbe: CollisionProbe
+//    var minesDetectedByProbe: [GoopMine] {
+//        print("mines detected by probe called")
+//        var mines: [GoopMine] = []
+//        for mine in gameScene.goopMines {
+//            if mine.overlappingCircle(collisionProbe) { mines.append(mine) }
+//        }
+//        return mines
+//    }
+//    var probeDetectingWall: Bool {
+////        return collisionProbe.position.x + collisionProbe.radius >= gameScene.mapSize.width ||
+////               collisionProbe.position.x - collisionProbe.radius <= 0 ||
+////               collisionProbe.position.y + collisionProbe.radius >= gameScene.mapSize.height ||
+////               collisionProbe.position.y - collisionProbe.radius <= 0
+//        return false
+//    }
+//    var probeWorldPositionBasedOnAICreature: CGPoint {
+//        let probeX = self.position.x  + cos(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
+//        let probeY = self.position.y + sin(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
+//        return CGPoint(x: probeX, y: probeY)
+//    }
+    
+    var minesDetectedByScanner: [GoopMine] {
+        return getMinesDetectedByScanner(withAngle: self.targetAngle)
     }
-    var collisionProbe: CollisionProbe
-    var minesDetectedByProbe: [GoopMine] {
-        print("mines detected by probe called")
-        var mines: [GoopMine] = []
+    
+    func getMinesDetectedByScanner(withAngle scannerAngle: CGFloat, scannerRange: CGFloat = AICreature.scanDistance) -> [GoopMine]{
+        var minesDetected = [GoopMine]()
         for mine in gameScene.goopMines {
-            if mine.overlappingCircle(collisionProbe) { mines.append(mine) }
+            if fabs(scannerAngle - angleToNode(mine)) < 45 {
+                minesDetected.append(mine)
+            }
         }
-        return mines
+        return minesDetected
     }
-    var probeDetectingWall: Bool {
-//        return collisionProbe.position.x + collisionProbe.radius >= gameScene.mapSize.width ||
-//               collisionProbe.position.x - collisionProbe.radius <= 0 ||
-//               collisionProbe.position.y + collisionProbe.radius >= gameScene.mapSize.height ||
-//               collisionProbe.position.y - collisionProbe.radius <= 0
-        return false
+    
+    enum Direction {
+        case Left, Right, Top, Bottom
     }
-    var probeWorldPositionBasedOnAICreature: CGPoint {
-        let probeX = self.position.x  + cos(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
-        let probeY = self.position.y + sin(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
-        return CGPoint(x: probeX, y: probeY)
+    var wallsDetectedByScanner: [Direction] {
+        return getWallsDetectedByScanner(withAngle: self.targetAngle)
+    }
+    
+    func getWallsDetectedByScanner(withAngle scannerAngle: CGFloat, scannerRange: CGFloat = AICreature.scanDistance) -> [Direction] {
+        var wallsDetected = [Direction]()
+        let testAtX = position.x + cos(scannerAngle.degreesToRadians()) * scannerRange
+        let testAtY = position.y + sin(scannerAngle.degreesToRadians()) * scannerRange
+        if testAtX <  0 { wallsDetected.append(.Left) }
+        if testAtX > gameScene.mapSize.width { wallsDetected.append(.Right) }
+        if testAtY < 0 { wallsDetected.append(.Bottom) }
+        if testAtY > gameScene.mapSize.height { wallsDetected.append(.Top) }
+        return wallsDetected
+
     }
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene, rxnTime: CGFloat) {
@@ -101,16 +133,16 @@ class AICreature: Creature {
         // Omniscence is ok for what I'm doing.
         self.gameScene = gameScene
         self.rxnTime = rxnTime
-        collisionProbe = CollisionProbe()
+//        collisionProbe = CollisionProbe()
         super.init(name: name, playerID: playerID, color: color, startRadius: startRadius)
-        collisionProbe.setUpProbe(self)
+//        collisionProbe.setUpProbe(self)
 
     }
     
     required init?(coder aDecoder: NSCoder) {
-        collisionProbe = CollisionProbe()
+//        collisionProbe = CollisionProbe()
         super.init(coder: aDecoder)
-        collisionProbe.setUpProbe(self)
+//        collisionProbe.setUpProbe(self)
     }
     
     override func thinkAndAct(deltaTime: CGFloat) {
@@ -156,8 +188,8 @@ class AICreature: Creature {
 //        print("ai computing next eat orbs action")
         if isBoosting { resolveStopBoost() }
         
-        if minesDetectedByProbe.count > 0 || probeDetectingWall{
-            evadeMinesAndWall(minesDetectedByProbe)
+        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0{
+            evadeMinesAndWall()
         } else if biggerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.RunningAway)
         } else if let _ = closestOrbBeacon {
@@ -165,7 +197,7 @@ class AICreature: Creature {
         } else if smallerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.ChasingSmallerCreature)
         } else if let closestMine = findClosestNodeToMeInList(gameScene.goopMines) {
-            if collisionProbe.overlappingCircle(closestMine as! GoopMine) && closestMine.position.distanceTo(self.position) < AICreature.waitingOnMineRange {
+            if minesDetectedByScanner.contains(closestMine as! GoopMine) && closestMine.position.distanceTo(self.position) < AICreature.waitingOnMineRange {
                 state = .WaitingOnMine
                 waitingOnMineStateProperties.mine = closestMine as! GoopMine
             }
@@ -178,9 +210,8 @@ class AICreature: Creature {
     }
     
     func computeNextChasingSmallerCreatureAction() {
-        if minesDetectedByProbe.count > 0 || probeDetectingWall {
-            if isBoosting { resolveStopBoost() }
-            evadeMinesAndWall(minesDetectedByProbe)
+        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
+            evadeMinesAndWall()
         } else if biggerCreaturesNearMe.count > 0 {
             //if !isBoosting && canBoost { resolveStartBoost() }
             resolveChangeStateTo(.RunningAway)
@@ -198,9 +229,8 @@ class AICreature: Creature {
     }
     
     func computeNextRunningAwayAction() {
-        if minesDetectedByProbe.count > 0 || probeDetectingWall{
-            if isBoosting { resolveStopBoost() }
-            evadeMinesAndWall(minesDetectedByProbe)
+        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
+            evadeMinesAndWall()
         } else if biggerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.RunningAway)
         } else if let closestPredator = findClosestNodeToMeInList(biggerCreaturesNearMe) {
@@ -230,9 +260,8 @@ class AICreature: Creature {
     }
     func computeNextGoingToClusterAction() {
         if !isBoosting && canBoost { startBoost() }
-        if minesDetectedByProbe.count > 0 || probeDetectingWall {
-            if isBoosting { resolveStopBoost() }
-            evadeMinesAndWall(minesDetectedByProbe)
+        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
+            evadeMinesAndWall()
         } else if let nearestBeacon = closestOrbBeacon {
             resolveSetTargetAngleTo(angleToPoint(nearestBeacon.position))
             if self.overlappingCircle(nearestBeacon) { resolveChangeStateTo(.EatOrbs) }
@@ -242,27 +271,48 @@ class AICreature: Creature {
         }
     }
     
-    func evadeMinesAndWall(minesInProbe: [GoopMine]) {
-        // Using the information from collision probe, make the player turn the right direction to avoid mines. Or a wall.
-        while minesDetectedByProbe.count > 0 {
-            var closest: GoopMine?
-            for eachMine in minesInProbe {
-                if let closeOne = closest {
-                    if collisionProbe.position.distanceTo(eachMine.position) < collisionProbe.position.distanceTo(closeOne.position) {
-                        closest = eachMine
-                    }
-                } else {
-                    closest = eachMine
-                }
+    func evadeMinesAndWall() {
+        // Keep the creature at an angle that will ensure it will not hit a mine or wall
+        // Test by synthesizing a scanner ( all that's needed is an angle variable )
+        var scannerAngle: CGFloat = CGFloat(self.targetAngle)
+        for _ in 0...10 {
+            let detectedMines = getMinesDetectedByScanner(withAngle: scannerAngle)
+            //let closestMine = findClosestNodeToMeInList(detectedMines)
+            let detectedWalls = getWallsDetectedByScanner(withAngle: scannerAngle)
+//            if let closestMine = closestMine {
+//                
+//            } else if detectedWalls.count > 0 {
+//                // There are actually no mines detected because there was no closest
+//                scannerAngle += 10
+//            }
+            if detectedWalls.count == 0 && detectedMines.count == 0 {
+                break
+            } else {
+                scannerAngle += 10
             }
-            if let closest = closest {
-                if self.angleToPoint(closest.position) > self.angleToPoint(collisionProbe.position) {
-                    resolveSetTargetAngleTo(self.targetAngle - 90)
-                } else {
-                    resolveSetTargetAngleTo(self.targetAngle + 90)
-                }
-            }
+            
         }
+        resolveSetTargetAngleTo(scannerAngle)
+        
+//        while minesDetectedByProbe.count > 0 {
+//            var closest: GoopMine?
+//            for eachMine in minesInProbe {
+//                if let closeOne = closest {
+//                    if collisionProbe.position.distanceTo(eachMine.position) < collisionProbe.position.distanceTo(closeOne.position) {
+//                        closest = eachMine
+//                    }
+//                } else {
+//                    closest = eachMine
+//                }
+//            }
+//            if let closest = closest {
+//                if self.angleToPoint(closest.position) > self.angleToPoint(collisionProbe.position) {
+//                    resolveSetTargetAngleTo(self.targetAngle - 90)
+//                } else {
+//                    resolveSetTargetAngleTo(self.targetAngle + 90)
+//                }
+//            }
+//        }
         
     }
     
@@ -293,7 +343,7 @@ class AICreature: Creature {
                 resolveChangeStateTo(.EatOrbs)
             } else {
                 resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
-                if minesDetectedByProbe.count > 0 || probeDetectingWall { evadeMinesAndWall(minesDetectedByProbe) }
+                if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 { evadeMinesAndWall() }
             }
         } else {
             resolveChangeStateTo(.EatOrbs)
