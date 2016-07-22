@@ -39,7 +39,8 @@ class GameScene: SKScene {
     
     var previousTime: CFTimeInterval? = nil
     
-    let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
+    let mapSize: (width: CGFloat, height: CGFloat) = (width: 1000, height: 6000)
+    var bgGraphics: SKNode!
     
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
     
@@ -74,7 +75,9 @@ class GameScene: SKScene {
     var orbBeacons: [OrbBeacon] = []
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
-        let x = Int(point.x / orbChunkWidth); let y = Int(point.y / orbChunkHeight)
+        var x = Int(point.x / orbChunkWidth); var y = Int(point.y / orbChunkHeight)
+        if x < 0 { x = 0 }; if x >= numOfChunkColumns { x = numOfChunkColumns - 1 }
+        if y < 0 { y = 0 }; if y >= numOfChunkRows { y = numOfChunkRows - 1 }
         return (x: x, y: y)
     }
     let orbChunkWidth: CGFloat = 600, orbChunkHeight: CGFloat = 600
@@ -94,6 +97,10 @@ class GameScene: SKScene {
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
+            
+            bgGraphics = childNodeWithName("bgGraphics")
+            bgGraphics.xScale = mapSize.width / 6000
+            bgGraphics.yScale = mapSize.height / 6000
             
             scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
             scoreLabel.horizontalAlignmentMode = .Left
