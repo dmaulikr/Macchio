@@ -29,7 +29,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 10
+            zoomOutFactor: 1.4
     )
     
     enum State {
@@ -292,12 +292,14 @@ class GameScene: SKScene {
             //var orbChunksToTest: [[EnergyOrb]] = [[]]
             for point in c.nineNotablePoints {
                 // The nine notable points are the center and eight points on the outside
-                if let location = convertWorldPointToOrbChunkLocation(point) {
+                if var location = convertWorldPointToOrbChunkLocation(point) {
                     let locationAsCGPoint = CGPoint(x: CGFloat(location.x), y: CGFloat(location.y))
                     if !(locationsThatWillBeTested.contains(locationAsCGPoint)) {
                         locationsThatWillBeTested.append(locationAsCGPoint)
                         //orbChunksToTest.append( orbChunks[location.x][location.y] )
                         // Test the chunk right now
+                        if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
+                        if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
                         let testingChunk = orbChunks[location.x][location.y]
                         let newChunkWithoutTheRemovedOrbs = handleOrbChunkCollision(testingChunk, withCreature: c)
                         orbChunks[location.x][location.y] = newChunkWithoutTheRemovedOrbs
@@ -421,7 +423,13 @@ class GameScene: SKScene {
             if creature.spawnMineAtMyTail {
                 creature.spawnMineAtMyTail = false
                 creature.mineSpawned()
-                let freshMine = self.spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: creature.growAmount * creature.percentSizeSacrificeToLeaveMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let valueForMine: CGFloat
+                if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(Creature.minRadius) {
+                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine)
+                } else {
+                    valueForMine = 0
+                }
+                let freshMine = self.spawnMineAtPosition(creature.position, playerRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 if creature === player {
                     spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
@@ -499,13 +507,15 @@ class GameScene: SKScene {
     
     
     func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color) -> EnergyOrb? {
-        if let location = convertWorldPointToOrbChunkLocation(position) {
+        if var location = convertWorldPointToOrbChunkLocation(position) {
             let newOrb = EnergyOrb(orbColor: inColor)
             newOrb.position = position
             newOrb.growAmount = growAmount
             newOrb.minRadius = minRadius
             newOrb.maxRadius = maxRadius
             newOrb.artificiallySpawned = artificiallySpawned
+            if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
+            if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
             orbChunks[location.x][location.y].append(newOrb)
             addChild(newOrb)
             return newOrb
@@ -514,7 +524,7 @@ class GameScene: SKScene {
     }
     
     let smallOrbGrowAmount: CGFloat = 400
-    let richOrbGrowAmount: CGFloat = 1200
+    let richOrbGrowAmount: CGFloat = 5000
     func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
@@ -614,6 +624,7 @@ class GameScene: SKScene {
     }
     
     func spawnFlyingNumberOnPlayerMouth(points: Int) {
+        if points == 0 { return }
         if let player = player {
             let labelNode = SKLabelNode(fontNamed: "Geneva 37.0")
             var text: String = String(points)

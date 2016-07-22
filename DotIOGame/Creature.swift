@@ -25,7 +25,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
-        return radius * 10
+        return radius * 8
     }
     
     var currentSpeed: CGFloat = 100 {
@@ -74,7 +74,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     var freshlySpawnedMine: GoopMine? = nil
     
-    let playerMaxAngleChangePerSecond: CGFloat = 90
+    let playerMaxAngleChangePerSecond: CGFloat = 270
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
     
@@ -233,8 +233,10 @@ class Creature: SKSpriteNode, BoundByCircle {
             // do the things the player does after leaving a mine
         })
     }
-    var canLeaveMine: Bool { return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
-        mineCoolDownCounter >= mineCoolDown }
+    var canLeaveMine: Bool {
+//        return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
+        return mineCoolDownCounter >= mineCoolDown
+    }
     
     func mineSpawned() {
         //Called by GameScene after a mine has successfully been spawned at the player's tail

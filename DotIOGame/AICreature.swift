@@ -17,6 +17,7 @@ class AICreature: Creature {
         case ChasingSmallerCreature
         case RunningAway
         case WaitingOnMine
+        case GoingToCluster
     }
     var state: CreatureState = .EatOrbs {
         willSet {
@@ -42,6 +43,8 @@ class AICreature: Creature {
     static let leaveMineRange: CGFloat = 300
     static let waitingOnMineRange: CGFloat = 400
     static let probeDistance: CGFloat = 20
+    static let goToBeaconRange: CGFloat = 750
+
     
     var biggerCreaturesNearMe: [Creature] {
         return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < AICreature.dangerRange && $0.radius > self.radius * 1.11 }
@@ -110,7 +113,7 @@ class AICreature: Creature {
     }
     
     override func thinkAndAct(deltaTime: CGFloat) {
-        print ("think and act called")
+//        print ("think and act called")
         switch state {
         case .EatOrbs:
             computeNextEatOrbsAction()
@@ -120,6 +123,8 @@ class AICreature: Creature {
             computeNextChasingSmallerCreatureAction()
         case .WaitingOnMine:
             computeNextWaitForMineAction()
+        case .GoingToCluster:
+            computeNextGoingToClusterAction()
         }
         
         rxnTimer += deltaTime
@@ -138,7 +143,7 @@ class AICreature: Creature {
             if let turnAction = nextTurnAction {
                 self.nextTurnAction = nil
                 targetAngle = turnAction.toAngle
-                print("read turn action and executed a turn")
+//                print("read turn action and executed a turn")
             }
                 
                 
@@ -147,11 +152,13 @@ class AICreature: Creature {
     }
     
     func computeNextEatOrbsAction() {
-        print("ai computing next eat orbs action")
+//        print("ai computing next eat orbs action")
         if isBoosting { resolveStopBoost() }
         
         if minesDetectedByProbe.count > 0 || probeDetectingWall{
             evadeMinesAndWall(minesDetectedByProbe)
+        } else if let _ = closestOrbBeacon {
+            resolveChangeStateTo(.GoingToCluster)
         } else if biggerCreaturesNearMe.count > 0 {
             resolveChangeStateTo(.RunningAway)
         } else if smallerCreaturesNearMe.count > 0 {
@@ -173,6 +180,8 @@ class AICreature: Creature {
         if minesDetectedByProbe.count > 0 || probeDetectingWall {
             if isBoosting { resolveStopBoost() }
             evadeMinesAndWall(minesDetectedByProbe)
+        } else if let closestOrbBeacon = closestOrbBeacon {
+            resolveChangeStateTo(.GoingToCluster)
         } else if biggerCreaturesNearMe.count > 0 {
             //if !isBoosting && canBoost { resolveStartBoost() }
             resolveChangeStateTo(.RunningAway)
@@ -191,6 +200,8 @@ class AICreature: Creature {
         if minesDetectedByProbe.count > 0 || probeDetectingWall{
             if isBoosting { resolveStopBoost() }
             evadeMinesAndWall(minesDetectedByProbe)
+        } else if biggerCreaturesNearMe.count > 0 {
+            resolveChangeStateTo(.RunningAway)
         } else if let closestPredator = findClosestNodeToMeInList(biggerCreaturesNearMe) {
             if !isBoosting && canBoost { resolveStartBoost() }
             resolveSetTargetAngleTo( 180 + angleToNode(closestPredator) )
@@ -201,6 +212,33 @@ class AICreature: Creature {
             resolveChangeStateTo(.EatOrbs)
         }
         
+    }
+    
+    var closestOrbBeacon: GameScene.OrbBeacon? {
+        var nearbyBeacon: GameScene.OrbBeacon?
+        for b in gameScene.orbBeacons {
+            if let _ = nearbyBeacon {
+                if b.position.distanceTo(self.position) < nearbyBeacon!.position.distanceTo(self.position) {
+                    nearbyBeacon = b
+                }
+            } else {
+                nearbyBeacon = b
+            }
+        }
+        return nearbyBeacon
+    }
+    func computeNextGoingToClusterAction() {
+        if !isBoosting && canBoost { startBoost() }
+        if minesDetectedByProbe.count > 0 || probeDetectingWall {
+            if isBoosting { resolveStopBoost() }
+            evadeMinesAndWall(minesDetectedByProbe)
+        } else if let nearestBeacon = closestOrbBeacon {
+            resolveSetTargetAngleTo(angleToPoint(nearestBeacon.position))
+            if self.overlappingCircle(nearestBeacon) { resolveChangeStateTo(.EatOrbs) }
+        } else {
+            if isBoosting { resolveStopBoost() }
+            resolveChangeStateTo(.EatOrbs)
+        }
     }
     
     func evadeMinesAndWall(minesInProbe: [GoopMine]) {
@@ -240,17 +278,20 @@ class AICreature: Creature {
             waitingOnMineStateProperties.stayAtPoint = self.position
         }
         
-        if let mine = waitingOnMineStateProperties.mine {
+        if let _ = closestOrbBeacon {
+            resolveChangeStateTo(.GoingToCluster)
+        } else if biggerCreaturesNearMe.count > 0 {
+            resolveChangeStateTo(.RunningAway)
+        } else if smallerCreaturesNearMe.count > 0 {
+            resolveChangeStateTo(.ChasingSmallerCreature)
+        } else if let mine = waitingOnMineStateProperties.mine {
             if mine.parent == nil {
                 waitingOnMineStateProperties.mine = nil
                 resolveChangeStateTo(.EatOrbs)
             } else {
                 resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
+                if minesDetectedByProbe.count > 0 { evadeMinesAndWall(minesDetectedByProbe) }
             }
-        } else if biggerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.RunningAway)
-        } else if smallerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.ChasingSmallerCreature)
         } else {
             resolveChangeStateTo(.EatOrbs)
         }
