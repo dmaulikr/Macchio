@@ -93,8 +93,7 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80)
-
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: randomColor(), startRadius: 80)
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)
@@ -320,7 +319,7 @@ class GameScene: SKScene {
         
         // After all the orb collisions have been handled, itereate through the beacons to see if there are any that should be removed..
         orbBeacons = orbBeacons.filter { $0.totalValue > 10000 }
-        print (orbBeacons.count)
+        //print (orbBeacons.count)
         
     }
     
@@ -502,7 +501,7 @@ class GameScene: SKScene {
                     
                     let deltaX = directionArrowTargetPosition.x - directionArrow.position.x
                     let deltaY = directionArrowTargetPosition.y - directionArrow.position.y
-                    directionArrow.position += CGVector(dx: deltaX / 3, dy: deltaY / 3)
+                    directionArrow.position += CGVector(dx: deltaX / 2, dy: deltaY / 2)
                 }
                 
                 // Change mine buttons image to can leave or can't
@@ -632,10 +631,10 @@ class GameScene: SKScene {
     
     
     func spawnAICreature() {
-        print("new AI creature spawned")
+        //print("new AI creature spawned")
         let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.02, max: 0.3))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
-        newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
+        //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         addChild(newCreature)
         newCreature.runAction(SKAction.fadeInWithDuration(0.5))

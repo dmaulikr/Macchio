@@ -115,10 +115,11 @@ class Creature: SKSpriteNode, BoundByCircle {
         self.speedDebuffTimeCounter = C.creature_speedDebuffTime
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed
+            velocity.angle = CGFloat.random(min: 0, max: 360)
+            targetAngle = velocity.angle
             targetRadius = startRadius
             radius = startRadius
         }
-        targetAngle = velocity.angle
         
     }
     
@@ -270,10 +271,10 @@ class Creature: SKSpriteNode, BoundByCircle {
                 }])
             self.runAction(speedDebuff)
             
-//            let lookSick = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 0.3, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
-//            SKAction.colorizeWithColor(UIColor(), colorBlendFactor: <#T##CGFloat#>, duration: <#T##NSTimeInterval#>)
-//            let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime/2)), lookSick.reversedAction()])
-//            self.runAction(speedDebuffVisualIndication)
+            let lookSick = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 0.3, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
+            let goBackToNormal = SKAction.colorizeWithColor(UIColor(white: 0, alpha: 0), colorBlendFactor: 0, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
+            let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime/2)), goBackToNormal])
+            self.runAction(speedDebuffVisualIndication)
         })
     }
 
