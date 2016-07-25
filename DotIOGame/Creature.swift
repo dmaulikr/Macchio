@@ -23,7 +23,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     var normalSpeed: CGFloat {
         return 30 * pow(1/2, (radius - 50) / 100) + 60
     }
-    var boostingSpeed: CGFloat { return normalSpeed * 2 }
+    var boostingSpeed: CGFloat { return normalSpeed * 2.3 }
     var minePropulsionSpeed: CGFloat {
         return radius * 7
     }

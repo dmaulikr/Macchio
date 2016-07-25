@@ -57,6 +57,11 @@ class GameScene: SKScene {
     }
     var scoreLabel: SKLabelNode!
     
+    var playerSize: Int = 0 {
+        didSet { sizeLabel.text = String(playerSize) }
+    }
+    var sizeLabel: SKLabelNode!
+    
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
     var directionArrowAnchor: SKNode! //An invisible node that sticks to the player, constantly faces the player's target angle, and works as an anchor for the direction arrow. It's important that this node ALWAYS be facing the target angle, for the arrow needs to feel responsive and the player can have intermediate turning states.
@@ -108,6 +113,7 @@ class GameScene: SKScene {
             
             scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
             scoreLabel.horizontalAlignmentMode = .Left
+            sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
             
             directionArrow = SKSpriteNode(imageNamed: "arrow.png")
             directionArrow.zPosition = 100
@@ -286,7 +292,7 @@ class GameScene: SKScene {
         updateUI()
         
         if let player = player {
-            score = convertAreaToScore(player.targetArea)
+            playerSize = convertAreaToScore(player.targetArea)
         }
         
     }
@@ -341,6 +347,8 @@ class GameScene: SKScene {
             c.targetArea += orb.growAmount
             if c === player {
                 spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
+                print("flying number spawned")
+                score += convertAreaToScore(orb.growAmount)
             }
             for beacon in orbBeacons {
                 if beacon.overlappingCircle(orb) { beacon.totalValue -= orb.growAmount }
@@ -393,6 +401,7 @@ class GameScene: SKScene {
                             if theBigger === player {
                                 // add a flying number
                                 spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
+                                score += convertAreaToScore(theSmaller.targetArea)
                             }
                         }
                     } else {
@@ -447,7 +456,7 @@ class GameScene: SKScene {
                 let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 if creature === player {
-                    spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
+                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
                 }
             }
             
@@ -583,9 +592,6 @@ class GameScene: SKScene {
                         }
                     }
                 }
-                
-                print(warningSigns.count)
-                
                 
             }
         }
