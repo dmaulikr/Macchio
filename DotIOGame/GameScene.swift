@@ -91,6 +91,8 @@ class GameScene: SKScene {
     
     var goopMines: [GoopMine] = []
     
+    var warningSigns: [WarningSign] = []
+    
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: randomColor(), startRadius: 80)
@@ -383,7 +385,7 @@ class GameScene: SKScene {
                     // So now we check if the bigger creature is big enough to eat the other creature, if so, then are they completely engulfing the smaller player. If the larger player wasn't larger enough to begin with, then the two players will just kinda bump into each other.
                     let theBigger = creature.radius > other.radius ? creature : other
                     let theSmaller = creature !== theBigger ? creature : other
-                    if theBigger.radius > theSmaller.radius * 1.11 {
+                    if theBigger.radius > theSmaller.radius * C.percentLargerACreatureMustBeToEngulfAnother {
                         if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath
@@ -516,6 +518,74 @@ class GameScene: SKScene {
                 } else {
                     boostButton.buttonIcon.texture = boostButton.defaultTexture
                 }
+                
+                // update the positions of warning signs
+                var warningSignKillList: [WarningSign] = []
+                let testingRange = C.alertPlayerAboutLargerCreaturesInRange * cameraScaleToPlayerRadiusRatios.x * player.radius
+
+                for warningSign in warningSigns {
+                    if let correspondingCreature = warningSign.correspondingCreature {
+                        let creaturePositionInRelationToCamera = camera!.convertPoint(correspondingCreature.position, fromNode: self)
+                        warningSign.position = creaturePositionInRelationToCamera
+                        warningSign.position.x.clamp(-size.width / 2 + warningSign.size.width/2, size.width / 2 - warningSign.size.width/2)
+                        warningSign.position.y.clamp(-size.height / 2 + warningSign.size.height/2, size.height / 2 - warningSign.size.height/2)
+                        
+                        // Test for despawning based on distance ( how far away is the creature from the camera center? )
+                        // 1) is the corresponding creature too far away?
+                        if camera!.position.distanceTo(correspondingCreature.position) - correspondingCreature.radius > testingRange {
+                            warningSignKillList.append(warningSign)
+                        }
+                        
+                        // 2) Hide if the corresponding creature inside the camera?
+                        let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians 😁
+                        let closestX = correspondingCreature.position.x + cos(angleToCamera) * correspondingCreature.radius
+                        let closestY = correspondingCreature.position.y + sin(angleToCamera) * correspondingCreature.radius
+                        let creatureClosestPointToCameraCenter = CGPoint(x: closestX, y: closestY)
+                        if creatureClosestPointToCameraCenter.x > camera!.position.x - size.width/2 * camera!.xScale &&
+                           creatureClosestPointToCameraCenter.x < camera!.position.x + size.width/2 * camera!.xScale &&
+                           creatureClosestPointToCameraCenter.y > camera!.position.y - size.height/2 * camera!.yScale &&
+                           creatureClosestPointToCameraCenter.y < camera!.position.y + size.height/2 * camera!.yScale {
+                            warningSign.hidden = true
+                        } else {
+                            warningSign.hidden = false
+                        }
+                        
+                    } else {
+                        // Despawn warning signs if the corresponding creature is nil
+                        warningSignKillList.append(warningSign)
+                    }
+                }
+                
+                
+                // destroy and remove the warning signs in the kill List
+                warningSigns = warningSigns.filter { !warningSignKillList.contains($0) }
+                for theFallen in warningSignKillList {
+                    theFallen.removeFromParent()
+                }
+                
+                
+                // spawn new warning signs if a large enough player is within range (range scales with camera)
+                for creature in otherCreatures {
+                    if creature === player { continue }
+                    if creature.radius > player.radius * C.percentLargerACreatureMustBeToEngulfAnother && creature.position.distanceTo(camera!.position) - creature.radius < testingRange {
+                        var warningSignAlreadyExists = false
+                        for sign in warningSigns {
+                            if sign.correspondingCreature === creature { warningSignAlreadyExists = true }
+                        }
+                        if !warningSignAlreadyExists {
+                            let newWarningSign = WarningSign(creature: creature)
+                            newWarningSign.position = camera!.convertPoint(creature.position, fromNode: self)
+                            newWarningSign.position.x.clamp(-size.width / 2 + newWarningSign.size.width/2, size.width / 2 - newWarningSign.size.width/2)
+                            newWarningSign.position.y.clamp(-size.height / 2 + newWarningSign.size.height/2, size.height / 2 - newWarningSign.size.height/2)
+
+                            warningSigns.append(newWarningSign)
+                            camera!.addChild(newWarningSign)
+                        }
+                    }
+                }
+                
+                print(warningSigns.count)
+                
                 
             }
         }
