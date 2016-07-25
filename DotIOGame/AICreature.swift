@@ -215,7 +215,7 @@ class AICreature: Creature {
         } else if biggerCreaturesNearMe.count > 0 {
             //if !isBoosting && canBoost { resolveStartBoost() }
             resolveChangeStateTo(.RunningAway)
-        } else if let closestOrbBeacon = closestOrbBeacon {
+        } else if closestOrbBeacon != nil {
             resolveChangeStateTo(.GoingToCluster)
         } else if let closestFoodCreature = findClosestNodeToMeInList(smallerCreaturesNearMe) {
             if !isBoosting && canBoost { resolveStartBoost() }
@@ -259,11 +259,13 @@ class AICreature: Creature {
         return nearbyBeacon
     }
     func computeNextGoingToClusterAction() {
-        if !isBoosting && canBoost { startBoost() }
-        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
+        if biggerCreaturesNearMe.count > 0 {
+            state = .RunningAway
+        } else if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
             evadeMinesAndWall()
         } else if let nearestBeacon = closestOrbBeacon {
             resolveSetTargetAngleTo(angleToPoint(nearestBeacon.position))
+            if !isBoosting && canBoost { startBoost() }
             if self.overlappingCircle(nearestBeacon) { resolveChangeStateTo(.EatOrbs) }
         } else {
             if isBoosting { resolveStopBoost() }

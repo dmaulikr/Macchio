@@ -18,6 +18,7 @@ class BoostButton: SKSpriteNode {
     var onPressed: () -> Void = { print("No boost pressed action set") }
     var onReleased: () -> Void = { print("No boost realeased action set.") }
     var buttonIcon: SKSpriteNode!
+    var touchPointGraphic: SKReferenceNode!
     override var xScale: CGFloat {
         didSet { buttonIcon.xScale = self.xScale }
     }
@@ -40,6 +41,13 @@ class BoostButton: SKSpriteNode {
         buttonIcon.alpha = 1
         buttonIcon.position = self.position
         parent!.addChild(buttonIcon)
+        
+        let path = NSBundle.mainBundle().pathForResource("TouchPoint", ofType: "sks")
+        touchPointGraphic = SKReferenceNode (URL: NSURL (fileURLWithPath: path!))
+        touchPointGraphic.userInteractionEnabled = false
+        touchPointGraphic.zPosition += 0.01
+        buttonIcon.addChild(touchPointGraphic)
+
     }
     
     /* You are required to implement this for your subclass to work */
@@ -49,6 +57,7 @@ class BoostButton: SKSpriteNode {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         onPressed()
+        touchPointGraphic.runAction(SKAction.fadeOutWithDuration(0.3))
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
