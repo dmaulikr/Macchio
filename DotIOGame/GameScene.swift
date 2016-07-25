@@ -16,7 +16,7 @@ enum Color {
     case Red, Green, Blue, Yellow
 }
 func randomColor() -> Color {
-    let allTheColors: [Color] = [.Red, .Green, .Blue, .Yellow]
+    let allTheColors: [Color] = [.Red, .Blue, .Yellow]
     let randIndex = Int(CGFloat.random(min: 0, max: CGFloat(allTheColors.count)))
     return allTheColors[randIndex]
 }
@@ -40,7 +40,7 @@ class GameScene: SKScene {
     
     var previousTime: CFTimeInterval? = nil
     
-    let mapSize: (width: CGFloat, height: CGFloat) = (width: 1000, height: 6000)
+    let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
     var bgGraphics: SKNode!
     
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -435,15 +435,15 @@ class GameScene: SKScene {
                 creature.mineSpawned()
                 let valueForMine: CGFloat
                 if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(Creature.minRadius) {
-                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine)
+                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * Creature.percentGrowAmountToBeDepositedUponDeath
                 } else {
                     valueForMine = 0
                 }
                 let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
                 let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
                 let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
-                let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-//                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 creature.freshlySpawnedMine = freshMine
                 if creature === player {
                     spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))

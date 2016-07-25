@@ -11,4 +11,5 @@ import SpriteKit
 
 class C {
     static let creature_speedDebuffTime: CGFloat = 2
+    static let growPointMultiplier: CGFloat = 0.5
 }

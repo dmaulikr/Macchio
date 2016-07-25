@@ -21,12 +21,13 @@ class Creature: SKSpriteNode, BoundByCircle {
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {
-        return 20 * pow(1/2, (radius - 50) / 100) + 40
+        return 30 * pow(1/2, (radius - 50) / 100) + 60
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2 }
     var minePropulsionSpeed: CGFloat {
-        return radius * 8
+        return radius * 7
     }
+    var speedDebuffSpeed: CGFloat { return normalSpeed * 3 / 4 }
     
     var currentSpeed: CGFloat = 0 {
         didSet { velocity.speed = currentSpeed }
@@ -72,6 +73,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     var mineCoolDownCounter: CGFloat = 4
     let minePropulsionSpeedActiveTime: CGFloat = 0.25
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
+    var onMineImpulseSpeed: Bool = false
     var freshlySpawnedMine: GoopMine? = nil
     
     var speedDebuffTimeCounter: CGFloat = 0
@@ -177,9 +179,11 @@ class Creature: SKSpriteNode, BoundByCircle {
         radius += deltaRadius / 10
         
         // Change the speeds if necessary
-        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime { currentSpeed = minePropulsionSpeed }
-        else if isBoosting { currentSpeed = boostingSpeed }
-        else { currentSpeed = normalSpeed }
+        //if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime { currentSpeed = minePropulsionSpeed }
+        if !onMineImpulseSpeed {
+            if isBoosting { currentSpeed = boostingSpeed }
+            else { currentSpeed = normalSpeed }
+        }
         
         // Mine cooldown
         if mineCoolDownCounter < mineCoolDown {
@@ -187,9 +191,9 @@ class Creature: SKSpriteNode, BoundByCircle {
         }
         
         // Mine propulsion speed counter
-        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime {
-            minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
-        }
+//        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime {
+//            minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
+//        }
         
         // Speed debuff counter
         
@@ -239,7 +243,6 @@ class Creature: SKSpriteNode, BoundByCircle {
             if self.canLeaveMine { self.spawnMineAtMyTail = true }
             // GameScene will see that this has turned true and spawn the mine for us
             // do the things the player does after leaving a mine
-            self.speedDebuffTimeCounter = 0
         })
     }
     var canLeaveMine: Bool {
@@ -251,7 +254,27 @@ class Creature: SKSpriteNode, BoundByCircle {
         //Called by GameScene after a mine has successfully been spawned at the player's tail
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
         mineCoolDownCounter = 0
-        minePropulsionSpeedActiveTimeCounter = 0
+//        minePropulsionSpeedActiveTimeCounter = 0
+        onMineImpulseSpeed = true
+        let impulseSpeedBump = SKAction.sequence([SKAction.runBlock {
+            self.currentSpeed = self.minePropulsionSpeed
+            }, SKAction.waitForDuration(NSTimeInterval(minePropulsionSpeedActiveTime)), SKAction.runBlock{
+            self.currentSpeed = self.normalSpeed
+            }])
+        self.runAction(impulseSpeedBump, completion: {
+            let speedDebuff = SKAction.sequence([SKAction.runBlock {
+                    self.currentSpeed = self.speedDebuffSpeed
+                }, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime)), SKAction.runBlock {
+                    self.currentSpeed = self.normalSpeed
+                    self.onMineImpulseSpeed = false
+                }])
+            self.runAction(speedDebuff)
+            
+//            let lookSick = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 0.3, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
+//            SKAction.colorizeWithColor(UIColor(), colorBlendFactor: <#T##CGFloat#>, duration: <#T##NSTimeInterval#>)
+//            let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime/2)), lookSick.reversedAction()])
+//            self.runAction(speedDebuffVisualIndication)
+        })
     }
 
     

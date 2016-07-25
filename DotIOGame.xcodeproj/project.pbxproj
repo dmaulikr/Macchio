@@ -16,6 +16,7 @@
 		836713211D3972900062D8C0 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713201D3972900062D8C0 /* MainScene.swift */; };
 		836713231D3984410062D8C0 /* Creature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713221D3984410062D8C0 /* Creature.swift */; };
 		836713251D3AC7A10062D8C0 /* AICreature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713241D3AC7A10062D8C0 /* AICreature.swift */; };
+		839388811D4670BE002AD481 /* TouchPoint.sks in Resources */ = {isa = PBXBuildFile; fileRef = 839388801D4670BE002AD481 /* TouchPoint.sks */; };
 		83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */; };
 		83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 83957B911D32FDDE00BF4450 /* GameScene.sks */; };
 		83957B941D32FDDE00BF4450 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B931D32FDDE00BF4450 /* GameScene.swift */; };
@@ -51,6 +52,7 @@
 		836713201D3972900062D8C0 /* MainScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
 		836713221D3984410062D8C0 /* Creature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Creature.swift; sourceTree = "<group>"; };
 		836713241D3AC7A10062D8C0 /* AICreature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreature.swift; sourceTree = "<group>"; };
+		839388801D4670BE002AD481 /* TouchPoint.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TouchPoint.sks; sourceTree = "<group>"; };
 		83957B8C1D32FDDE00BF4450 /* DotIOGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotIOGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83957B911D32FDDE00BF4450 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				8367131E1D39700E0062D8C0 /* MainScene.sks */,
 				836713201D3972900062D8C0 /* MainScene.swift */,
 				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
+				839388801D4670BE002AD481 /* TouchPoint.sks */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 			files = (
 				83957B921D32FDDE00BF4450 /* GameScene.sks in Resources */,
 				83957B9E1D32FDDE00BF4450 /* LaunchScreen.storyboard in Resources */,
+				839388811D4670BE002AD481 /* TouchPoint.sks in Resources */,
 				83957B9B1D32FDDE00BF4450 /* Assets.xcassets in Resources */,
 				8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */,
 				83957B991D32FDDE00BF4450 /* Main.storyboard in Resources */,
