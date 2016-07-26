@@ -120,6 +120,7 @@ class Creature: SKSpriteNode, BoundByCircle {
             targetRadius = startRadius
             radius = startRadius
         }
+        self.name = name
         
     }
     

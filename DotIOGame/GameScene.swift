@@ -340,7 +340,7 @@ class GameScene: SKScene {
             c.targetArea += orb.growAmount
             if c === player {
                 spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
-                print("flying number spawned")
+                //print("flying number spawned")
                 score += convertAreaToScore(orb.growAmount)
             }
             for beacon in orbBeacons {
@@ -443,10 +443,12 @@ class GameScene: SKScene {
                     valueForMine = 0
                 }
                 let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
-                let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
-                let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
+                //let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
+                //let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                freshMine.name = "\(creature.name!) shuriken"
+                
                 creature.freshlySpawnedMines.append(freshMine)
                 for otherCreature in allCreatures {
                     if otherCreature === creature { continue }
@@ -459,13 +461,35 @@ class GameScene: SKScene {
                 }
             }
             
+        }
+        
+        
+        for creature in allCreatures {
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
+            var mineRemoveList:[GoopMine] = []
             for freshMine in creature.freshlySpawnedMines {
                 if !freshMine.overlappingCircle(creature) {
-                    freshMine.zPosition = 90
+                    //freshMine.zPosition = 90
+                    mineRemoveList.append(freshMine)
+                    print("freshly spawned mine removed: \(freshMine.name)")
                 }
             }
-            creature.freshlySpawnedMines = creature.freshlySpawnedMines.filter { $0.zPosition != 90 }
+         
+            creature.freshlySpawnedMines = creature.freshlySpawnedMines.filter { !mineRemoveList.contains($0) }
+        }
+        
+        
+        for mine in (goopMines.filter { $0.zPosition != 90 }) {
+            var isFreshToSomebody = false
+            for creature in (allCreatures.filter { $0.freshlySpawnedMines.count > 0 }) {
+                if creature.freshlySpawnedMines.contains(mine) {
+                    isFreshToSomebody = true
+                    break
+                }
+            }
+            if !isFreshToSomebody {
+                mine.zPosition = 90
+            }
         }
     }
     
@@ -590,6 +614,7 @@ class GameScene: SKScene {
                             newWarningSign.position.x.clamp(-size.width / 2 + newWarningSign.size.width/2, size.width / 2 - newWarningSign.size.width/2)
                             newWarningSign.position.y.clamp(-size.height / 2 + newWarningSign.size.height/2, size.height / 2 - newWarningSign.size.height/2)
 
+                            newWarningSign.zPosition = -6
                             warningSigns.append(newWarningSign)
                             camera!.addChild(newWarningSign)
                         }
