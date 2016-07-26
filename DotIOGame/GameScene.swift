@@ -309,14 +309,14 @@ class GameScene: SKScene {
             //var orbChunksToTest: [[EnergyOrb]] = [[]]
             for point in c.nineNotablePoints {
                 // The nine notable points are the center and eight points on the outside
-                if var location = convertWorldPointToOrbChunkLocation(point) {
+                if let location = convertWorldPointToOrbChunkLocation(point) {
                     let locationAsCGPoint = CGPoint(x: CGFloat(location.x), y: CGFloat(location.y))
                     if !(locationsThatWillBeTested.contains(locationAsCGPoint)) {
                         locationsThatWillBeTested.append(locationAsCGPoint)
                         //orbChunksToTest.append( orbChunks[location.x][location.y] )
                         // Test the chunk right now
-                        if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
-                        if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
+//                        if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
+//                        if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
                         let testingChunk = orbChunks[location.x][location.y]
                         let newChunkWithoutTheRemovedOrbs = handleOrbChunkCollision(testingChunk, withCreature: c)
                         orbChunks[location.x][location.y] = newChunkWithoutTheRemovedOrbs
@@ -347,7 +347,7 @@ class GameScene: SKScene {
             c.targetArea += orb.growAmount
             if c === player {
                 spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
-                print("flying number spawned")
+//                print("flying number spawned")
                 score += convertAreaToScore(orb.growAmount)
             }
             for beacon in orbBeacons {
@@ -363,7 +363,7 @@ class GameScene: SKScene {
         var creatureKillList: [Creature] = []
         for creature in allCreatures {
             for mine in goopMines {
-                if mine.overlappingCircle(creature) && mine !== creature.freshlySpawnedMine {
+                if mine.overlappingCircle(creature) && !creature.freshlySpawnedMines.contains(mine) {
                     // creature just died
                     creatureKillList.append(creature)
                 }
@@ -454,19 +454,25 @@ class GameScene: SKScene {
                 let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                creature.freshlySpawnedMine = freshMine
+                creature.freshlySpawnedMines.append(freshMine)
+                for otherCreature in allCreatures {
+                    if otherCreature === creature { continue }
+                    if freshMine.overlappingCircle(otherCreature) {
+                        otherCreature.freshlySpawnedMines.append(freshMine)
+                    }
+                }
                 if creature === player {
                     //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
                 }
             }
             
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
-            if let freshMine = creature.freshlySpawnedMine {
+            for freshMine in creature.freshlySpawnedMines {
                 if !freshMine.overlappingCircle(creature) {
-                    creature.freshlySpawnedMine?.zPosition = 99
-                    creature.freshlySpawnedMine = nil
+                    freshMine.zPosition = 90
                 }
             }
+            creature.freshlySpawnedMines = creature.freshlySpawnedMines.filter { $0.zPosition != 90 }
         }
     }
     
@@ -516,8 +522,14 @@ class GameScene: SKScene {
                 }
                 
                 // Change mine buttons image to can leave or can't
-                if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
-                else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
+                //if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
+                //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
+                leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / player.mineCoolDown
+                leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / player.mineCoolDown
+                print(leaveMineButton.greenPart.xScale)
+
+                
+                
                 
                 // Make sure the boost button is greyed if the player can't boost
                 if !player.canBoost {
@@ -599,15 +611,15 @@ class GameScene: SKScene {
     
     
     func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color) -> EnergyOrb? {
-        if var location = convertWorldPointToOrbChunkLocation(position) {
+        if let location = convertWorldPointToOrbChunkLocation(position) {
             let newOrb = EnergyOrb(orbColor: inColor)
             newOrb.position = position
             newOrb.growAmount = growAmount
             newOrb.minRadius = minRadius
             newOrb.maxRadius = maxRadius
             newOrb.artificiallySpawned = artificiallySpawned
-            if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
-            if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
+//            if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
+//            if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
             orbChunks[location.x][location.y].append(newOrb)
             addChild(newOrb)
             return newOrb
@@ -708,7 +720,7 @@ class GameScene: SKScene {
     
     func spawnAICreature() {
         //print("new AI creature spawned")
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.02, max: 0.3))
+        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)

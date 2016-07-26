@@ -74,7 +74,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     let minePropulsionSpeedActiveTime: CGFloat = 0.25
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     var onMineImpulseSpeed: Bool = false
-    var freshlySpawnedMine: GoopMine? = nil
+    var freshlySpawnedMines: [GoopMine] = []
     
     var speedDebuffTimeCounter: CGFloat = 0
     
