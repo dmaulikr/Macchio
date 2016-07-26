@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		833102691D46A27200B8844A /* WarningSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102681D46A27200B8844A /* WarningSign.swift */; };
+		8331028D1D48072C00B8844A /* WorldControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8331028C1D48072C00B8844A /* WorldControlPanel.swift */; };
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
@@ -46,6 +47,7 @@
 /* Begin PBXFileReference section */
 		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		833102681D46A27200B8844A /* WarningSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarningSign.swift; sourceTree = "<group>"; };
+		8331028C1D48072C00B8844A /* WorldControlPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorldControlPanel.swift; sourceTree = "<group>"; };
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
 				839388801D4670BE002AD481 /* TouchPoint.sks */,
 				833102681D46A27200B8844A /* WarningSign.swift */,
+				8331028C1D48072C00B8844A /* WorldControlPanel.swift */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				83957B961D32FDDE00BF4450 /* GameViewController.swift in Sources */,
 				836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */,
 				8367131D1D3856AA0062D8C0 /* MineButton.swift in Sources */,
+				8331028D1D48072C00B8844A /* WorldControlPanel.swift in Sources */,
 				83957BC11D33FBEC00BF4450 /* SKTAudio.swift in Sources */,
 				83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */,
 				83957BC01D33FBEC00BF4450 /* SKNode+Extensions.swift in Sources */,

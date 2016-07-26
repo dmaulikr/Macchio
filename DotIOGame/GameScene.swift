@@ -77,8 +77,9 @@ class GameScene: SKScene {
     var boostButton: BoostButton!
     var leaveMineButton: MineButton!
     
+    let worldControlPanel = WorldControlPanel()
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
-    var orbBeacons: [OrbBeacon] = []
+    var orbBeacons: [WorldControlPanel.OrbBeacon] = []
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
         var x = Int(point.x / orbChunkWidth); var y = Int(point.y / orbChunkHeight)
@@ -371,7 +372,7 @@ class GameScene: SKScene {
             } else {
                 x.removeFromParent()
             }
-            seedAutoOrbClusterWithBudget(x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
+            worldControlPanel.seedAutoOrbClusterWithBudget(self, growAmount: x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
         }
 
     }
@@ -426,7 +427,7 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
+            worldControlPanel.seedAutoOrbClusterWithBudget(self, growAmount: mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
             mine.removeFromParent()
         }
         
@@ -442,11 +443,11 @@ class GameScene: SKScene {
                 } else {
                     valueForMine = 0
                 }
-                let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
+                //let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
                 //let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMine = worldControlPanel.spawnMineAtPosition(self, atPosition: creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 freshMine.name = "\(creature.name!) shuriken"
                 
                 creature.freshlySpawnedMines.append(freshMine)
@@ -471,7 +472,7 @@ class GameScene: SKScene {
                 if !freshMine.overlappingCircle(creature) {
                     //freshMine.zPosition = 90
                     mineRemoveList.append(freshMine)
-                    print("freshly spawned mine removed: \(freshMine.name)")
+                    //print("freshly spawned mine removed: \(freshMine.name)")
                 }
             }
          
@@ -508,7 +509,7 @@ class GameScene: SKScene {
             for _ in 0..<numOfOrbsToSpawnNow {
                 // x times, spawn an orb at a random world positon
                 let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
-                seedSmallOrbAtPosition(newPosition)
+                worldControlPanel.seedSmallOrb(self, position: newPosition)
             }
         }
     }
@@ -516,7 +517,7 @@ class GameScene: SKScene {
     func handleCreatureSpawning() {
         let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
         for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
-            spawnAICreature()
+            worldControlPanel.spawnAICreature(self)
         }
     }
     
@@ -626,124 +627,6 @@ class GameScene: SKScene {
     }
     
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color) -> EnergyOrb? {
-        if let location = convertWorldPointToOrbChunkLocation(position) {
-            let newOrb = EnergyOrb(orbColor: inColor)
-            newOrb.position = position
-            newOrb.growAmount = growAmount
-            newOrb.minRadius = minRadius
-            newOrb.maxRadius = maxRadius
-            newOrb.artificiallySpawned = artificiallySpawned
-//            if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
-//            if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
-            orbChunks[location.x][location.y].append(newOrb)
-            addChild(newOrb)
-            return newOrb
-        }
-        return nil
-    }
-    
-    let smallOrbGrowAmount: CGFloat = 800
-    let richOrbGrowAmount: CGFloat = 2500
-    func seedSmallOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
-        let orbColor: Color
-        if let _ = inColor { orbColor = inColor! }
-        else { orbColor = randomColor() }
-        return seedOrbAtPosition(position, growAmount: smallOrbGrowAmount, minRadius: 10, maxRadius: 14, artificiallySpawned: artificiallySpawned, inColor: orbColor)
-    }
-    
-    func seedRichOrbAtPosition(position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
-        let orbColor: Color
-        if let _ = inColor { orbColor = inColor! }
-        else { orbColor = randomColor() }
-        return seedOrbAtPosition(position, growAmount: richOrbGrowAmount, minRadius: 16, maxRadius: 20, artificiallySpawned: artificiallySpawned, inColor: orbColor)
-    }
-    
-    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
-        //Budget is the growAmount quantity that once existed in the entity that spawned the orbs. Mostly, this will be from dead players or old mines.
-        var budget = growAmount
-        while budget > 0 {
-            let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-            let randDist = CGFloat.random(min: 0, max: radius)
-            let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            let newOrbColor: Color
-            if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
-            else { newOrbColor = randomColor() }
-            if let newOrb = seedSmallOrbAtPosition(position, artificiallySpawned: true, inColor: newOrbColor) {
-                budget -= newOrb.growAmount
-            }
-        }
-        
-    }
-    
-    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
-        var budget = growAmount
-        while budget > 0 {
-            let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-            let randDist = CGFloat.random(min: 0, max: radius)
-            let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
-            let newOrbColor: Color
-            if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
-            else { newOrbColor = randomColor() }
-            if let newOrb = seedRichOrbAtPosition(position, artificiallySpawned: true, inColor: newOrbColor) {
-                budget -= newOrb.growAmount
-            }
-        }
-        
-    }
-    
-    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
-        let maxNumberOfSmallOrbs = 30
-        let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * smallOrbGrowAmount
-        let orbColor: Color?
-        if let exclusivelyInColor = exclusivelyInColor {
-            orbColor = exclusivelyInColor
-        } else {
-            orbColor = nil
-        }
-        if growAmount < costToMaxOutSmallOrbs {
-            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
-        } else {
-            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
-            let richOrbBudget = growAmount - costToMaxOutSmallOrbs
-            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
-        }
-        
-        orbBeacons.append(OrbBeacon(totalValue: growAmount, radius: radius, position: aboutPoint))
-    }
-    
-    class OrbBeacon: BoundByCircle {
-        var totalValue: CGFloat
-        var radius: CGFloat
-        var position: CGPoint
-        init(totalValue: CGFloat, radius: CGFloat, position: CGPoint) {
-            self.totalValue = totalValue
-            self.radius = radius
-            self.position = position
-        }
-    }
-    
-    
-    func spawnMineAtPosition(atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
-        let mine = GoopMine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
-        mine.position = atPosition
-        mine.zPosition = 1
-        addChild(mine)
-        goopMines.append(mine)
-        return mine
-    }
-    
-    
-    func spawnAICreature() {
-        //print("new AI creature spawned")
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.2, max: 0.4))
-        newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
-        //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
-        otherCreatures.append(newCreature)
-        addChild(newCreature)
-        newCreature.runAction(SKAction.fadeInWithDuration(0.5))
-    }
-    
     func spawnFlyingNumberOnPlayerMouth(points: Int) {
         if points == 0 { return }
         if let player = player {
@@ -811,10 +694,6 @@ func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
 }
 
 
-//func growAmountToPoints(growAmount: CGFloat) -> Int {
-//    return Int(growAmount / 100)
-//}
-
 func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
     return CGFloat(pi) * r * r
 }
@@ -826,9 +705,6 @@ func radiusOfCircleWithArea(a: CGFloat) -> CGFloat {
     return CGFloat(sqrt( a / CGFloat(pi) ))
 }
 
-//func fastRandom(min: CGFloat, max: CGFloat) -> {
-//    rand()
-//}
 
 func contains(a:[(x: Int, y: Int)], v:(x: Int, y: Int)) -> Bool {
     let (c1, c2) = v

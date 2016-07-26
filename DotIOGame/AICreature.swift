@@ -245,8 +245,8 @@ class AICreature: Creature {
         
     }
     
-    var closestOrbBeacon: GameScene.OrbBeacon? {
-        var nearbyBeacon: GameScene.OrbBeacon?
+    var closestOrbBeacon: WorldControlPanel.OrbBeacon? {
+        var nearbyBeacon: WorldControlPanel.OrbBeacon?
         for b in gameScene.orbBeacons {
             if let _ = nearbyBeacon {
                 if b.position.distanceTo(self.position) < nearbyBeacon!.position.distanceTo(self.position) {

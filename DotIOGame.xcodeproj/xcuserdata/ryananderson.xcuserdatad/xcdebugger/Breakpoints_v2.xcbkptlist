@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/GameScene.swift"
-            timestampString = "491253600.359553"
+            timestampString = "491261134.245488"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "264"
-            endingLineNumber = "264"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "update(_:)"
             landmarkType = "5">
          </BreakpointContent>
