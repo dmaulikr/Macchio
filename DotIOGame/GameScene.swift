@@ -77,9 +77,8 @@ class GameScene: SKScene {
     var boostButton: BoostButton!
     var leaveMineButton: MineButton!
     
-    let worldControlPanel = WorldControlPanel()
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
-    var orbBeacons: [WorldControlPanel.OrbBeacon] = []
+    var orbBeacons: [OrbBeacon] = []
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
         var x = Int(point.x / orbChunkWidth); var y = Int(point.y / orbChunkHeight)
@@ -372,7 +371,7 @@ class GameScene: SKScene {
             } else {
                 x.removeFromParent()
             }
-            worldControlPanel.seedAutoOrbClusterWithBudget(self, growAmount: x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
+            seedAutoOrbClusterWithBudget(x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
         }
 
     }
@@ -404,7 +403,14 @@ class GameScene: SKScene {
                         let displaceDistance = theBigger.radius - theBigger.position.distanceTo(theSmaller.position) + theSmaller.radius
                         // For now just displace theSmaller by the distance value and at the apppropriate angle
                         let displaceAngle = (theSmaller.position - theBigger.position).angle
-                        theSmaller.position += CGPoint(x: cos(displaceAngle) * displaceDistance, y: sin(displaceAngle) * displaceDistance)
+                        let totalMassInvolved = theBigger.targetArea + theSmaller.targetArea
+                        let theSmallerFraction = theSmaller.targetArea / totalMassInvolved
+                        let theBiggerFraction = theBigger.targetArea / totalMassInvolved
+                        
+                        theSmaller.position.x += cos(displaceAngle) * (displaceDistance * theSmallerFraction)
+                        theSmaller.position.y += sin(displaceAngle) * (displaceDistance * theSmallerFraction)
+                        theBigger.position.x -= cos(displaceAngle) * (displaceDistance * theBiggerFraction)
+                        theBigger.position.y -= sin(displaceAngle) * (displaceDistance * theBiggerFraction)
                     }
                     
                 }
@@ -427,7 +433,7 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            worldControlPanel.seedAutoOrbClusterWithBudget(self, growAmount: mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
+            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
             mine.removeFromParent()
         }
         
@@ -447,7 +453,7 @@ class GameScene: SKScene {
                 //let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                let freshMine = worldControlPanel.spawnMineAtPosition(self, atPosition: creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMine = spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 freshMine.name = "\(creature.name!) shuriken"
                 
                 creature.freshlySpawnedMines.append(freshMine)
@@ -509,7 +515,7 @@ class GameScene: SKScene {
             for _ in 0..<numOfOrbsToSpawnNow {
                 // x times, spawn an orb at a random world positon
                 let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
-                worldControlPanel.seedSmallOrb(self, position: newPosition)
+                seedOrbWithSpecifiedType(.Small, atPosition: newPosition)
             }
         }
     }
@@ -517,7 +523,7 @@ class GameScene: SKScene {
     func handleCreatureSpawning() {
         let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
         for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
-            worldControlPanel.spawnAICreature(self)
+            spawnAICreature()
         }
     }
     
@@ -626,11 +632,11 @@ class GameScene: SKScene {
         }
     }
     
-    
+    let masterNode = SKLabelNode(fontNamed: "Chalkboard SE Regular 32.0")
     func spawnFlyingNumberOnPlayerMouth(points: Int) {
         if points == 0 { return }
         if let player = player {
-            let labelNode = SKLabelNode(fontNamed: "Chalkboard SE Regular 32.0")
+            let labelNode = masterNode.copy() as! SKLabelNode
             var text: String = String(points)
             if points > 0 { text = "+\(text)" }
             labelNode.text = text

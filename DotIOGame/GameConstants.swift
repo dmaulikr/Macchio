@@ -13,4 +13,8 @@ class C {
     static let creature_speedDebuffTime: CGFloat = 2
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     static let percentLargerACreatureMustBeToEngulfAnother: CGFloat = 1.11
+    static let orbGrowAmount: [GameScene.OrbType: CGFloat] = [
+        .Small : 800,
+        .Rich : 2500
+    ]
 }
