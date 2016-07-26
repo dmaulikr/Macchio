@@ -112,7 +112,6 @@ class GameScene: SKScene {
             bgGraphics.yScale = mapSize.height / 6000
             
             scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
-            scoreLabel.horizontalAlignmentMode = .Left
             sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
             
             directionArrow = SKSpriteNode(imageNamed: "arrow.png")
@@ -315,8 +314,6 @@ class GameScene: SKScene {
                         locationsThatWillBeTested.append(locationAsCGPoint)
                         //orbChunksToTest.append( orbChunks[location.x][location.y] )
                         // Test the chunk right now
-//                        if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
-//                        if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
                         let testingChunk = orbChunks[location.x][location.y]
                         let newChunkWithoutTheRemovedOrbs = handleOrbChunkCollision(testingChunk, withCreature: c)
                         orbChunks[location.x][location.y] = newChunkWithoutTheRemovedOrbs
@@ -332,22 +329,18 @@ class GameScene: SKScene {
     }
     
     func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
+        // handles the collisons between a given creature and all the orbs in the given chunk
         // returns a new list of orbs for the chunk without the removed ones.
-        var orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) && !$0.isEaten }
-        for orb in orbChunk {
-            if orb.overlappingCircle(c) {
-                orbKillList.append(orb)
-            }
-        }
+        let orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) }
+        
         for orb in orbKillList {
-            let fadeAction = SKAction.fadeOutWithDuration(0.4)
+            let fadeAction = SKAction.fadeOutWithDuration(1)
             let remove = SKAction.runBlock { self.removeFromParent() }
             orb.runAction(SKAction.sequence([fadeAction, remove]))
-            orb.isEaten = true
             c.targetArea += orb.growAmount
             if c === player {
                 spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
-//                print("flying number spawned")
+                print("flying number spawned")
                 score += convertAreaToScore(orb.growAmount)
             }
             for beacon in orbBeacons {
@@ -526,8 +519,6 @@ class GameScene: SKScene {
                 //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
                 leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / player.mineCoolDown
                 leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / player.mineCoolDown
-                print(leaveMineButton.greenPart.xScale)
-
                 
                 
                 
