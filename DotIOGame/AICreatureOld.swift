@@ -36,7 +36,7 @@ class AICreatureOld: Creature {
     //var actionQueue: [ActionIdentifier] = []
     var nextTurnAction: SetTargetAngleActionIdentifier? = nil // used exclusively for turn actions
     var buttonActionQueue: [ActionIdentifier] = [] // used exclusively for button related actions (start boost, stop boost, leave mine )
-    var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
+    var mineTravelDistance: CGFloat { return minePropulsionSpeed * C.creature_minePropulsionSpeedActiveTime }
     
     static let sniffRange: CGFloat = 300
     static let dangerRange: CGFloat = 400

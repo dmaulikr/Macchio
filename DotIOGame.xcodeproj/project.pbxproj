@@ -12,6 +12,8 @@
 		8331028F1D4819F200B8844A /* GameSceneExtensionSpawning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */; };
 		833102911D48238100B8844A /* AIActionComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102901D48238100B8844A /* AIActionComputer.swift */; };
 		833102931D495B9700B8844A /* AICreatureOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102921D495B9700B8844A /* AICreatureOld.swift */; };
+		833102951D4966B300B8844A /* KillPoints.sks in Resources */ = {isa = PBXBuildFile; fileRef = 833102941D4966B300B8844A /* KillPoints.sks */; };
+		833102971D4967B300B8844A /* GrowPointsSmall.sks in Resources */ = {isa = PBXBuildFile; fileRef = 833102961D4967B300B8844A /* GrowPointsSmall.sks */; };
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
@@ -52,6 +54,8 @@
 		8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSceneExtensionSpawning.swift; sourceTree = "<group>"; };
 		833102901D48238100B8844A /* AIActionComputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputer.swift; sourceTree = "<group>"; };
 		833102921D495B9700B8844A /* AICreatureOld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreatureOld.swift; sourceTree = "<group>"; };
+		833102941D4966B300B8844A /* KillPoints.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = KillPoints.sks; sourceTree = "<group>"; };
+		833102961D4967B300B8844A /* GrowPointsSmall.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GrowPointsSmall.sks; sourceTree = "<group>"; };
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
@@ -144,6 +148,8 @@
 				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
 				839388801D4670BE002AD481 /* TouchPoint.sks */,
 				833102681D46A27200B8844A /* WarningSign.swift */,
+				833102941D4966B300B8844A /* KillPoints.sks */,
+				833102961D4967B300B8844A /* GrowPointsSmall.sks */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -242,6 +248,8 @@
 				83957B9B1D32FDDE00BF4450 /* Assets.xcassets in Resources */,
 				8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */,
 				83957B991D32FDDE00BF4450 /* Main.storyboard in Resources */,
+				833102951D4966B300B8844A /* KillPoints.sks in Resources */,
+				833102971D4967B300B8844A /* GrowPointsSmall.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

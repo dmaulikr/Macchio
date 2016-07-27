@@ -97,7 +97,7 @@ class AICreature: Creature {
         var isBoosting: Bool = self.isBoosting
         var canLeaveMine: Bool = self.canLeaveMine
         var onMineImpulseSpeed: Bool = self.onMineImpulseSpeed
-        var speedDebuffCounter: CGFloat = self.speedDebuffTimeCounter
+        var hasSpeedDebuff: Bool = self.hasSpeedDebuff
         
         if pendingActions.count > 0 {
             // Get a list of the pending actions in the order they will happen
