@@ -278,6 +278,7 @@ class GameScene: SKScene {
         for mine in goopMines {
             mine.update(deltaTime)
         }
+        for warningSign in warningSigns { warningSign.update(CGFloat(deltaTime)) }
         
         //      ----Handle collisions----
         handleCreatureAndOrbCollisions()
@@ -592,6 +593,9 @@ class GameScene: SKScene {
                         } else {
                             warningSign.hidden = false
                         }
+                        
+                        // Change the flash rate to be the inverse of the distance between the center of the camera and the corresponding creature
+                        warningSign.flashRate = 1000 / camera!.position.distanceTo(correspondingCreature.position)
                         
                     } else {
                         // Despawn warning signs if the corresponding creature is nil
