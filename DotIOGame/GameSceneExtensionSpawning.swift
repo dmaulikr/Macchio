@@ -134,7 +134,7 @@ extension GameScene {
     
     func spawnAICreature() {
         //print("new AI creature spawned")
-        let newCreature = AICreature(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.2, max: 0.4))
+        let newCreature = AICreatureOld(name: "BS Player ID", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: Creature.minRadius, max: 100), gameScene: self, rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)

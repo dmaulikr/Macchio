@@ -47,12 +47,12 @@ class Creature: SKSpriteNode, BoundByCircle {
             }
             
             // Change positionDeltas to match
-            let desiredDx = cos(velocity.angle.degreesToRadians()) * velocity.speed
-            let desiredDy = sin(velocity.angle.degreesToRadians()) * velocity.speed
+            positionDeltas.dx = cos(velocity.angle.degreesToRadians()) * velocity.speed
+            positionDeltas.dy = sin(velocity.angle.degreesToRadians()) * velocity.speed
             
-            // Only set the position deltas if they have not been set yet (avoiding recursion)
-            if positionDeltas.dx != desiredDx {positionDeltas.dx = desiredDx}
-            if positionDeltas.dy != desiredDy {positionDeltas.dy = desiredDy}
+//            // Only set the position deltas if they have not been set yet (avoiding recursion)
+//            if positionDeltas.dx != desiredDx {positionDeltas.dx = desiredDx}
+//            if positionDeltas.dy != desiredDy {positionDeltas.dy = desiredDy}
             
             zRotation = velocity.angle.degreesToRadians()
             
@@ -74,11 +74,12 @@ class Creature: SKSpriteNode, BoundByCircle {
     let minePropulsionSpeedActiveTime: CGFloat = 0.25
     var minePropulsionSpeedActiveTimeCounter: CGFloat = 0.25 // Start the mine counter complete
     var onMineImpulseSpeed: Bool = false
+    var hasSpeedDebuff: Bool = false
     var freshlySpawnedMines: [GoopMine] = []
     
     var speedDebuffTimeCounter: CGFloat = 0
     
-    let playerMaxAngleChangePerSecond: CGFloat = 270
+    
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
     
@@ -162,7 +163,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         // cap the angle change per second
         // find the max angle change for this frame based on deltaTime
         // and ensure delta angle is no greater
-        let maxAngleChangeThisFrame = playerMaxAngleChangePerSecond * CGFloat(deltaTime)
+        let maxAngleChangeThisFrame = C.creature_maxAngleChangePerSecond * CGFloat(deltaTime)
         deltaAngle.clamp(-maxAngleChangeThisFrame, maxAngleChangeThisFrame)
         
         velocity.angle += deltaAngle
@@ -182,7 +183,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         
         // Change the speeds if necessary
         //if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime { currentSpeed = minePropulsionSpeed }
-        if !onMineImpulseSpeed {
+        if !onMineImpulseSpeed && !hasSpeedDebuff {
             if isBoosting { currentSpeed = boostingSpeed }
             else { currentSpeed = normalSpeed }
         }
@@ -191,13 +192,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         if mineCoolDownCounter < mineCoolDown {
             mineCoolDownCounter += CGFloat(deltaTime)
         }
-        
-        // Mine propulsion speed counter
-//        if minePropulsionSpeedActiveTimeCounter < minePropulsionSpeedActiveTime {
-//            minePropulsionSpeedActiveTimeCounter += CGFloat(deltaTime)
-//        }
-        
-        // Speed debuff counter
         
         // Make sure the player can't boost when "they can't boost"
         if isBoosting && !canBoost {
@@ -256,7 +250,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         //Called by GameScene after a mine has successfully been spawned at the player's tail
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
         mineCoolDownCounter = 0
-//        minePropulsionSpeedActiveTimeCounter = 0
         onMineImpulseSpeed = true
         let impulseSpeedBump = SKAction.sequence([SKAction.runBlock {
             self.currentSpeed = self.minePropulsionSpeed
@@ -265,10 +258,12 @@ class Creature: SKSpriteNode, BoundByCircle {
             }])
         self.runAction(impulseSpeedBump, completion: {
             let speedDebuff = SKAction.sequence([SKAction.runBlock {
+                    self.onMineImpulseSpeed = false
+                    self.hasSpeedDebuff = true
                     self.currentSpeed = self.speedDebuffSpeed
                 }, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime)), SKAction.runBlock {
                     self.currentSpeed = self.normalSpeed
-                    self.onMineImpulseSpeed = false
+                    self.hasSpeedDebuff = false
                 }])
             self.runAction(speedDebuff)
             

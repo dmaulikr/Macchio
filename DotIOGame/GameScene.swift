@@ -99,7 +99,7 @@ class GameScene: SKScene {
     var warningSigns: [WarningSign] = []
     
     override func didMoveToView(view: SKView) {
-//        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
+//        player = AICreatureOld(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: randomColor(), startRadius: 80)
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)

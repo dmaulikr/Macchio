@@ -8,437 +8,216 @@
 
 import Foundation
 import SpriteKit
+import Darwin
 
 class AICreature: Creature {
-    
-    var gameScene: GameScene!
-    enum CreatureState {
-        case EatOrbs
-        case ChasingSmallerCreature
-        case RunningAway
-        case WaitingOnMine
-        case GoingToCluster
-    }
-    var state: CreatureState = .EatOrbs {
-        willSet {
-            //RESET STATE PROPERTIES
-            switch state {
-            case .WaitingOnMine:
-                waitingOnMineStateProperties.mine = nil
-                waitingOnMineStateProperties.stayAtPoint = nil
-            default:
-                break
-            }
-        }
-    }
-    var rxnTimer: CGFloat = 0
-    var rxnTime: CGFloat = 0
-    //var actionQueue: [ActionIdentifier] = []
-    var nextTurnAction: SetTargetAngleActionIdentifier? = nil // used exclusively for turn actions
-    var buttonActionQueue: [ActionIdentifier] = [] // used exclusively for button related actions (start boost, stop boost, leave mine )
-    var mineTravelDistance: CGFloat { return minePropulsionSpeed * minePropulsionSpeedActiveTime }
-    
-    static let sniffRange: CGFloat = 300
-    static let dangerRange: CGFloat = 400
-    static let leaveMineRange: CGFloat = 300
-    static let waitingOnMineRange: CGFloat = 400
-    static let scanDistance: CGFloat = 300
-    static let goToBeaconRange: CGFloat = 600
-    
-    var biggerCreaturesNearMe: [Creature] {
-        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < AICreature.dangerRange && $0.radius > self.radius * 1.11 }
-    }
-    
-    var smallerCreaturesNearMe: [Creature] {
-        return gameScene.allCreatures.filter { $0 !== self && $0.position.distanceTo(self.position) - $0.radius < AICreature.sniffRange && $0.radius * 1.11 < self.radius }
-    }
-    
-    var myChunk: [EnergyOrb] {
-        if let myChunkLocation = gameScene.convertWorldPointToOrbChunkLocation(self.position) {
-            let myChunk = gameScene.orbChunks[myChunkLocation.x][myChunkLocation.y]
-            return myChunk
-        }
-        return []
-    }
-    
-//    class CollisionProbe: BoundByCircle {
-//        weak var aicreature: AICreature?
-//        var radius: CGFloat {
-//            return aicreature?.radius ?? 0
-//        }
-//        var position: CGPoint {
-//            return aicreature?.probeWorldPositionBasedOnAICreature ?? CGPoint(x: 0, y: 0)
-//        }
-//        func setUpProbe(aiCreature: AICreature) {
-//            self.aicreature = aiCreature
-//        }
-//    }
-//    var collisionProbe: CollisionProbe
-//    var minesDetectedByProbe: [GoopMine] {
-//        print("mines detected by probe called")
-//        var mines: [GoopMine] = []
-//        for mine in gameScene.goopMines {
-//            if mine.overlappingCircle(collisionProbe) { mines.append(mine) }
-//        }
-//        return mines
-//    }
-//    var probeDetectingWall: Bool {
-////        return collisionProbe.position.x + collisionProbe.radius >= gameScene.mapSize.width ||
-////               collisionProbe.position.x - collisionProbe.radius <= 0 ||
-////               collisionProbe.position.y + collisionProbe.radius >= gameScene.mapSize.height ||
-////               collisionProbe.position.y - collisionProbe.radius <= 0
-//        return false
-//    }
-//    var probeWorldPositionBasedOnAICreature: CGPoint {
-//        let probeX = self.position.x  + cos(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
-//        let probeY = self.position.y + sin(targetAngle.degreesToRadians()) * (AICreature.probeDistance + 2 * radius)
-//        return CGPoint(x: probeX, y: probeY)
-//    }
-    
-    var minesDetectedByScanner: [GoopMine] {
-        return getMinesDetectedByScanner(withAngle: self.targetAngle)
-    }
-    
-    func getMinesDetectedByScanner(withAngle scannerAngle: CGFloat, scannerRange: CGFloat = AICreature.scanDistance) -> [GoopMine]{
-        var minesDetected = [GoopMine]()
-        for mine in gameScene.goopMines {
-            if fabs(scannerAngle - angleToNode(mine)) < 45 {
-                minesDetected.append(mine)
-            }
-        }
-        return minesDetected
-    }
-    
-    enum Direction {
-        case Left, Right, Top, Bottom
-    }
-    var wallsDetectedByScanner: [Direction] {
-        return getWallsDetectedByScanner(withAngle: self.targetAngle)
-    }
-    
-    func getWallsDetectedByScanner(withAngle scannerAngle: CGFloat, scannerRange: CGFloat = AICreature.scanDistance) -> [Direction] {
-        var wallsDetected = [Direction]()
-        let testAtX = position.x + cos(scannerAngle.degreesToRadians()) * scannerRange
-        let testAtY = position.y + sin(scannerAngle.degreesToRadians()) * scannerRange
-        if testAtX <  0 { wallsDetected.append(.Left) }
-        if testAtX > gameScene.mapSize.width { wallsDetected.append(.Right) }
-        if testAtY < 0 { wallsDetected.append(.Bottom) }
-        if testAtY > gameScene.mapSize.height { wallsDetected.append(.Top) }
-        return wallsDetected
 
-    }
+    // The AI creature is the dumb driver of the ai operation. The action computer is the genius that yells at it to do stuff
+    // The AICreature will listen. Somewhat. By adding actions to its pending actions list.
+    // The game scene + self + pending actions is a representation of AICreature's DESIRED state. Its other properties and the properties of gameScene represent
+    // the CURRENT state. It is the job of the action computer to change the desired state.
+    var rxnTime: CGFloat = 0
+    var pendingActions: [Action] = []
+    var actionComputer: AIActionComputer?
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene, rxnTime: CGFloat) {
-        // The entire game scene is passed in to make the ai creature omniscent.
-        // Omniscence is ok for what I'm doing.
-        self.gameScene = gameScene
         self.rxnTime = rxnTime
-//        collisionProbe = CollisionProbe()
         super.init(name: name, playerID: playerID, color: color, startRadius: startRadius)
-//        collisionProbe.setUpProbe(self)
-
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-//        collisionProbe = CollisionProbe()
-        super.init(coder: aDecoder)
-//        collisionProbe.setUpProbe(self)
+        self.actionComputer = AIActionComputer(gameScene: gameScene, controlCreature: self)
     }
     
     override func thinkAndAct(deltaTime: CGFloat) {
-//        print ("think and act called")
-        switch state {
-        case .EatOrbs:
-            computeNextEatOrbsAction()
-        case .RunningAway:
-            computeNextRunningAwayAction()
-        case .ChasingSmallerCreature:
-            computeNextChasingSmallerCreatureAction()
-        case .WaitingOnMine:
-            computeNextWaitForMineAction()
-        case .GoingToCluster:
-            computeNextGoingToClusterAction()
+        if let actionComputer = actionComputer {
+            actionComputer.requestActions()
         }
         
-        rxnTimer += deltaTime
-        if rxnTimer >= rxnTime {
-            if let nextButtonAction = buttonActionQueue.first {
-                buttonActionQueue.removeFirst()
-                if nextButtonAction.type == .StartBoost {
-                    startBoost()
-                } else if nextButtonAction.type == .StopBoost {
-                    stopBoost()
-                } else if nextButtonAction.type == .LeaveMine {
-                    leaveMine()
-                }
-            }
-            
-            if let turnAction = nextTurnAction {
-                self.nextTurnAction = nil
-                targetAngle = turnAction.toAngle
-//                print("read turn action and executed a turn")
-            }
-                
-                
-            rxnTimer = 0
+        for action in pendingActions {
+            action.effectiveTimer += deltaTime
         }
-    }
-    
-    func computeNextEatOrbsAction() {
-//        print("ai computing next eat orbs action")
-        if isBoosting { resolveStopBoost() }
-        
-        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0{
-            evadeMinesAndWall()
-        } else if biggerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.RunningAway)
-        } else if let _ = closestOrbBeacon {
-            resolveChangeStateTo(.GoingToCluster)
-        } else if smallerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.ChasingSmallerCreature)
-        } else if let closestMine = findClosestNodeToMeInList(gameScene.goopMines) {
-            if minesDetectedByScanner.contains(closestMine as! GoopMine) && closestMine.position.distanceTo(self.position) < AICreature.waitingOnMineRange {
-                state = .WaitingOnMine
-                waitingOnMineStateProperties.mine = closestMine as! GoopMine
-            }
-        } else {
-            if let closeOrb = findClosestNodeToMeInList(myChunk) {
-//                print("resolving to change angle to nearest orb")
-                resolveSetTargetAngleTo(angleToNode(closeOrb))
-            }
+        let effectiveActions = pendingActions.filter { $0.effectiveTimer >= rxnTime }
+        for action in effectiveActions {
+            self.executeAction(action)
         }
-    }
-    
-    func computeNextChasingSmallerCreatureAction() {
-        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
-            evadeMinesAndWall()
-        } else if biggerCreaturesNearMe.count > 0 {
-            //if !isBoosting && canBoost { resolveStartBoost() }
-            resolveChangeStateTo(.RunningAway)
-        } else if closestOrbBeacon != nil {
-            resolveChangeStateTo(.GoingToCluster)
-        } else if let closestFoodCreature = findClosestNodeToMeInList(smallerCreaturesNearMe) {
-            if !isBoosting && canBoost { resolveStartBoost() }
-            else if isBoosting && canLeaveMine && position.distanceTo(closestFoodCreature.position) < mineTravelDistance {
-                resolveLeaveMine()
-            }
-            resolveSetTargetAngleTo(angleToNode(closestFoodCreature))
-        } else {
-            resolveChangeStateTo(.EatOrbs)
-        }
-    }
-    
-    func computeNextRunningAwayAction() {
-        if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
-            evadeMinesAndWall()
-        } else if biggerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.RunningAway)
-        } else if let closestPredator = findClosestNodeToMeInList(biggerCreaturesNearMe) {
-            if !isBoosting && canBoost { resolveStartBoost() }
-            resolveSetTargetAngleTo( 180 + angleToNode(closestPredator) )
-            if position.distanceTo(closestPredator.position) < AICreature.leaveMineRange && canLeaveMine {
-                resolveLeaveMine()
-            }
-        } else {
-            resolveChangeStateTo(.EatOrbs)
+        pendingActions = pendingActions.filter {
+            let pendingAction = $0
+            return !effectiveActions.contains { $0 === pendingAction }
         }
         
     }
     
-    var closestOrbBeacon: GameScene.OrbBeacon? {
-        var nearbyBeacon: GameScene.OrbBeacon?
-        for b in gameScene.orbBeacons {
-            if let _ = nearbyBeacon {
-                if b.position.distanceTo(self.position) < nearbyBeacon!.position.distanceTo(self.position) {
-                    nearbyBeacon = b
-                }
-            } else {
-                nearbyBeacon = b
-            }
-        }
-        return nearbyBeacon
-    }
-    func computeNextGoingToClusterAction() {
-        if biggerCreaturesNearMe.count > 0 {
-            state = .RunningAway
-        } else if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 {
-            evadeMinesAndWall()
-        } else if let nearestBeacon = closestOrbBeacon {
-            resolveSetTargetAngleTo(angleToPoint(nearestBeacon.position))
-            if !isBoosting && canBoost { startBoost() }
-            if self.overlappingCircle(nearestBeacon) { resolveChangeStateTo(.EatOrbs) }
-        } else {
-            if isBoosting { resolveStopBoost() }
-            resolveChangeStateTo(.EatOrbs)
-        }
-    }
-    
-    func evadeMinesAndWall() {
-        // Keep the creature at an angle that will ensure it will not hit a mine or wall
-        // Test by synthesizing a scanner ( all that's needed is an angle variable )
-        var scannerAngle: CGFloat = CGFloat(self.targetAngle)
-        for _ in 0...30 {
-            let detectedMines = getMinesDetectedByScanner(withAngle: scannerAngle)
-            //let closestMine = findClosestNodeToMeInList(detectedMines)
-            let detectedWalls = getWallsDetectedByScanner(withAngle: scannerAngle)
-//            if let closestMine = closestMine {
-//                
-//            } else if detectedWalls.count > 0 {
-//                // There are actually no mines detected because there was no closest
-//                scannerAngle += 10
-//            }
-            if detectedWalls.count == 0 && detectedMines.count == 0 {
-                break
-            } else {
-                scannerAngle += 10
-            }
-            
-        }
-        resolveSetTargetAngleTo(scannerAngle)
-        
-//        while minesDetectedByProbe.count > 0 {
-//            var closest: GoopMine?
-//            for eachMine in minesInProbe {
-//                if let closeOne = closest {
-//                    if collisionProbe.position.distanceTo(eachMine.position) < collisionProbe.position.distanceTo(closeOne.position) {
-//                        closest = eachMine
-//                    }
-//                } else {
-//                    closest = eachMine
-//                }
-//            }
-//            if let closest = closest {
-//                if self.angleToPoint(closest.position) > self.angleToPoint(collisionProbe.position) {
-//                    resolveSetTargetAngleTo(self.targetAngle - 90)
-//                } else {
-//                    resolveSetTargetAngleTo(self.targetAngle + 90)
-//                }
-//            }
-//        }
-        
-    }
-    
-    var waitingOnMineStateProperties: (mine: GoopMine?, stayAtPoint: CGPoint!) = (
-        mine: nil,
-        stayAtPoint: nil
-    )
-    func computeNextWaitForMineAction() {
-        if waitingOnMineStateProperties.mine == nil {
-            let closest: GoopMine? = findClosestNodeToMeInList(gameScene.goopMines) as? GoopMine
-            if let closest = closest {
-                waitingOnMineStateProperties.mine = closest
-            }
-        }
-        if waitingOnMineStateProperties.stayAtPoint == nil {
-            waitingOnMineStateProperties.stayAtPoint = self.position
-        }
-        
-        if let _ = closestOrbBeacon {
-            resolveChangeStateTo(.GoingToCluster)
-        } else if biggerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.RunningAway)
-        } else if smallerCreaturesNearMe.count > 0 {
-            resolveChangeStateTo(.ChasingSmallerCreature)
-        } else if let mine = waitingOnMineStateProperties.mine {
-            if mine.parent == nil {
-                waitingOnMineStateProperties.mine = nil
-                resolveChangeStateTo(.EatOrbs)
-            } else {
-                resolveSetTargetAngleTo(angleToPoint(waitingOnMineStateProperties.stayAtPoint))
-                if minesDetectedByScanner.count > 0 || wallsDetectedByScanner.count > 0 { evadeMinesAndWall() }
-            }
-        } else {
-            resolveChangeStateTo(.EatOrbs)
-        }
-    }
-    
-    func findClosestNodeToMeInList(nodes: [SKNode]) -> SKNode? {
-        var closestToMe: (distance: CGFloat, node: SKNode?) = (distance: 99999, node: nil)
-        for thing in nodes {
-            let dist = self.position.distanceTo(thing.position)
-            if dist < closestToMe.distance {
-                closestToMe = (distance: dist, node: thing)
-            }
-        }
-        return closestToMe.node
-    }
-    
-//    func actionQueueContainsAsFirstElement(element: ActionIdentifier) -> Bool {
-//        if let first = actionQueue.first {
-//            if first.type == .SetTargetAngle && element.type == .SetTargetAngle &&
-//               fabs((first as! SetTargetAngleActionIdentifier).toAngle - (element as! SetTargetAngleActionIdentifier).toAngle) < 40 {
-//                return true
-//            } else if first.type == .ChangeState && element.type == .ChangeState &&
-//               (first as! ChangeStateActionIdentifier).toState == (element as! ChangeStateActionIdentifier).toState {
-//                return true
-//            } else {
-//                return first.type == element.type
-//            }
-//            
-//        } else {
-//            return false
-//        }
-//    }
-    
-    func resolveSetTargetAngleTo(angle: CGFloat) {
-        let newAction = SetTargetAngleActionIdentifier(toAngle: angle)
-        nextTurnAction = newAction
-    }
-    
-    func resolveChangeStateTo(state: CreatureState) {
-        self.state = state
-    }
-    
-    func resolveStartBoost() {
-        let newAction = ActionIdentifier(type: .StartBoost)
-        buttonActionQueue.append(newAction)
-    }
-    
-    func resolveStopBoost() {
-        let newAction = ActionIdentifier(type: .StopBoost)
-        buttonActionQueue.append(newAction)
-    }
-    
-    func resolveLeaveMine() {
-        let newAction = ActionIdentifier(type: .LeaveMine)
-        buttonActionQueue.append(newAction)
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     enum ActionType {
-        case SetTargetAngle
-        case ChangeState
-        case StartBoost
-        case StopBoost
-        case LeaveMine
+        case TurnToAngle, StartBoost, StopBoost, LeaveMine
     }
-    class ActionIdentifier: NSObject {
+    
+    class Action: NSObject {
         var type: ActionType
-        init(type: ActionType) {
+        var toAngle: CGFloat? // To angle should be nil when the action is anything other than turn to angle
+        var effectiveTimer: CGFloat = 0
+        init(type: ActionType, toAngle: CGFloat? = nil) {
             self.type = type
-        }
-    }
-    class SetTargetAngleActionIdentifier: ActionIdentifier {
-        var toAngle: CGFloat
-        init(toAngle: CGFloat) {
             self.toAngle = toAngle
-            super.init(type: .SetTargetAngle)
         }
     }
     
-    class ChangeStateActionIdentifier: ActionIdentifier {
-        var toState: CreatureState
-        init(toState: CreatureState) {
-            self.toState = toState
-            super.init(type: .ChangeState)
+    func executeAction(action: Action) {
+        switch action.type {
+        case .TurnToAngle:
+            if let toAngle = action.toAngle {
+                self.targetAngle = toAngle
+            }
+        case .StartBoost:
+            startBoost()
+        case .StopBoost:
+            stopBoost()
+        case .LeaveMine:
+            leaveMine()
         }
     }
     
-    func angleToNode(node: SKNode) -> CGFloat {
-        return mapRadiansToDegrees0to360((node.position - self.position).angle)
+    // To be called by the action computer
+    // @ return true if the action was carried out successfully or false if it was ignored.
+    // The AI creature decides what it can ignore.
+    func requestAction(action: Action) -> Bool {
+        // Read the ultimate state variable and see if the requested action is unnecessary. Don't append the action if the ultimate state already accomplishes what would be accomplished by this action.
+        // TODO implement
+        pendingActions.append(action)
+        return true
     }
     
-    func angleToPoint(point: CGPoint) -> CGFloat {
-        return mapRadiansToDegrees0to360((point - self.position).angle)
+    var ultimateState: (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, canLeaveMine: Bool, onMineImpulseSpeed: Bool, hasSpeedDebuff: Bool) {
+        
+        // Initialize a set of variables representing the current conditions
+        var angle: CGFloat = self.velocity.angle
+        var speed: CGFloat = self.velocity.speed
+        var position: CGPoint = self.position
+        var isBoosting: Bool = self.isBoosting
+        var canLeaveMine: Bool = self.canLeaveMine
+        var onMineImpulseSpeed: Bool = self.onMineImpulseSpeed
+        var speedDebuffCounter: CGFloat = self.speedDebuffTimeCounter
+        
+        if pendingActions.count > 0 {
+            // Get a list of the pending actions in the order they will happen
+            var actionsInOrderOfExecution = pendingActions.sort ({ $0.effectiveTimer > $1.effectiveTimer })
+            // Don't forget that the higher the effective timer is, the closer the action is to being completed.
+            // The time that the action has to completion = rxnTime - action.effectiveTimer - timePassed (if applicable)
+            
+            //let actionsInOrderOfExecutioinDummies = (actionsInOrderOfExecution.map { $0.copy() } as! [Action])
+            //var turningActions = actionsInOrderOfExecution.filter { $0.type == .TurnToAngle && $0.toAngle != nil }
+            
+            // Assuming the actions were to all just happen when their effectiveTimers hit the creatures rxn time, assign the variables to compute the ultimate state
+            let timeThatWillHavePassed: CGFloat = self.rxnTime - actionsInOrderOfExecution.last!.effectiveTimer
+            var timePassed: CGFloat = 0
+            var timeUntilReadingNextAction: CGFloat? = actionsInOrderOfExecution.count > 0 ? self.rxnTime - actionsInOrderOfExecution.first!.effectiveTimer : nil
+            
+            var previousAction: Action? = nil
+            for _ in 1...actionsInOrderOfExecution.count {
+                if let action = actionsInOrderOfExecution.first {
+                    actionsInOrderOfExecution.removeFirst()
+                    timePassed = self.rxnTime - action.effectiveTimer
+                    
+                    // Update important variables
+                    if action.type == .StartBoost {
+                        speed = boostingSpeed
+                        isBoosting = true
+                    } else if action.type == .StopBoost {
+                        speed = normalSpeed
+                        isBoosting = false
+                    } else if action.type == .LeaveMine {
+                        speed = minePropulsionSpeed
+                        canLeaveMine = false
+                        onMineImpulseSpeed = true
+                    }
+                    
+                    
+                    
+                    
+                    // Since movement happens all the time and at different speeds, it will be handled here
+                    if action.type == .TurnToAngle && action.toAngle != nil {
+                        let movementResult = simulateCreatureTurningMovement(startPosition: position, startAngle: angle, targetAngle: action.toAngle!, atSpeed: speed, forDuration: timeUntilReadingNextAction ?? timeThatWillHavePassed - timePassed)
+                        position = movementResult.finalPosition
+                        angle = movementResult.finalAngle
+                    } else {
+                         position = simulateCreatureStraightMovement(startPosition: position, startAngle: angle, atSpeed: speed, forDuration: timeUntilReadingNextAction ?? timeThatWillHavePassed - timePassed)
+                    }
+                    
+                    timeUntilReadingNextAction = actionsInOrderOfExecution.first != nil ? self.rxnTime - timePassed - actionsInOrderOfExecution.first!.effectiveTimer : nil // removeFirst() was called at the beginning of the iteration, so now actionsInOrderOfExecution.first! refers to the NEXT action, that will be called in the next iteration, if there is any.
+                    previousAction = action
+                }
+            }
+            
+            
+            
+            
+            
+//            for action in actionsInOrderOfExecution {
+//                timePassed = self.rxnTime - action.effectiveTimer
+//                if action.type == .TurnToAngle && action.toAngle != nil {
+//                    let movementResult = simulateCreatureTurningMovement(startPosition: position, startAngle: angle, targetAngle: action.toAngle!, atSpeed: speed, forTime: timeUntilReadingNextTurnToAngleAction ?? timeThatWillHavePassed - timePassed)
+//                    position = movementResult.finalPosition
+//                    angle = movementResult.finalAngle
+//                    turningActions.removeFirst()
+//                    timeUntilReadingNextTurnToAngleAction = turningActions.first != nil ? self.rxnTime - timePassed - turningActions.first!.effectiveTimer : nil
+//                } else if action.type == .LeaveMine {
+//                    if canLeaveMine && !onMineImpulseSpeed && !hasSpeedDebuff {
+//                        
+//                    }
+//                }
+//                
+//                // Since movment happens in between all actions, movement can be accounted for in its own block
+//                
+//            }
+        }
+        
+        return (angle: angle, speed: speed, position: position, isBoosting: isBoosting, canLeaveMine: canLeaveMine, onMineImpulseSpeed: onMineImpulseSpeed, hasSpeedDebuff: hasSpeedDebuff)
+        
+    }
+    
+    func simulateCreatureTurningMovement(startPosition startPosition: CGPoint, startAngle: CGFloat, targetAngle: CGFloat, atSpeed creatureSpeed: CGFloat, forDuration timeDuration: CGFloat) -> (finalPosition: CGPoint, finalAngle: CGFloat) {
+        
+        // Calculate the total delta angle that the simulated creature will take over its journey. Note that all angles here should be degree measures ranging from 0 to 360
+        var posDist: CGFloat, negDist: CGFloat
+        if targetAngle > startAngle {
+            posDist = targetAngle - startAngle
+            negDist = startAngle + 360 - targetAngle
+        } else if targetAngle < startAngle {
+            negDist = startAngle - targetAngle
+            posDist = 360 - startAngle + targetAngle
+        } else {
+            negDist = 0
+            posDist = 0
+        }
+        
+        let totalDesiredAngleDelta = posDist > negDist ? posDist : -negDist
+        let anIdealAngleChangeRate = totalDesiredAngleDelta / timeDuration // This would be the IDEAL rate; by the time the simulation is finsihed, the creature would be at its target angle. But unfortunately for the creature, there is a turn rate cap.
+        let theActualAngleChangeRate = anIdealAngleChangeRate.clamped(0, C.creature_maxAngleChangePerSecond)
+        let theActualAngleDelta = theActualAngleChangeRate * timeDuration
+        
+        let travelDistance = creatureSpeed * timeDuration
+        
+        // Time to calculate the final x and y coordinates. I could just change the angle all at once, then the distance all at once, but that would be innacurate. The more I split up the calculations, the more accurate the final coordinates get. Split factor can be an arbitrary number.
+        let splitFactor = 60
+        var finalX = startPosition.x
+        var finalY = startPosition.y
+        for k in 1...splitFactor {
+            finalX += cos((CGFloat(k / splitFactor) * theActualAngleDelta).degreesToRadians()) * travelDistance / CGFloat(splitFactor)
+            finalY += sin((CGFloat(k / splitFactor) * theActualAngleDelta).degreesToRadians()) * travelDistance / CGFloat(splitFactor)
+        }
+        
+        let theFinalAngle = theActualAngleChangeRate * timeDuration // We can already predict the final angle based on what we have.
+        return (finalPosition: CGPoint(x: finalX, y: finalY), finalAngle: theFinalAngle)
+        
+    }
+    
+    func simulateCreatureStraightMovement(startPosition startPosition: CGPoint, startAngle: CGFloat, atSpeed speed: CGFloat, forDuration timeDuration: CGFloat) -> CGPoint {
+        // A more efficient function to calculate the creature's final position if they are moving straight
+        let travelDistance = speed * timeDuration
+        let newX = startPosition.x + cos(startAngle.degreesToRadians()) * travelDistance
+        let newY = startPosition.y + sin(startAngle.degreesToRadians()) * travelDistance
+        return CGPoint(x: newX, y: newY)
     }
     
 }

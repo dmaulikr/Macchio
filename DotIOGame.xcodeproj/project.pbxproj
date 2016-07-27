@@ -10,6 +10,8 @@
 		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		833102691D46A27200B8844A /* WarningSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102681D46A27200B8844A /* WarningSign.swift */; };
 		8331028F1D4819F200B8844A /* GameSceneExtensionSpawning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */; };
+		833102911D48238100B8844A /* AIActionComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102901D48238100B8844A /* AIActionComputer.swift */; };
+		833102931D495B9700B8844A /* AICreatureOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102921D495B9700B8844A /* AICreatureOld.swift */; };
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
@@ -48,6 +50,8 @@
 		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		833102681D46A27200B8844A /* WarningSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarningSign.swift; sourceTree = "<group>"; };
 		8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSceneExtensionSpawning.swift; sourceTree = "<group>"; };
+		833102901D48238100B8844A /* AIActionComputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputer.swift; sourceTree = "<group>"; };
+		833102921D495B9700B8844A /* AICreatureOld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreatureOld.swift; sourceTree = "<group>"; };
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
@@ -121,6 +125,8 @@
 				8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */,
 				83957BA51D3302F700BF4450 /* PlayerCreature.swift */,
 				836713241D3AC7A10062D8C0 /* AICreature.swift */,
+				833102921D495B9700B8844A /* AICreatureOld.swift */,
+				833102901D48238100B8844A /* AIActionComputer.swift */,
 				839710051D34650A00696814 /* EnergyOrb.swift */,
 				836713181D36F8300062D8C0 /* GoopMine.swift */,
 				836713141D358D3D0062D8C0 /* BoundByCircle.swift */,
@@ -272,6 +278,8 @@
 				83957BBC1D33FBEC00BF4450 /* Int+Extensions.swift in Sources */,
 				836713191D36F8300062D8C0 /* GoopMine.swift in Sources */,
 				836713211D3972900062D8C0 /* MainScene.swift in Sources */,
+				833102931D495B9700B8844A /* AICreatureOld.swift in Sources */,
+				833102911D48238100B8844A /* AIActionComputer.swift in Sources */,
 				83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */,
 				83957BBF1D33FBEC00BF4450 /* SKColor+Extensions.swift in Sources */,
 				831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */,

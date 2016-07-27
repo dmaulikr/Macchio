@@ -10,7 +10,8 @@ import Foundation
 import SpriteKit
 
 class C {
-    static let creature_speedDebuffTime: CGFloat = 2
+    static let creature_speedDebuffTime: CGFloat = 2,
+    creature_maxAngleChangePerSecond: CGFloat = 270
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     static let percentLargerACreatureMustBeToEngulfAnother: CGFloat = 1.11
     static let orbGrowAmount: [GameScene.OrbType: CGFloat] = [
