@@ -69,7 +69,6 @@ class Creature: SKSpriteNode, BoundByCircle {
     var isBoosting = false
     var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
-    let mineCoolDown: CGFloat = 4
     var mineCoolDownCounter: CGFloat = 4
     
 //    var onMineImpulseSpeed: Bool = false
@@ -206,7 +205,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         }
         
         // Mine cooldown
-        if mineCoolDownCounter < mineCoolDown {
+        if mineCoolDownCounter < C.creature_mineCooldownTime {
             mineCoolDownCounter += CGFloat(deltaTime)
         }
         
@@ -260,7 +259,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     }
     var canLeaveMine: Bool {
 //        return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
-        return mineCoolDownCounter >= mineCoolDown
+        return mineCoolDownCounter >= C.creature_mineCooldownTime
     }
     
     func mineSpawned() {

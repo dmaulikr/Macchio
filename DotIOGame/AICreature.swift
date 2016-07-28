@@ -88,92 +88,87 @@ class AICreature: Creature {
         return true
     }
     
-    var ultimateState: (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, canLeaveMine: Bool, onMineImpulseSpeed: Bool, hasSpeedDebuff: Bool) {
+    func computeUltimateState(pendingActions: [Action]) -> (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, mineCooldownCounter: CGFloat, minePropulsionCounter: CGFloat, speedDebuffCounter: CGFloat) {
         
         // Initialize a set of variables representing the current conditions
-        var angle: CGFloat = self.velocity.angle
-        var speed: CGFloat = self.velocity.speed
-        var position: CGPoint = self.position
-        var isBoosting: Bool = self.isBoosting
-        var canLeaveMine: Bool = self.canLeaveMine
-        var onMineImpulseSpeed: Bool = self.onMineImpulseSpeed
-        var hasSpeedDebuff: Bool = self.hasSpeedDebuff
+        var sim_angle: CGFloat = self.velocity.angle
+        var sim_targetAngle: CGFloat = self.targetAngle
+        var sim_speed: CGFloat = self.velocity.speed
+        var sim_position: CGPoint = self.position
+        var sim_isBoosting: Bool = self.isBoosting
+        var sim_mineCooldownCounter: CGFloat = self.mineCoolDownCounter
+        var sim_minePropulsionCounter: CGFloat = self.minePropulsionSpeedActiveTimeCounter
+        var sim_speedDebuffCounter: CGFloat = self.speedDebuffTimeCounter
+        
         
         if pendingActions.count > 0 {
-            // Get a list of the pending actions in the order they will happen
-            var actionsInOrderOfExecution = pendingActions.sort ({ $0.effectiveTimer > $1.effectiveTimer })
-            // Don't forget that the higher the effective timer is, the closer the action is to being completed.
-            // The time that the action has to completion = rxnTime - action.effectiveTimer - timePassed (if applicable)
+            let sim_actionsInOrder = pendingActions.sort ({ $0.effectiveTimer > $1.effectiveTimer }).map{ $0.copy() } as! [Action]
+            // * since sim_actions in order is just a copy of the actual pending actions, anything can be done with these actions. It won't screw up the actual ones.
             
-            //let actionsInOrderOfExecutioinDummies = (actionsInOrderOfExecution.map { $0.copy() } as! [Action])
-            //var turningActions = actionsInOrderOfExecution.filter { $0.type == .TurnToAngle && $0.toAngle != nil }
-            
-            // Assuming the actions were to all just happen when their effectiveTimers hit the creatures rxn time, assign the variables to compute the ultimate state
-            let timeThatWillHavePassed: CGFloat = self.rxnTime - actionsInOrderOfExecution.last!.effectiveTimer
-            var timePassed: CGFloat = 0
-            var timeUntilReadingNextAction: CGFloat? = actionsInOrderOfExecution.count > 0 ? self.rxnTime - actionsInOrderOfExecution.first!.effectiveTimer : nil
-            
-            var previousAction: Action? = nil
-            for _ in 1...actionsInOrderOfExecution.count {
-                if let action = actionsInOrderOfExecution.first {
-                    actionsInOrderOfExecution.removeFirst()
-                    timePassed = self.rxnTime - action.effectiveTimer
-                    
-                    // Update important variables
-                    if action.type == .StartBoost {
-                        speed = boostingSpeed
-                        isBoosting = true
-                    } else if action.type == .StopBoost {
-                        speed = normalSpeed
-                        isBoosting = false
-                    } else if action.type == .LeaveMine {
-                        speed = minePropulsionSpeed
-                        canLeaveMine = false
-                        onMineImpulseSpeed = true
-                    }
-                    
-                    
-                    
-                    
-                    // Since movement happens all the time and at different speeds, it will be handled here
-                    if action.type == .TurnToAngle && action.toAngle != nil {
-                        let movementResult = simulateCreatureTurningMovement(startPosition: position, startAngle: angle, targetAngle: action.toAngle!, atSpeed: speed, forDuration: timeUntilReadingNextAction ?? timeThatWillHavePassed - timePassed)
-                        position = movementResult.finalPosition
-                        angle = movementResult.finalAngle
-                    } else {
-                         position = simulateCreatureStraightMovement(startPosition: position, startAngle: angle, atSpeed: speed, forDuration: timeUntilReadingNextAction ?? timeThatWillHavePassed - timePassed)
-                    }
-                    
-                    timeUntilReadingNextAction = actionsInOrderOfExecution.first != nil ? self.rxnTime - timePassed - actionsInOrderOfExecution.first!.effectiveTimer : nil // removeFirst() was called at the beginning of the iteration, so now actionsInOrderOfExecution.first! refers to the NEXT action, that will be called in the next iteration, if there is any.
-                    previousAction = action
+            var sim_timeElapsed: CGFloat = 0
+            for action in sim_actionsInOrder {
+                let sim_timeElapsedToCompleteThisAction = self.rxnTime - action.effectiveTimer // The simulated time has passed for THIS current action to have been completed
+                sim_timeElapsed += sim_timeElapsedToCompleteThisAction
+                for eachAction in sim_actionsInOrder {
+                    eachAction.effectiveTimer += sim_timeElapsedToCompleteThisAction
                 }
+                
+                // Update the simulated variables passively
+                var timeGivenToMinePropulsionCounter: CGFloat = 0
+                if sim_minePropulsionCounter < C.creature_minePropulsionSpeedActiveTime {
+                    timeGivenToMinePropulsionCounter = sim_timeElapsedToCompleteThisAction.clamped(0, C.creature_minePropulsionSpeedActiveTime - sim_minePropulsionCounter + 0.00001)
+                    sim_minePropulsionCounter += timeGivenToMinePropulsionCounter
+                }
+                
+                if sim_speedDebuffCounter < C.creature_speedDebuffTime {
+                    sim_speedDebuffCounter += (sim_timeElapsedToCompleteThisAction - timeGivenToMinePropulsionCounter).clamped(0, C.creature_speedDebuffTime - sim_speedDebuffCounter + 0.00001)
+                }
+                
+                if sim_mineCooldownCounter < C.creature_mineCooldownTime {
+                    sim_mineCooldownCounter += sim_timeElapsedToCompleteThisAction.clamped(0, C.creature_mineCooldownTime - sim_mineCooldownCounter + 0.00001)
+                }
+                
+                // Now update the simulated variables based on the action that just happened
+                switch action.type {
+                case .LeaveMine:
+                    if sim_mineCooldownCounter >= C.creature_mineCooldownTime {
+                        sim_mineCooldownCounter = 0
+                        sim_minePropulsionCounter = 0
+                        sim_speedDebuffCounter = 0
+                    }
+                case .StartBoost:
+                    sim_isBoosting = true
+                case .StopBoost:
+                    sim_isBoosting = false
+                case .TurnToAngle:
+                    sim_targetAngle = action.toAngle != nil ? action.toAngle! : sim_targetAngle
+                }
+                
+                // Speeds
+                if sim_minePropulsionCounter < C.creature_minePropulsionSpeedActiveTime {
+                    sim_speed = minePropulsionSpeed
+                } else if sim_speedDebuffCounter < C.creature_speedDebuffTime {
+                    sim_speed = speedDebuffSpeed
+                } else if sim_isBoosting {
+                    sim_speed = boostingSpeed
+                } else {
+                    sim_speed = normalSpeed
+                }
+                
+                // Movement
+                if sim_angle == sim_targetAngle {
+                    sim_position = simulateCreatureStraightMovement(startPosition: sim_position, startAngle: sim_angle, atSpeed: sim_speed, forDuration: sim_timeElapsedToCompleteThisAction)
+                } else {
+                    let movementResult = simulateCreatureTurningMovement(startPosition: sim_position, startAngle: sim_angle, targetAngle: sim_targetAngle, atSpeed: sim_speed, forDuration: sim_timeElapsedToCompleteThisAction)
+                    sim_position = movementResult.finalPosition
+                    sim_angle = movementResult.finalAngle
+                }
+                
             }
-            
-            
-            
-            
-            
-//            for action in actionsInOrderOfExecution {
-//                timePassed = self.rxnTime - action.effectiveTimer
-//                if action.type == .TurnToAngle && action.toAngle != nil {
-//                    let movementResult = simulateCreatureTurningMovement(startPosition: position, startAngle: angle, targetAngle: action.toAngle!, atSpeed: speed, forTime: timeUntilReadingNextTurnToAngleAction ?? timeThatWillHavePassed - timePassed)
-//                    position = movementResult.finalPosition
-//                    angle = movementResult.finalAngle
-//                    turningActions.removeFirst()
-//                    timeUntilReadingNextTurnToAngleAction = turningActions.first != nil ? self.rxnTime - timePassed - turningActions.first!.effectiveTimer : nil
-//                } else if action.type == .LeaveMine {
-//                    if canLeaveMine && !onMineImpulseSpeed && !hasSpeedDebuff {
-//                        
-//                    }
-//                }
-//                
-//                // Since movment happens in between all actions, movement can be accounted for in its own block
-//                
-//            }
+
         }
         
-        return (angle: angle, speed: speed, position: position, isBoosting: isBoosting, canLeaveMine: canLeaveMine, onMineImpulseSpeed: onMineImpulseSpeed, hasSpeedDebuff: hasSpeedDebuff)
-        
+        return (angle: sim_angle, speed: sim_speed, position: sim_position, isBoosting: sim_isBoosting, mineCooldownCounter: sim_mineCooldownCounter, minePropulsionCounter: sim_minePropulsionCounter, speedDebuffCounter: sim_speedDebuffCounter)
     }
     
     func simulateCreatureTurningMovement(startPosition startPosition: CGPoint, startAngle: CGFloat, targetAngle: CGFloat, atSpeed creatureSpeed: CGFloat, forDuration timeDuration: CGFloat) -> (finalPosition: CGPoint, finalAngle: CGFloat) {
