@@ -30,7 +30,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1.3
+            zoomOutFactor: 10
     )
     
     enum State {
@@ -99,7 +99,7 @@ class GameScene: SKScene {
     var warningSigns: [WarningSign] = []
     
     override func didMoveToView(view: SKView) {
-//        player = AICreatureOld(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
+//        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: randomColor(), startRadius: 80)
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
@@ -159,7 +159,7 @@ class GameScene: SKScene {
         }
     }
     
-    func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = Creature.minRadius) -> CGPoint {
+    func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
         // This function assumes the creature has not been spawned yet
         let randX = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.width - creatureStartRadius )
         let randY = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.height - creatureStartRadius)
@@ -445,7 +445,7 @@ class GameScene: SKScene {
                 creature.spawnMineAtMyTail = false
                 creature.mineSpawned()
                 let valueForMine: CGFloat
-                if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(Creature.minRadius) {
+                if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(C.creature_minRadius) {
                     valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * Creature.percentGrowAmountToBeDepositedUponDeath
                 } else {
                     valueForMine = 0
@@ -549,8 +549,8 @@ class GameScene: SKScene {
                 // Change mine buttons image to can leave or can't
                 //if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
                 //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
-                leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / player.mineCoolDown
-                leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / player.mineCoolDown
+                leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
+                leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
                 
                 
                 

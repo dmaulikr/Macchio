@@ -84,7 +84,6 @@ class Creature: SKSpriteNode, BoundByCircle {
     
     var targetAngle: CGFloat! //operates in degrees 0 to 360
     
-    static let minRadius: CGFloat = 50
     var radius: CGFloat = 50 {
         didSet {
             size.width = 2*radius

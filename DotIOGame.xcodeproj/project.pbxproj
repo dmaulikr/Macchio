@@ -46,6 +46,7 @@
 		83957BC31D33FBEC00BF4450 /* SKTTimingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */; };
 		83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB61D33FBEC00BF4450 /* Vector3.swift */; };
 		839710061D34650A00696814 /* EnergyOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839710051D34650A00696814 /* EnergyOrb.swift */; };
+		83E1B9761D4B054700B4EEFB /* AIActionComputerBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +91,7 @@
 		83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTTimingFunctions.swift; sourceTree = "<group>"; };
 		83957BB61D33FBEC00BF4450 /* Vector3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3.swift; sourceTree = "<group>"; };
 		839710051D34650A00696814 /* EnergyOrb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnergyOrb.swift; sourceTree = "<group>"; };
+		83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputerBasic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,17 +127,14 @@
 				83957BA71D33FBEC00BF4450 /* Utils */,
 				83957B911D32FDDE00BF4450 /* GameScene.sks */,
 				83957B931D32FDDE00BF4450 /* GameScene.swift */,
-				836713221D3984410062D8C0 /* Creature.swift */,
 				8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */,
+				836713221D3984410062D8C0 /* Creature.swift */,
 				83957BA51D3302F700BF4450 /* PlayerCreature.swift */,
-				836713241D3AC7A10062D8C0 /* AICreature.swift */,
-				833102921D495B9700B8844A /* AICreatureOld.swift */,
-				833102901D48238100B8844A /* AIActionComputer.swift */,
-				839710051D34650A00696814 /* EnergyOrb.swift */,
+				83E1B9771D4B069300B4EEFB /* AI */,
+				83E1B9781D4B06B600B4EEFB /* UI */,
 				836713181D36F8300062D8C0 /* GoopMine.swift */,
+				839710051D34650A00696814 /* EnergyOrb.swift */,
 				836713141D358D3D0062D8C0 /* BoundByCircle.swift */,
-				836713161D36CFA40062D8C0 /* BoostButton.swift */,
-				8367131C1D3856AA0062D8C0 /* MineButton.swift */,
 				83957B951D32FDDE00BF4450 /* GameViewController.swift */,
 				83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */,
 				83957B8D1D32FDDE00BF4450 /* Products */,
@@ -146,8 +145,6 @@
 				8367131E1D39700E0062D8C0 /* MainScene.sks */,
 				836713201D3972900062D8C0 /* MainScene.swift */,
 				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
-				839388801D4670BE002AD481 /* TouchPoint.sks */,
-				833102681D46A27200B8844A /* WarningSign.swift */,
 				833102941D4966B300B8844A /* KillPoints.sks */,
 				833102961D4967B300B8844A /* GrowPointsSmall.sks */,
 			);
@@ -181,6 +178,28 @@
 				83957BB61D33FBEC00BF4450 /* Vector3.swift */,
 			);
 			path = SKTUtils;
+			sourceTree = "<group>";
+		};
+		83E1B9771D4B069300B4EEFB /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				833102921D495B9700B8844A /* AICreatureOld.swift */,
+				836713241D3AC7A10062D8C0 /* AICreature.swift */,
+				833102901D48238100B8844A /* AIActionComputer.swift */,
+				83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */,
+			);
+			name = AI;
+			sourceTree = "<group>";
+		};
+		83E1B9781D4B06B600B4EEFB /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				836713161D36CFA40062D8C0 /* BoostButton.swift */,
+				8367131C1D3856AA0062D8C0 /* MineButton.swift */,
+				839388801D4670BE002AD481 /* TouchPoint.sks */,
+				833102681D46A27200B8844A /* WarningSign.swift */,
+			);
+			name = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +294,7 @@
 				83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */,
 				83957BC01D33FBEC00BF4450 /* SKNode+Extensions.swift in Sources */,
 				83957BBD1D33FBEC00BF4450 /* SKAction+Extensions.swift in Sources */,
+				83E1B9761D4B054700B4EEFB /* AIActionComputerBasic.swift in Sources */,
 				836713231D3984410062D8C0 /* Creature.swift in Sources */,
 				83957BBE1D33FBEC00BF4450 /* SKAction+SpecialEffects.swift in Sources */,
 				839710061D34650A00696814 /* EnergyOrb.swift in Sources */,

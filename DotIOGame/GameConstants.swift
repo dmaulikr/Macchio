@@ -13,7 +13,8 @@ class C {
     static let creature_speedDebuffTime: CGFloat = 2,
         creature_maxAngleChangePerSecond: CGFloat = 270,
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,
-        creature_mineCooldownTime: CGFloat = 4.0
+        creature_mineCooldownTime: CGFloat = 4.0,
+        creature_minRadius: CGFloat = 50
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     static let percentLargerACreatureMustBeToEngulfAnother: CGFloat = 1.11
     static let orbGrowAmount: [GameScene.OrbType: CGFloat] = [

@@ -16,17 +16,21 @@ class AICreature: Creature {
     // The AICreature will listen. Somewhat. By adding actions to its pending actions list.
     // The game scene + self + pending actions is a representation of AICreature's DESIRED state. Its other properties and the properties of gameScene represent
     // the CURRENT state. It is the job of the action computer to change the desired state.
+    weak var gameScene: GameScene? = nil
     var rxnTime: CGFloat = 0
     var pendingActions: [Action] = []
     var actionComputer: AIActionComputer?
     
-    init(name: String, playerID: Int, color: Color, startRadius: CGFloat, gameScene: GameScene, rxnTime: CGFloat) {
+    init(theGameScene: GameScene, name: String, playerID: Int, color: Color, startRadius: CGFloat, rxnTime: CGFloat) {
+        self.gameScene = theGameScene
         self.rxnTime = rxnTime
         super.init(name: name, playerID: playerID, color: color, startRadius: startRadius)
-        self.actionComputer = AIActionComputer(gameScene: gameScene, controlCreature: self)
+        self.actionComputer = AIActionComputerBasic(gameScene: gameScene!, controlCreature: self)
     }
     
     override func thinkAndAct(deltaTime: CGFloat) {
+        // This method gets called every frame. It's pretty much an update() method
+        
         if let actionComputer = actionComputer {
             actionComputer.requestActions()
         }
@@ -79,13 +83,8 @@ class AICreature: Creature {
     }
     
     // To be called by the action computer
-    // @ return true if the action was carried out successfully or false if it was ignored.
-    // The AI creature decides what it can ignore.
-    func requestAction(action: Action) -> Bool {
-        // Read the ultimate state variable and see if the requested action is unnecessary. Don't append the action if the ultimate state already accomplishes what would be accomplished by this action.
-        // TODO implement
+    func requestAction(action: Action) {
         pendingActions.append(action)
-        return true
     }
     
     func computeUltimateState(pendingActions: [Action]) -> (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, mineCooldownCounter: CGFloat, minePropulsionCounter: CGFloat, speedDebuffCounter: CGFloat) {
@@ -202,7 +201,7 @@ class AICreature: Creature {
             finalY += sin((CGFloat(k / splitFactor) * theActualAngleDelta).degreesToRadians()) * travelDistance / CGFloat(splitFactor)
         }
         
-        let theFinalAngle = theActualAngleChangeRate * timeDuration // We can already predict the final angle based on what we have.
+        let theFinalAngle = theActualAngleChangeRate * timeDuration
         return (finalPosition: CGPoint(x: finalX, y: finalY), finalAngle: theFinalAngle)
         
     }
@@ -212,7 +211,38 @@ class AICreature: Creature {
         let travelDistance = speed * timeDuration
         let newX = startPosition.x + cos(startAngle.degreesToRadians()) * travelDistance
         let newY = startPosition.y + sin(startAngle.degreesToRadians()) * travelDistance
+        
         return CGPoint(x: newX, y: newY)
     }
+    
+    func computeUltimateStateAsGhost(pendingActions: [Action]) -> Ghost {
+        let result = computeUltimateState(pendingActions)
+        return Ghost(position: result.position, angle: result.angle, speed: result.speed, isBoosting: result.isBoosting, mineCooldownCounter: result.mineCooldownCounter, minePropulsionCounter: result.minePropulsionCounter, speedDebuffCounter: result.speedDebuffCounter, radius: self.targetRadius)
+    }
+    
+    //func computeUltimateStateAsGhost(withActions pendingActions: [Action])
+    
+    
+    class Ghost: BoundByCircle {
+        var position: CGPoint
+        var angle: CGFloat
+        var speed: CGFloat
+        var isBoosting: Bool
+        var mineCooldownCounter: CGFloat
+        var minePropulsionCounter: CGFloat
+        var speedDebuffCounter: CGFloat
+        var radius: CGFloat
+        init(position: CGPoint, angle: CGFloat, speed: CGFloat, isBoosting: Bool, mineCooldownCounter: CGFloat, minePropulsionCounter: CGFloat, speedDebuffCounter: CGFloat, radius: CGFloat) {
+            self.position = position
+            self.angle = angle
+            self.speed = speed
+            self.isBoosting = isBoosting
+            self.mineCooldownCounter = mineCooldownCounter
+            self.minePropulsionCounter = minePropulsionCounter
+            self.speedDebuffCounter = speedDebuffCounter
+            self.radius = radius
+        }
+    }
+    
     
 }

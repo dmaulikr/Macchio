@@ -21,8 +21,6 @@ class AIActionComputer: NSObject {
     
     func requestActions() {
         // add things to myCreatures pending actions array
-        
-        
     }
     
 }
