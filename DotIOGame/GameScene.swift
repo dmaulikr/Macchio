@@ -30,7 +30,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 10
+            zoomOutFactor: 1.3
     )
     
     enum State {

@@ -137,7 +137,7 @@ extension GameScene {
         //let newCreature = AICreature(theGameScene: self, name: "BS Player Name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: C.creature_minRadius + 60), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         
         
-        let newCreature = AICreature(theGameScene: self, name: "player name", playerID: randomID(), color: randomColor(), startRadius: C.creature_minRadius, rxnTime: CGFloat.random(min: 0.2, max: 0.4))
+        let newCreature = AICreature(theGameScene: self, name: "player name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)

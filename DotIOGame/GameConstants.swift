@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class C {
-    static let creature_speedDebuffTime: CGFloat = 2,
+    static let creature_speedDebuffTime: CGFloat = 1,
         creature_maxAngleChangePerSecond: CGFloat = 270,
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,
         creature_mineCooldownTime: CGFloat = 4.0,
