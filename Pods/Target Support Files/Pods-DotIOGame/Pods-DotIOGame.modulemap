@@ -1,0 +1,6 @@
+framework module Pods_DotIOGame {
+  umbrella header "Pods-DotIOGame-umbrella.h"
+
+  export *
+  module * { export * }
+}

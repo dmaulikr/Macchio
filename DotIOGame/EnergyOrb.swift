@@ -12,10 +12,10 @@ import SpriteKit
 class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     static let orbTextures: [Color : SKTexture] = [
-        .Blue: SKTexture.init(imageNamed: "blue circle.png"),
-        .Red: SKTexture.init(imageNamed: "red orb.png"),
-        .Green: SKTexture.init(imageNamed: "green orb.png"),
-        .Yellow: SKTexture.init(imageNamed: "yellow orb.png")
+        .Blue: SKTexture.init(imageNamed: "blue_orb.png"),
+        .Red: SKTexture.init(imageNamed: "red_orb.png"),
+        .Green: SKTexture.init(imageNamed: "green_orb.png"),
+        .Yellow: SKTexture.init(imageNamed: "yellow_orb.png")
     ]
     
     var radius: CGFloat = 15 {
@@ -30,6 +30,10 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
     var isEaten = false
     
+    @objc override class func initialize() {
+        
+    }
+    
     init(orbColor: Color) {
         let texture = EnergyOrb.orbTextures[orbColor]
         let color = SKColor.whiteColor()
@@ -37,8 +41,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
         zPosition = 0
-        alpha = 0.5
-        blendMode = SKBlendMode.Add
+        blendMode = .Add
     }
     
     /* You are required to implement this for your subclass to work */
@@ -50,10 +53,10 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         if growing {
             radius += 20 * CGFloat(deltaTime)
             if radius >= maxRadius {growing = false}
-        } else {
-            radius -= 20 * CGFloat(deltaTime)
-            if radius <= minRadius {growing = true}
-        }
+        } //else {
+            //radius -= 20 * CGFloat(deltaTime)
+            //if radius <= minRadius {growing = true}
+        //}
     }
     
     

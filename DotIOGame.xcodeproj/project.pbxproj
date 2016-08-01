@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26A015BB28344B8BE6D90EEE /* Pods_DotIOGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */; };
 		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		833102691D46A27200B8844A /* WarningSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102681D46A27200B8844A /* WarningSign.swift */; };
 		8331028F1D4819F200B8844A /* GameSceneExtensionSpawning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */; };
 		833102911D48238100B8844A /* AIActionComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102901D48238100B8844A /* AIActionComputer.swift */; };
 		833102931D495B9700B8844A /* AICreatureOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102921D495B9700B8844A /* AICreatureOld.swift */; };
-		833102951D4966B300B8844A /* KillPoints.sks in Resources */ = {isa = PBXBuildFile; fileRef = 833102941D4966B300B8844A /* KillPoints.sks */; };
-		833102971D4967B300B8844A /* GrowPointsSmall.sks in Resources */ = {isa = PBXBuildFile; fileRef = 833102961D4967B300B8844A /* GrowPointsSmall.sks */; };
 		836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713141D358D3D0062D8C0 /* BoundByCircle.swift */; };
 		836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713161D36CFA40062D8C0 /* BoostButton.swift */; };
 		836713191D36F8300062D8C0 /* GoopMine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713181D36F8300062D8C0 /* GoopMine.swift */; };
@@ -50,13 +49,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DotIOGame.release.xcconfig"; path = "Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame.release.xcconfig"; sourceTree = "<group>"; };
 		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		833102681D46A27200B8844A /* WarningSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarningSign.swift; sourceTree = "<group>"; };
 		8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameSceneExtensionSpawning.swift; sourceTree = "<group>"; };
 		833102901D48238100B8844A /* AIActionComputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputer.swift; sourceTree = "<group>"; };
 		833102921D495B9700B8844A /* AICreatureOld.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreatureOld.swift; sourceTree = "<group>"; };
-		833102941D4966B300B8844A /* KillPoints.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = KillPoints.sks; sourceTree = "<group>"; };
-		833102961D4967B300B8844A /* GrowPointsSmall.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GrowPointsSmall.sks; sourceTree = "<group>"; };
 		836713141D358D3D0062D8C0 /* BoundByCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundByCircle.swift; sourceTree = "<group>"; };
 		836713161D36CFA40062D8C0 /* BoostButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoostButton.swift; sourceTree = "<group>"; };
 		836713181D36F8300062D8C0 /* GoopMine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoopMine.swift; sourceTree = "<group>"; };
@@ -92,6 +90,8 @@
 		83957BB61D33FBEC00BF4450 /* Vector3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3.swift; sourceTree = "<group>"; };
 		839710051D34650A00696814 /* EnergyOrb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnergyOrb.swift; sourceTree = "<group>"; };
 		83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputerBasic.swift; sourceTree = "<group>"; };
+		C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DotIOGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame.debug.xcconfig"; sourceTree = "<group>"; };
+		F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DotIOGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,16 +99,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26A015BB28344B8BE6D90EEE /* Pods_DotIOGame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		628DD06EE9F9CAF563FDDEA4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		83957B831D32FDDE00BF4450 = {
 			isa = PBXGroup;
 			children = (
 				83957B8E1D32FDDE00BF4450 /* DotIOGame */,
+				94E63BEEF1B80A951F0F6C94 /* Pods */,
+				628DD06EE9F9CAF563FDDEA4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -145,8 +156,6 @@
 				8367131E1D39700E0062D8C0 /* MainScene.sks */,
 				836713201D3972900062D8C0 /* MainScene.swift */,
 				831D6EB91D42CD7000F5491F /* GameConstants.swift */,
-				833102941D4966B300B8844A /* KillPoints.sks */,
-				833102961D4967B300B8844A /* GrowPointsSmall.sks */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -202,6 +211,15 @@
 			name = UI;
 			sourceTree = "<group>";
 		};
+		94E63BEEF1B80A951F0F6C94 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */,
+				2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -209,9 +227,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83957BA21D32FDDE00BF4450 /* Build configuration list for PBXNativeTarget "DotIOGame" */;
 			buildPhases = (
+				1ED72636B55A2D942B307198 /* [CP] Check Pods Manifest.lock */,
 				83957B881D32FDDE00BF4450 /* Sources */,
 				83957B891D32FDDE00BF4450 /* Frameworks */,
 				83957B8A1D32FDDE00BF4450 /* Resources */,
+				41A99EECE9FB1E7BA77C45C7 /* [CP] Embed Pods Frameworks */,
+				23E49313C80B9E120381FB63 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -267,12 +288,58 @@
 				83957B9B1D32FDDE00BF4450 /* Assets.xcassets in Resources */,
 				8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */,
 				83957B991D32FDDE00BF4450 /* Main.storyboard in Resources */,
-				833102951D4966B300B8844A /* KillPoints.sks in Resources */,
-				833102971D4967B300B8844A /* GrowPointsSmall.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1ED72636B55A2D942B307198 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		23E49313C80B9E120381FB63 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		41A99EECE9FB1E7BA77C45C7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		83957B881D32FDDE00BF4450 /* Sources */ = {
@@ -423,6 +490,7 @@
 		};
 		83957BA31D32FDDE00BF4450 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -437,6 +505,7 @@
 		};
 		83957BA41D32FDDE00BF4450 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

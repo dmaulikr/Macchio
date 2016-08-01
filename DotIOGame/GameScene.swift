@@ -91,12 +91,13 @@ class GameScene: SKScene {
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     let orbsToAreaRatio: CGFloat = 0.00002
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
-    let creaturesToAreaRatio: CGFloat = 0.0000011
+    let creaturesToAreaRatio: CGFloat = 0.00000125
     var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
     
     var warningSigns: [WarningSign] = []
+    var killPointsLabelOriginal: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
@@ -155,6 +156,8 @@ class GameScene: SKScene {
                     orbChunks[col].append([])
                 }
             }
+            
+            killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
             
         }
     }
@@ -298,7 +301,24 @@ class GameScene: SKScene {
     }
     
     func convertAreaToScore(area: CGFloat) -> Int {
-        return Int(radiusOfCircleWithArea(area) * 100) / 100
+        //return Int(radiusOfCircleWithArea(area) * 100) / 100
+        let radius = radiusOfCircleWithArea(area)
+        switch radius {
+        case let r where r <= 50:
+            return 50
+        case let r where r > 50 && r <= 100:
+            return 100
+        case let r where r > 100 && r <= 150:
+            return 150
+        case let r where r > 150 && r <= 200:
+            return 200
+        case let r where r > 200 && r <= 250:
+            return 250
+        case let r where r > 250:
+            return 300
+        default:
+            return -1
+        }
     }
 
     
@@ -360,6 +380,9 @@ class GameScene: SKScene {
                 if mine.overlappingCircle(creature) && !creature.freshlySpawnedMines.contains(mine) {
                     // creature just died
                     creatureKillList.append(creature)
+                    if mine.leftByPlayerID == player?.playerID && creature !== player {
+                        spawnKillPoints(convertAreaToScore(creature.targetArea))
+                    }
                 }
             }
             
@@ -387,14 +410,15 @@ class GameScene: SKScene {
                     // So now we check if the bigger creature is big enough to eat the other creature, if so, then are they completely engulfing the smaller player. If the larger player wasn't larger enough to begin with, then the two players will just kinda bump into each other.
                     let theBigger = creature.radius > other.radius ? creature : other
                     let theSmaller = creature !== theBigger ? creature : other
-                    if theBigger.radius > theSmaller.radius * C.percentLargerACreatureMustBeToEngulfAnother {
+                    if theBigger.radius > theSmaller.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother {
                         if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath
                             theEaten.append(theSmaller)
                             if theBigger === player {
                                 // add a flying number
-                                spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
+                                //spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
+                                spawnKillPoints(convertAreaToScore(theSmaller.targetArea))
                                 score += convertAreaToScore(theSmaller.targetArea)
                             }
                         }
@@ -516,7 +540,8 @@ class GameScene: SKScene {
             for _ in 0..<numOfOrbsToSpawnNow {
                 // x times, spawn an orb at a random world positon
                 let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
-                seedOrbWithSpecifiedType(.Small, atPosition: newPosition)
+                let randType: OrbType = CGFloat.random() > 0.9 ? .Rich : .Small
+                seedOrbWithSpecifiedType(randType, atPosition: newPosition)
             }
         }
     }
@@ -614,7 +639,7 @@ class GameScene: SKScene {
                 // spawn new warning signs if a large enough player is within range (range scales with camera)
                 for creature in otherCreatures {
                     if creature === player { continue }
-                    if creature.radius > player.radius * C.percentLargerACreatureMustBeToEngulfAnother && creature.position.distanceTo(camera!.position) - creature.radius < testingRange {
+                    if creature.radius > player.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother && creature.position.distanceTo(camera!.position) - creature.radius < testingRange {
                         var warningSignAlreadyExists = false
                         for sign in warningSigns {
                             if sign.correspondingCreature === creature { warningSignAlreadyExists = true }
@@ -655,6 +680,19 @@ class GameScene: SKScene {
                 self.removeFromParent()
             })
         }
+    }
+    
+    func spawnKillPoints(points: Int) {
+        if points <= 0 { return }
+        let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
+        newLabelNode.position = CGPoint(x: 0, y: 50)
+        newLabelNode.text = "+\(points)"
+        camera!.addChild(newLabelNode)
+        let waitAction = SKAction.waitForDuration(1)
+        let fadeAction = SKAction.fadeOutWithDuration(0.5)
+        newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
+            newLabelNode.removeFromParent()
+        })
     }
     
     func randomID() -> Int {

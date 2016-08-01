@@ -25,8 +25,6 @@ extension GameScene {
             newOrb.minRadius = minRadius
             newOrb.maxRadius = maxRadius
             newOrb.artificiallySpawned = artificiallySpawned
-            //            if location.x < 0 { location.x = 0 }; if location.x >= numOfChunkColumns { location.x = numOfChunkColumns - 1 }
-            //            if location.y < 0 { location.y = 0 }; if location.y >= numOfChunkRows { location.y = numOfChunkRows - 1 }
             orbChunks[location.x][location.y].append(newOrb)
             addChild(newOrb)
             return newOrb
@@ -45,8 +43,8 @@ extension GameScene {
         let growAmount: CGFloat
         switch type {
         case .Small:
-            minRadius = 10
-            maxRadius = 14
+            minRadius = 5
+            maxRadius = 7
             growAmount = C.orbGrowAmount[.Small]!
         case .Rich:
             minRadius = 16
@@ -137,7 +135,7 @@ extension GameScene {
         //let newCreature = AICreature(theGameScene: self, name: "BS Player Name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: C.creature_minRadius + 60), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         
         
-        let newCreature = AICreature(theGameScene: self, name: "player name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
+        let newCreature = AICreature(theGameScene: self, name: "player name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.35, max: 0.5))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)

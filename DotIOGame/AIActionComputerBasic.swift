@@ -61,8 +61,8 @@ class AIActionComputerBasic: AIActionComputer {
                 let orbBeaconsNearMe = gameScene.orbBeacons.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 
                 let allCreaturesNearMe = gameScene.allCreatures.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
-                let smallCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius * C.percentLargerACreatureMustBeToEngulfAnother < myCreature.targetRadius }
-                let largerCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius > myCreature.targetRadius * C.percentLargerACreatureMustBeToEngulfAnother }
+                let smallCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother < myCreature.targetRadius }
+                let largerCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius > myCreature.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother }
 
                 for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weight_mine, objectType: .Mine) }
                 for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
@@ -83,10 +83,13 @@ class AIActionComputerBasic: AIActionComputer {
                 myCreature.requestAction(AICreature.Action(type: .TurnToAngle, toAngle: CGFloat(indexWithLeastDanger) * anglePerSector + anglePerSector / 2))
                 
                 
-                let chosenIndex = indexWithLeastDanger
-                let chosenIndexAdj1 = indexWithinSectorsBounds(indexWithLeastDanger + 1)
-                let chosenIndexAdj2 = indexWithinSectorsBounds(indexWithLeastDanger - 1)
-                let everythingInFrontOfMe = sectorContents[chosenIndex] + sectorContents[chosenIndexAdj1] + sectorContents[chosenIndexAdj2]
+//                let chosenIndex = indexWithLeastDanger
+//                let chosenIndexAdj1 = indexWithinSectorsBounds(indexWithLeastDanger + 1)
+//                let chosenIndexAdj2 = indexWithinSectorsBounds(indexWithLeastDanger - 1)
+                let currentIndex = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector))
+                let currentIndexAdj1 = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector) + 1)
+                let currentIndexAdj2 = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector) - 1)
+                let everythingInFrontOfMe = sectorContents[currentIndex] + sectorContents[currentIndexAdj1] + sectorContents[currentIndexAdj2]
 
                 let opp = indexWithLeastDanger + sectorDangerRatings.count/2
                 let oppositeIndex = indexWithinSectorsBounds(opp)
@@ -95,7 +98,6 @@ class AIActionComputerBasic: AIActionComputer {
                 let everythingBehindMe = sectorContents[oppositeIndex] + sectorContents[oppositeIndexAdj1] + sectorContents[oppositeIndexAdj2]
                 // Perform deeper analysis
                 // now I'll figure out why I'm going the direction I am and do something to help myself. Whether that's leaving a mine, starting a boost, or stopping a boost
-//                var iAmRunningFromALargerCreature = weight_largeCreature > 0 && sectorContentCountOf(forSectorIndex: opp, lookForType: AIActionComputerBasic.ObjectType)(.LargeCreature)
                 var shouldBeBoosting = false
                 var shouldLeaveMine = false
                 
