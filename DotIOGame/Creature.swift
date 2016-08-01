@@ -68,6 +68,7 @@ class Creature: SKSpriteNode, BoundByCircle {
 
     var isBoosting = false
     var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
+    //var inTheProcessOfLeavingAMine = false
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
     var mineCoolDownCounter: CGFloat = 4
     
@@ -246,16 +247,28 @@ class Creature: SKSpriteNode, BoundByCircle {
         isBoosting = false
         blendMode = SKBlendMode.Alpha
     }
-    
+    let totalPulseTime = 0.5
     func leaveMine() {
         // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
         if !canLeaveMine { return }
-        let waitAction = SKAction.waitForDuration(0.01)
-        runAction(waitAction, completion: {
-            if self.canLeaveMine { self.spawnMineAtMyTail = true }
-            // GameScene will see that this has turned true and spawn the mine for us
-            // do the things the player does after leaving a mine
-        })
+        ///canLeaveMine = false
+        mineCoolDownCounter = 0
+        // Make the creature pulse
+        //let totalPulseTime = 0.5
+        let expandAction = SKAction.scaleBy(1.4, duration: totalPulseTime/2)
+        //let unexpandAction = SKAction.scaleTo(1, duration: totalPulseTime/2)
+        self.runAction(SKAction.sequence([expandAction/*, unexpandAction*/]))
+        
+        let waitForEndPulseStage1 = SKAction.waitForDuration(totalPulseTime/2)
+        let setFlagAction = SKAction.runBlock {
+            self.spawnMineAtMyTail = true
+        }
+        runAction(SKAction.sequence([waitForEndPulseStage1, setFlagAction]))
+//        runAction(waitAction, completion: {
+//        if self.canLeaveMine { self.spawnMineAtMyTail = true }
+//            // GameScene will see that this has turned true and spawn the mine for us
+//            // do the things the player does after leaving a mine
+//        })
     }
     var canLeaveMine: Bool {
 //        return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&
@@ -264,6 +277,8 @@ class Creature: SKSpriteNode, BoundByCircle {
     
     func mineSpawned() {
         //Called by GameScene after a mine has successfully been spawned at the player's tail
+        //inTheProcessOfLeavingAMine = false
+        
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
         mineCoolDownCounter = 0
         minePropulsionSpeedActiveTimeCounter = 0

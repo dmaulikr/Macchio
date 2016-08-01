@@ -505,7 +505,8 @@ class GameScene: SKScene {
         for creature in allCreatures {
             if creature.spawnMineAtMyTail {
                 creature.spawnMineAtMyTail = false
-                creature.mineSpawned()
+                
+            
                 let valueForMine: CGFloat
                 if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(C.creature_minRadius) {
                     valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * Creature.percentGrowAmountToBeDepositedUponDeath
@@ -516,19 +517,24 @@ class GameScene: SKScene {
                 //let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
                 //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                let freshMine = spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
                 freshMine.name = "\(creature.name!) shuriken"
                 
+                
                 creature.freshlySpawnedMines.append(freshMine)
-//                for otherCreature in allCreatures {
-//                    if otherCreature === creature { continue }
-//                    if freshMine.overlappingCircle(otherCreature) {
-//                        otherCreature.freshlySpawnedMines.append(freshMine)
-//                    }
-//                }
-//                if creature === player {
-//                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
-//                }
+                //                for otherCreature in allCreatures {
+                //                    if otherCreature === creature { continue }
+                //                    if freshMine.overlappingCircle(otherCreature) {
+                //                        otherCreature.freshlySpawnedMines.append(freshMine)
+                //                    }
+                //                }
+                //                if creature === player {
+                //                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
+                //                }
+
+                
+            
+                creature.mineSpawned()
             }
             
         }
