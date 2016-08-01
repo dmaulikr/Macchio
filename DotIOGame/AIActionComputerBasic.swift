@@ -24,13 +24,17 @@ class AIActionComputerBasic: AIActionComputer {
     }
     
     enum ObjectType {
-        case Mine, OrbBeacon, SmallCreature, LargeCreature
+        case Mine, OrbBeacon, SmallCreature, LargeCreature, Wall
     }
     
     let weight_mine: CGFloat = 5
     let weight_orbBeacon: CGFloat = -1
     let weight_smallCreature: CGFloat = -2
     let weight_largeCreature: CGFloat = 2
+    let weight_wall: CGFloat = 5
+    enum WallDirection {
+        case Right, Top, Left, Bottom
+    }
     
     let leaveMineRange: CGFloat = 200
     var mineTravelDistance: CGFloat { return myCreature!.minePropulsionSpeed * C.creature_minePropulsionSpeedActiveTime }
@@ -63,6 +67,11 @@ class AIActionComputerBasic: AIActionComputer {
                 let allCreaturesNearMe = gameScene.allCreatures.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 let smallCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother < myCreature.targetRadius }
                 let largerCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius > myCreature.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother }
+                var wallsNearMe: [WallDirection] = []
+                if myCreature.position.x - radarDistance <= 0 { wallsNearMe.append(.Left) }
+                if myCreature.position.x + radarDistance >= gameScene.mapSize.width { wallsNearMe.append(.Right) }
+                if myCreature.position.y - radarDistance <= 0 { wallsNearMe.append(.Bottom) }
+                if myCreature.position.y + radarDistance >= gameScene.mapSize.height { wallsNearMe.append(.Top) }
 
                 for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weight_mine, objectType: .Mine) }
                 for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
@@ -70,6 +79,20 @@ class AIActionComputerBasic: AIActionComputer {
                     assignModifiersForSectorAndCatalogueObject(smallCreature.position, objectRadius: smallCreature.radius, weight: weight_smallCreature, objectType: .SmallCreature)
                 }
                 for largeCreature in largerCreaturesNearMe { assignModifiersForSectorAndCatalogueObject(largeCreature.position, objectRadius: largeCreature.radius, weight: weight_largeCreature, objectType: .LargeCreature) }
+                for wall in wallsNearMe {
+                    let closestPointOnWall: CGPoint
+                    switch wall {
+                    case .Right:
+                        closestPointOnWall = CGPoint(x: gameScene.mapSize.width, y: myCreature.position.y)
+                    case .Left:
+                        closestPointOnWall = CGPoint(x: 0, y: myCreature.position.y)
+                    case .Top:
+                        closestPointOnWall = CGPoint(x: myCreature.position.x, y: gameScene.mapSize.height)
+                    case .Bottom:
+                        closestPointOnWall = CGPoint(x: myCreature.position.x, y: 0)
+                    }
+                    assignModifiersForSectorAndCatalogueObject(closestPointOnWall, objectRadius: 0, weight: weight_wall, objectType: .Wall)
+                }
                 
                 var indexWithLeastDanger = -1
                 var leastDangerValue: CGFloat = 9999

@@ -199,7 +199,7 @@ class AICreatureOld: Creature {
         } else if let closestMine = findClosestNodeToMeInList(gameScene.goopMines) {
             if minesDetectedByScanner.contains(closestMine as! GoopMine) && closestMine.position.distanceTo(self.position) < AICreatureOld.waitingOnMineRange {
                 state = .WaitingOnMine
-                waitingOnMineStateProperties.mine = closestMine as! GoopMine
+                waitingOnMineStateProperties.mine = closestMine as? GoopMine
             }
         } else {
             if let closeOrb = findClosestNodeToMeInList(myChunk) {

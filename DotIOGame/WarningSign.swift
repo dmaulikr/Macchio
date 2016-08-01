@@ -33,7 +33,7 @@ class WarningSign: SKSpriteNode {
             // perform flash action
             self.removeAllActions()
             let flashOn = SKAction.runBlock { self.alpha = 1 }
-            let waitAction = SKAction.waitForDuration(0.5)
+            //let waitAction = SKAction.waitForDuration(0.5)
             let flashOff = SKAction.runBlock { self.alpha = 0.3 }
             let smallWaitAction = SKAction.waitForDuration(0.2)
             
