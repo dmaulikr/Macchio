@@ -280,7 +280,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         //inTheProcessOfLeavingAMine = false
         
         targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
-        mineCoolDownCounter = 0
+        //mineCoolDownCounter = 0
         minePropulsionSpeedActiveTimeCounter = 0
         minePropulsionSpeedActiveTimeCounterPreviousValue = 0
         speedDebuffTimeCounter = 0

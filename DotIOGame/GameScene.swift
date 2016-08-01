@@ -41,6 +41,7 @@ class GameScene: SKScene {
     var bgGraphics: SKNode!
     
     var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
+    var cameraTarget: SKNode!
     
     var player: Creature?
     let spawnPosition = CGPoint(x: 200, y: 200)
@@ -105,6 +106,7 @@ class GameScene: SKScene {
             self.addChild(player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
+            cameraTarget = player
             
             bgGraphics = childNodeWithName("bgGraphics")
             bgGraphics.xScale = mapSize.width / 6000
@@ -603,7 +605,7 @@ class GameScene: SKScene {
             if gameState != .GameOver {
                 camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius * prefs.zoomOutFactor // Follow player on z axis (by rescaling 😀)
                 camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius * prefs.zoomOutFactor
-                camera!.position = player.position //Follow player on the x axis and y axis
+                camera!.position = cameraTarget.position //Follow player on the x axis and y axis
                 
                 //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
                 if prefs.showArrow {
@@ -750,10 +752,13 @@ class GameScene: SKScene {
             touchesEnded(fakeTouches, withEvent: nil)
         }
         let destroyPlayerAction = SKAction.runBlock {
-            self.player!.removeFromParent()
+            self.player?.removeFromParent()
             self.player = nil
         }
-        let wait = SKAction.waitForDuration(2)
+        let zoomOutAction = SKAction.scaleBy(1.3, duration: 3)
+        camera!.runAction(zoomOutAction)
+        
+        let wait = SKAction.waitForDuration(3)
         let sequence = SKAction.sequence([destroyPlayerAction, wait])
         runAction(sequence, completion: restart)
         
