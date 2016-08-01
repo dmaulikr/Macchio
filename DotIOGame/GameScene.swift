@@ -8,9 +8,6 @@
 
 import Foundation
 import SpriteKit
-import Darwin
-
-let pi = M_PI
 
 enum Color {
     case Red, Green, Blue, Yellow

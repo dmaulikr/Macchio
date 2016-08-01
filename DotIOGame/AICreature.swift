@@ -21,6 +21,14 @@ class AICreature: Creature {
     var pendingActions: [Action] = []
     var actionComputer: AIActionComputer?
     
+    var myOrbChunk: [EnergyOrb] {
+        if let gameScene = gameScene {
+            if let chunkLocation = gameScene.convertWorldPointToOrbChunkLocation(self.position) {
+                return gameScene.orbChunks[chunkLocation.x][chunkLocation.y]
+            }
+        }
+        return []
+    }
     init(theGameScene: GameScene, name: String, playerID: Int, color: Color, startRadius: CGFloat, rxnTime: CGFloat) {
         self.gameScene = theGameScene
         self.rxnTime = rxnTime

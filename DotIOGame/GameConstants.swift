@@ -8,6 +8,9 @@
 
 import Foundation
 import SpriteKit
+import Darwin
+
+let pi = CGFloat(M_PI)
 
 class C {
     // Not all game constants are here. Yet. My goal is for all of them to be here

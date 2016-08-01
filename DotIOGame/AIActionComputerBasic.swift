@@ -24,11 +24,12 @@ class AIActionComputerBasic: AIActionComputer {
     }
     
     enum ObjectType {
-        case Mine, OrbBeacon, SmallCreature, LargeCreature, Wall
+        case Mine, OrbBeacon, NaturalOrb, SmallCreature, LargeCreature, Wall
     }
     
     let weight_mine: CGFloat = 5
-    let weight_orbBeacon: CGFloat = -1
+    let weight_orbBeacon: CGFloat = -3
+    let weight_naturalOrb: CGFloat = -0.1
     let weight_smallCreature: CGFloat = -2
     let weight_largeCreature: CGFloat = 2
     let weight_wall: CGFloat = 5
@@ -64,6 +65,8 @@ class AIActionComputerBasic: AIActionComputer {
                 let minesNearMe = gameScene.goopMines.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 let orbBeaconsNearMe = gameScene.orbBeacons.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 
+                let naturalOrbsNearMe = myCreature.myOrbChunk.filter { $0.artificiallySpawned == false }
+                
                 let allCreaturesNearMe = gameScene.allCreatures.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 let smallCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother < myCreature.targetRadius }
                 let largerCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius > myCreature.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother }
@@ -75,6 +78,7 @@ class AIActionComputerBasic: AIActionComputer {
 
                 for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weight_mine, objectType: .Mine) }
                 for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
+                for naturalOrb in naturalOrbsNearMe { assignModifiersForSectorAndCatalogueObject(naturalOrb.position, objectRadius: naturalOrb.radius, weight: weight_naturalOrb, objectType: .NaturalOrb) }
                 for smallCreature in smallCreaturesNearMe {
                     assignModifiersForSectorAndCatalogueObject(smallCreature.position, objectRadius: smallCreature.radius, weight: weight_smallCreature, objectType: .SmallCreature)
                 }
