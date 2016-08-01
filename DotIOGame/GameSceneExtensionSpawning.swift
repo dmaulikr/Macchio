@@ -55,12 +55,12 @@ extension GameScene {
     }
 
     
-    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
+    func seedSmallOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat, exclusivelyInColor: Color? = nil) {
         //Budget is the growAmount quantity that once existed in the entity that spawned the orbs. Mostly, this will be from dead players or old mines.
         var budget = growAmount
         while budget > 0 {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-            let randDist = CGFloat.random(min: 0, max: radius)
+            let randDist = CGFloat.random(min: minRadius, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
             let newOrbColor: Color
             if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
@@ -72,11 +72,11 @@ extension GameScene {
         
     }
     
-    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
+    func seedRichOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat, exclusivelyInColor: Color? = nil) {
         var budget = growAmount
         while budget > 0 {
             let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-            let randDist = CGFloat.random(min: 0, max: radius)
+            let randDist = CGFloat.random(min: minRadius, max: radius)
             let position = CGPoint(x: cos(randAngle) * randDist + aboutPoint.x, y: sin(randAngle) * randDist + aboutPoint.y)
             let newOrbColor: Color
             if let _ = exclusivelyInColor { newOrbColor = exclusivelyInColor! }
@@ -99,7 +99,7 @@ extension GameScene {
         }
     }
     
-    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, exclusivelyInColor: Color? = nil) {
+    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
         let maxNumberOfSmallOrbs = 30
         let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * C.orbGrowAmount[.Small]!
         let orbColor: Color?
@@ -109,11 +109,11 @@ extension GameScene {
             orbColor = nil
         }
         if growAmount < costToMaxOutSmallOrbs {
-            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
+            seedSmallOrbClusterWithBudget(growAmount, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
         } else {
-            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
+            seedSmallOrbClusterWithBudget(costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
             let richOrbBudget = growAmount - costToMaxOutSmallOrbs
-            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, exclusivelyInColor: orbColor)
+            seedRichOrbClusterWithBudget(richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
         }
         
         orbBeacons.append(OrbBeacon(totalValue: growAmount, radius: radius, position: aboutPoint))

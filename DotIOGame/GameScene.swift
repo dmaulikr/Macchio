@@ -392,10 +392,35 @@ class GameScene: SKScene {
         for creature in allCreatures {
             for mine in goopMines {
                 if mine.overlappingCircle(creature) && !creature.freshlySpawnedMines.contains(mine) {
-                    // creature just died
-                    creatureKillList.append(creature)
-                    if mine.leftByPlayerID == player?.playerID && creature !== player {
-                        spawnKillPoints(convertAreaToScore(creature.targetArea))
+                    
+                    if creature.targetRadius >= C.creature_minimumRadiusToApplyMineSizeReductionInsteadOfInstantDeath {
+                        // Creature is large enough so that a size reduction can be applied instead of just instant death
+                        let orgRadius = creature.targetRadius
+                        let radiusLoss = creature.targetRadius * C.creature_minePercentMassReduction
+                        let newRadius = creature.targetRadius - radiusLoss
+                        //creature.radius = newRadius
+                        creature.targetRadius = newRadius
+                        creature.speedDebuffTimeCounter = 0 // Intitiate a speed debuff
+                        creature.isBoosting = false
+                        if mine.leftByPlayerID == player?.playerID && creature !== player {
+                            spawnKillPoints(convertAreaToScore(areaOfCircleWithRadius(radiusLoss)))
+                        }
+                        
+                        let waitAction = SKAction.waitForDuration(0.3)
+                        let spawnOrbClusterAction = SKAction.runBlock {
+                            self.seedAutoOrbClusterWithBudget(areaOfCircleWithRadius(radiusLoss), aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
+                        }
+                        runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
+                        
+                        
+                    } else {
+                        // creature just died
+                        creatureKillList.append(creature)
+                        seedAutoOrbClusterWithBudget(creature.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: creature.position, withinRadius: creature.targetRadius * creature.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
+
+                        if mine.leftByPlayerID == player?.playerID && creature !== player {
+                            spawnKillPoints(convertAreaToScore(creature.targetArea))
+                        }
                     }
                 }
             }
@@ -409,7 +434,6 @@ class GameScene: SKScene {
             } else {
                 x.removeFromParent()
             }
-            seedAutoOrbClusterWithBudget(x.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: x.position, withinRadius: x.targetRadius * x.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: x.playerColor)
         }
 
     }
@@ -472,7 +496,7 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius)
+            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
             mine.removeFromParent()
         }
         
@@ -496,15 +520,15 @@ class GameScene: SKScene {
                 freshMine.name = "\(creature.name!) shuriken"
                 
                 creature.freshlySpawnedMines.append(freshMine)
-                for otherCreature in allCreatures {
-                    if otherCreature === creature { continue }
-                    if freshMine.overlappingCircle(otherCreature) {
-                        otherCreature.freshlySpawnedMines.append(freshMine)
-                    }
-                }
-                if creature === player {
-                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
-                }
+//                for otherCreature in allCreatures {
+//                    if otherCreature === creature { continue }
+//                    if freshMine.overlappingCircle(otherCreature) {
+//                        otherCreature.freshlySpawnedMines.append(freshMine)
+//                    }
+//                }
+//                if creature === player {
+//                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
+//                }
             }
             
         }

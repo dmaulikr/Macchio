@@ -21,7 +21,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {
-        return 30 * pow(1/2, (radius - 50) / 100) + 60
+        return 60 * pow(1/2, (radius - 50) / 100) + 60
     }
     var boostingSpeed: CGFloat { return normalSpeed * 2.3 }
     var minePropulsionSpeed: CGFloat {
@@ -112,6 +112,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
+        self.alpha = 0.9
         self.currentSpeed = normalSpeed
         defer { //This keyword ensures that the didSet code is called
             velocity.speed = currentSpeed

@@ -18,11 +18,14 @@ class C {
     static let creaturesToAreaRatio: CGFloat = 0.0000011
     static let orbsToAreaRatio: CGFloat = 0.00002
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000
+    
+    static let creature_minePercentMassReduction: CGFloat = 0.5
+    static let creature_minimumRadiusToApplyMineSizeReductionInsteadOfInstantDeath: CGFloat = 80
 
-    static let creature_speedDebuffTime: CGFloat = 1,
+    static let creature_speedDebuffTime: CGFloat = 1.5,
         creature_maxAngleChangePerSecond: CGFloat = 270,
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,
-        creature_mineCooldownTime: CGFloat = 4.0,
+        creature_mineCooldownTime: CGFloat = 5.0,
         creature_minRadius: CGFloat = 50
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     static let percentLargerRadiusACreatureMustBeToEngulfAnother: CGFloat = 1.11

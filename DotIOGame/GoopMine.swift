@@ -25,10 +25,12 @@ class GoopMine: SKSpriteNode, BoundByCircle {
     var rps: CGFloat = 1 // Rotations per second
     var deltaRPSPerSecond: CGFloat = -1
     var leftByPlayerID: Int = 0
+    var leftByPlayerColor: Color = .Red
 
     init(radius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerWithID: Int, initialRPS: CGFloat = 1) {
         self.radius = radius
         self.growAmount = growAmount
+        self.leftByPlayerColor = color
         self.rps = initialRPS
         self.deltaRPSPerSecond = -rps / lifeSpan
         
