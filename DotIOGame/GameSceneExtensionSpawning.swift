@@ -17,9 +17,9 @@ extension GameScene {
     }
     
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color) -> EnergyOrb? {
+    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color, asType type: OrbType) -> EnergyOrb? {
         if let location = convertWorldPointToOrbChunkLocation(position) {
-            let newOrb = EnergyOrb(orbColor: inColor)
+            let newOrb = EnergyOrb(orbColor: inColor, type: type)
             newOrb.position = position
             newOrb.growAmount = growAmount
             newOrb.minRadius = minRadius
@@ -51,7 +51,7 @@ extension GameScene {
             maxRadius = 20
             growAmount = C.orbGrowAmount[.Rich]!
         }
-        return seedOrbAtPosition(position, growAmount: growAmount, minRadius: minRadius, maxRadius: maxRadius, artificiallySpawned: artificiallySpawned, inColor: orbColor)
+        return seedOrbAtPosition(position, growAmount: growAmount, minRadius: minRadius, maxRadius: maxRadius, artificiallySpawned: artificiallySpawned, inColor: orbColor, asType: type)
     }
 
     

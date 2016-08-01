@@ -28,13 +28,14 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     var growing = true
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
-    var isEaten = false
+    //var isEaten = false
+    var type: GameScene.OrbType = GameScene.OrbType.Small
+//    @objc override class func initialize() {
+//        
+//    }
     
-    @objc override class func initialize() {
-        
-    }
-    
-    init(orbColor: Color) {
+    init(orbColor: Color, type: GameScene.OrbType) {
+        self.type = type
         let texture = EnergyOrb.orbTextures[orbColor]
         let color = SKColor.whiteColor()
         defer { radius = 0 }

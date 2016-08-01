@@ -14,10 +14,10 @@ class Creature: SKSpriteNode, BoundByCircle {
     var playerID: Int = 0
     var playerColor: Color = .Red
     let textures: [Color: SKTexture] = [
-        .Red : SKTexture(imageNamed: "player_red"),
+        .Red : SKTexture(imageNamed: "player_red_lit"),
         .Green: SKTexture(imageNamed: "player_green"),
-        .Blue: SKTexture(imageNamed: "player_blue"),
-        .Yellow: SKTexture(imageNamed: "player_yellow")
+        .Blue: SKTexture(imageNamed: "player_blue_lit"),
+        .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
     let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {

@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 10
+            zoomOutFactor: 1.3
     )
     
     enum State {
@@ -95,6 +95,7 @@ class GameScene: SKScene {
     
     var warningSigns: [WarningSign] = []
     var killPointsLabelOriginal: SKLabelNode!
+    var smallScoreLabelOriginal: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
@@ -155,6 +156,7 @@ class GameScene: SKScene {
             }
             
             killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
+            smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
             
         }
     }
@@ -362,14 +364,19 @@ class GameScene: SKScene {
         let orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) }
         
         for orb in orbKillList {
-            let fadeAction = SKAction.fadeOutWithDuration(1)
+            let fadeAction = SKAction.fadeOutWithDuration(0.3)
             let remove = SKAction.runBlock { self.removeFromParent() }
             orb.runAction(SKAction.sequence([fadeAction, remove]))
             c.targetArea += orb.growAmount
             if c === player {
-                spawnFlyingNumberOnPlayerMouth(convertAreaToScore(orb.growAmount))
-                //print("flying number spawned")
-                score += convertAreaToScore(orb.growAmount)
+                let deltaScore: Int
+                if orb.type == .Small {
+                    deltaScore = 1
+                } else {
+                    deltaScore = 5
+                }
+                score += deltaScore
+                spawnSmallScoreTextOnPlayerMouth(deltaScore)
             }
             for beacon in orbBeacons {
                 if beacon.overlappingCircle(orb) { beacon.totalValue -= orb.growAmount }
@@ -668,22 +675,15 @@ class GameScene: SKScene {
         }
     }
     
-    let masterNode = SKLabelNode(fontNamed: "Chalkboard SE Regular 32.0")
-    func spawnFlyingNumberOnPlayerMouth(points: Int) {
+    func spawnSmallScoreTextOnPlayerMouth(points: Int) {
         if points == 0 { return }
         if let player = player {
-            let labelNode = masterNode.copy() as! SKLabelNode
-            var text: String = String(points)
-            if points > 0 { text = "+\(text)" }
-            labelNode.text = text
-            let pointOnPlayersMouth = convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player)
-            labelNode.position = pointOnPlayersMouth
-            labelNode.zPosition = 100
-            labelNode.xScale = camera!.xScale
-            labelNode.yScale = camera!.yScale
-            addChild(labelNode)
-            labelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.6))
-            labelNode.runAction(SKAction.fadeOutWithDuration(0.6), completion: {
+            let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
+            newLabelNode.text = "+\(points)"
+            newLabelNode.position = camera!.convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player)
+            camera!.addChild(newLabelNode)
+            newLabelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.8))
+            newLabelNode.runAction(SKAction.fadeOutWithDuration(0.8), completion: {
                 self.removeFromParent()
             })
         }
