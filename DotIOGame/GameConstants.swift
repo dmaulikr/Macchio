@@ -15,6 +15,10 @@ let pi = CGFloat(M_PI)
 class C {
     // Not all game constants are here. Yet. My goal is for all of them to be here
     // Functions do count as constants.
+    static let creaturesToAreaRatio: CGFloat = 0.0000011
+    static let orbsToAreaRatio: CGFloat = 0.00002
+    static let orbBeacon_minimumValueRequirement: CGFloat = 20000
+
     static let creature_speedDebuffTime: CGFloat = 1,
         creature_maxAngleChangePerSecond: CGFloat = 270,
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,

@@ -67,6 +67,8 @@ class GameScene: SKScene {
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
+    let frozenTouchDetectionTime: CGFloat = 5.0 // If the touch is not moved at all for this many seconds, nullify the touch
+    var frozenTouchCounter: CGFloat = 0
     
     var joyStickBox: SKNode!, controlStick: SKNode!
     let maxControlStickDistance: CGFloat = 20
@@ -86,10 +88,8 @@ class GameScene: SKScene {
     let orbChunkWidth: CGFloat = 600, orbChunkHeight: CGFloat = 600
     var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
-    let orbsToAreaRatio: CGFloat = 0.00002
-    var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(orbsToAreaRatio * mapSize.width * mapSize.height) }
-    let creaturesToAreaRatio: CGFloat = 0.00000125
-    var numOfCreaturesThatMustExist: Int { return Int(creaturesToAreaRatio * mapSize.width * mapSize.height) }
+    var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(C.orbsToAreaRatio * mapSize.width * mapSize.height) }
+    var numOfCreaturesThatMustExist: Int { return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [GoopMine] = []
     
@@ -194,6 +194,7 @@ class GameScene: SKScene {
                         joyStickBox.hidden = false
                         joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
                     }
+                    frozenTouchCounter = 0
                 }
             }
         }
@@ -204,7 +205,6 @@ class GameScene: SKScene {
         if let player = player {
             for touch in touches {
                 if touch == playerMovingTouch {
-                    
                     let location = touch.locationInNode(camera!)
                     player.targetAngle = mapRadiansToDegrees0to360((location - originalPlayerMovingTouchPositionInCamera!).angle)
                     //player.velocity.angle = playerTargetAngle
@@ -232,6 +232,7 @@ class GameScene: SKScene {
                             controlStick.position.y = sin(angle) * maxControlStickDistance
                         }
                     }
+                    frozenTouchCounter = 0
                 }
             }
         }
@@ -294,6 +295,15 @@ class GameScene: SKScene {
         if let player = player {
             playerSize = convertAreaToScore(player.targetArea)
         }
+        if let playerMovingTouch = playerMovingTouch {
+            print(frozenTouchCounter)
+            frozenTouchCounter += CGFloat(deltaTime)
+            if frozenTouchCounter >= frozenTouchDetectionTime {
+                frozenTouchCounter = 0
+                var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
+                touchesEnded(fakeTouches, withEvent: nil)
+            }
+        }
         
     }
     
@@ -341,7 +351,7 @@ class GameScene: SKScene {
         }
         
         // After all the orb collisions have been handled, itereate through the beacons to see if there are any that should be removed..
-        orbBeacons = orbBeacons.filter { $0.totalValue > 10000 }
+        orbBeacons = orbBeacons.filter { $0.totalValue > C.orbBeacon_minimumValueRequirement }
         //print (orbBeacons.count)
         
     }
