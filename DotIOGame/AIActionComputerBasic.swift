@@ -91,7 +91,8 @@ class AIActionComputerBasic: AIActionComputer {
                 let currentIndexAdj2 = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector) - 1)
                 let everythingInFrontOfMe = sectorContents[currentIndex] + sectorContents[currentIndexAdj1] + sectorContents[currentIndexAdj2]
 
-                let opp = indexWithLeastDanger + sectorDangerRatings.count/2
+//                let opp = indexWithLeastDanger + sectorDangerRatings.count/2
+                let opp = currentIndex + sectorDangerRatings.count/2
                 let oppositeIndex = indexWithinSectorsBounds(opp)
                 let oppositeIndexAdj1 = indexWithinSectorsBounds(opp + 1)
                 let oppositeIndexAdj2 = indexWithinSectorsBounds(opp - 1)
