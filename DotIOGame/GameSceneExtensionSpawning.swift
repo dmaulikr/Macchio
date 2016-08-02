@@ -65,21 +65,23 @@ extension GameScene {
         var placeOrbsAtPositions: [CGPoint] = []
         var r = minRadius + orbMaxRadius
         // Go through and figure out the number of orbs I'll end up spawning. While I'm at it, I'll also get the positions I'll spawn stuff at
-        for _ in 0..<numberOfOrbShells {
-            // Here's the counting part
-            let numOrbsInShell = numberOfOrbsAtRadius(r)
-            totalNumOfOrbs += numOrbsInShell
-            
-            // Now here comes the predetermining orb posititions
-            for _ in 0..<numOrbsInShell {
-                let aRandomAngle = CGFloat.random(min: 0, max: 360)
-                let randX = aboutPoint.x + cos(aRandomAngle) * r
-                let randY = aboutPoint.y + sin(aRandomAngle) * r
-                let randomOrbPosition = CGPoint(x: randX, y: randY)
-                placeOrbsAtPositions.append(randomOrbPosition)
+        if numberOfOrbShells > 0 {
+            for _ in 0..<numberOfOrbShells {
+                // Here's the counting part
+                let numOrbsInShell = numberOfOrbsAtRadius(r)
+                totalNumOfOrbs += numOrbsInShell
+                
+                // Now here comes the predetermining orb posititions
+                for _ in 0..<numOrbsInShell {
+                    let aRandomAngle = CGFloat.random(min: 0, max: 360)
+                    let randX = aboutPoint.x + cos(aRandomAngle) * r
+                    let randY = aboutPoint.y + sin(aRandomAngle) * r
+                    let randomOrbPosition = CGPoint(x: randX, y: randY)
+                    placeOrbsAtPositions.append(randomOrbPosition)
+                }
+                
+                r += 2*orbMaxRadius
             }
-            
-            r += 2*orbMaxRadius
         }
         let orbGrowAmount: CGFloat = budget / CGFloat(totalNumOfOrbs) // So this way, the budget I'm given is distributed across all the orbs
         

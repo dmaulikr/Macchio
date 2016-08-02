@@ -124,6 +124,8 @@ class AIActionComputerBasic: AIActionComputer {
                 }
                 
                 myCreature.requestAction(AICreature.Action(type: .TurnToAngle, toAngle: CGFloat(indexWithLeastDanger) * anglePerSector + anglePerSector / 2))
+                // The creature has now done the Turning!
+                // Now time to compute other actions and abilities
                 
                 
 //                let chosenIndex = indexWithLeastDanger
@@ -152,8 +154,10 @@ class AIActionComputerBasic: AIActionComputer {
                 
                 let smallCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .SmallCreature}
                 let smallCreaturesThatICanCatchByLeavingAMine = smallCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - myCreature.radius < mineTravelDistance }
+                let orbsInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .Orb }
                 
-                if largeCreaturesChasingMe.count > 0 || smallCreaturesInFrontOfMe.count > 0 {
+                
+                if largeCreaturesChasingMe.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 || orbsInFrontOfMe.count > 10 {
                     shouldBeBoosting = true
                 }
                 

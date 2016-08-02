@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/AIActionComputerBasic.swift"
-            timestampString = "491866349.349765"
+            timestampString = "491867279.837838"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
             landmarkName = "assignModifiersForSectorAndCatalogueObject(_:objectRadius:weight:objectType:)"
             landmarkType = "5">
          </BreakpointContent>
