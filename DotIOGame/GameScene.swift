@@ -291,7 +291,7 @@ class GameScene: SKScene {
         handleCreatureAndCreatureCollisions()
         
         handleMineSpawningAndDecay()
-        handleOrbSpawning()
+        handleOrbSpawningAndDecay()
         handleCreatureSpawning()
         
         updateUI()
@@ -566,12 +566,21 @@ class GameScene: SKScene {
         }
     }
     
-    func handleOrbSpawning() {
+    func handleOrbSpawningAndDecay() {
         var currrentOrbCount = 0
-        for chunkCol in orbChunks {
-            for chunk in chunkCol {
+        for (colIndex ,chunkCol) in orbChunks.enumerate() {
+            for (rowIndex, chunk) in chunkCol.enumerate() {
+                //var decayedOrbs: [EnergyOrb] = []
                 for orb in chunk {
                     if orb.artificiallySpawned == false { currrentOrbCount += 1 }
+                }
+                // Basically take out all the dead orbs
+                orbChunks[colIndex][rowIndex] = orbChunks[colIndex][rowIndex].filter { $0.isAlive }
+                
+                // And for the ones that are near decay, then start a fade action
+                for nearDecayOrb in (orbChunks[colIndex][rowIndex].filter { $0.isNearDecay && !$0.isAlreadyFading }) {
+                    nearDecayOrb.isAlreadyFading = true
+                    nearDecayOrb.runAction(SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds)))
                 }
             }
         }

@@ -25,6 +25,14 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     }
     var minRadius: CGFloat = 10, maxRadius: CGFloat = 15
     var growAmount: CGFloat = 1/5
+    var lifespanCounter: CGFloat = 0
+    var isAlive: Bool {
+        return self.artificiallySpawned ? lifespanCounter < C.orb_artificialLifespan : true
+    }
+    var isNearDecay: Bool {
+        return self.artificiallySpawned ? fabs(lifespanCounter - C.orb_artificialLifespan) <= C.orb_fadeOutForXSeconds : false
+    }
+    var isAlreadyFading = false
     
     var growing = true
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
@@ -51,6 +59,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     }
     
     func update(deltaTime: CFTimeInterval) {
+        if self.artificiallySpawned { lifespanCounter += CGFloat(deltaTime) }
         if growing {
             radius += 20 * CGFloat(deltaTime)
             if radius >= maxRadius {growing = false}
