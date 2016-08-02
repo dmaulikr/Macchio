@@ -50,12 +50,12 @@ class GameScene: SKScene {
         return (player != nil ? [player!] : []) + otherCreatures
     }
     
-    var score: Int = 0 {
-        didSet { scoreLabel.text = String(score) }
+    var playerScore: Int = 0 {
+        didSet { scoreLabel.text = String(playerScore) }
     }
     var scoreLabel: SKLabelNode!
     
-    var playerSize: Int = 0 {
+    var playerSize: UInt32 = 0 {
         didSet { sizeLabel.text = String(playerSize) }
     }
     var sizeLabel: SKLabelNode!
@@ -92,7 +92,7 @@ class GameScene: SKScene {
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(C.orbsToAreaRatio * mapSize.width * mapSize.height) }
     var numOfCreaturesThatMustExist: Int { return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
-    var goopMines: [GoopMine] = []
+    var goopMines: [Mine] = []
     
     var warningSigns: [WarningSign] = []
     var killPointsLabelOriginal: SKLabelNode!
@@ -297,7 +297,7 @@ class GameScene: SKScene {
         updateUI()
         
         if let player = player {
-            playerSize = convertAreaToScore(player.targetArea)
+            playerSize = convertAreaToSizeNumber(player.targetArea)
         }
         if let playerMovingTouch = playerMovingTouch {
             //print(frozenTouchCounter)
@@ -311,7 +311,11 @@ class GameScene: SKScene {
         
     }
     
-    func convertAreaToScore(area: CGFloat) -> Int {
+    func convertAreaToSizeNumber(area: CGFloat) -> UInt32 {
+        return UInt32(radiusOfCircleWithArea(area))
+    }
+    
+    func convertAreaToKillPoints(area: CGFloat) -> UInt32 {
         //return Int(radiusOfCircleWithArea(area) * 100) / 100
         let radius = radiusOfCircleWithArea(area)
         switch radius {
@@ -328,7 +332,7 @@ class GameScene: SKScene {
         case let r where r > 250:
             return 300
         default:
-            return -1
+            return 0
         }
     }
 
@@ -370,9 +374,10 @@ class GameScene: SKScene {
             let remove = SKAction.runBlock { self.removeFromParent() }
             orb.runAction(SKAction.sequence([fadeAction, remove]))
             c.targetArea += orb.growAmount
+            let deltaScore: UInt32 = C.orb_pointValues[orb.type]!
+            c.score += deltaScore
+
             if c === player {
-                let deltaScore: Int = C.orb_pointValues[orb.type]!
-                score += deltaScore
                 spawnSmallScoreTextOnPlayerMouth(deltaScore)
             }
             for beacon in orbBeacons {
@@ -399,8 +404,16 @@ class GameScene: SKScene {
                         creature.targetRadius = newRadius
                         creature.speedDebuffTimeCounter = 0 // Intitiate a speed debuff
                         creature.isBoosting = false
+                        
+                        let deltaScore = convertAreaToKillPoints(areaOfCircleWithRadius(radiusLoss))
+                        for creature in allCreatures {
+                            if creature.playerID == mine.leftByPlayerID {
+                                creature.score += deltaScore
+                                break
+                            }
+                        }
                         if mine.leftByPlayerID == player?.playerID && creature !== player {
-                            spawnKillPoints(convertAreaToScore(areaOfCircleWithRadius(radiusLoss)))
+                            spawnKillPoints(deltaScore)
                         }
                         
                         let waitAction = SKAction.waitForDuration(0.3)
@@ -415,8 +428,15 @@ class GameScene: SKScene {
                         creatureKillList.append(creature)
                         seedOrbCluster(ofType: .Glorious, withBudget: creature.growAmount * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: creature.targetRadius * C.creature_orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
 
+                        let deltaScore = convertAreaToKillPoints(creature.targetArea)
+                        for creature in allCreatures {
+                            if creature.playerID == mine.leftByPlayerID {
+                                creature.score += deltaScore
+                                break
+                            }
+                        }
                         if mine.leftByPlayerID == player?.playerID && creature !== player {
-                            spawnKillPoints(convertAreaToScore(creature.targetArea))
+                            spawnKillPoints(deltaScore)
                         }
                     }
                 }
@@ -450,11 +470,12 @@ class GameScene: SKScene {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount * C.energyTransferPercent
                             theEaten.append(theSmaller)
+                            let deltaScore = convertAreaToKillPoints(theSmaller.targetArea)
+                            theBigger.score += deltaScore
                             if theBigger === player {
                                 // add a flying number
                                 //spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
-                                spawnKillPoints(convertAreaToScore(theSmaller.targetArea))
-                                score += convertAreaToScore(theSmaller.targetArea)
+                                spawnKillPoints(deltaScore)
                             }
                         }
                     } else {
@@ -539,7 +560,7 @@ class GameScene: SKScene {
         
         for creature in allCreatures {
             // Take out the fresh mine reference from players if the mine isn't "fresh" anymore i.e. the player has finished the initial contact and can be harmed by their own mine.
-            var mineRemoveList:[GoopMine] = []
+            var mineRemoveList:[Mine] = []
             for freshMine in creature.freshlySpawnedMines {
                 if !freshMine.overlappingCircle(creature) {
                     //freshMine.zPosition = 90
@@ -711,7 +732,7 @@ class GameScene: SKScene {
         }
     }
     
-    func spawnSmallScoreTextOnPlayerMouth(points: Int) {
+    func spawnSmallScoreTextOnPlayerMouth(points: UInt32) {
         if points == 0 { return }
         if let player = player {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
@@ -725,7 +746,7 @@ class GameScene: SKScene {
         }
     }
     
-    func spawnKillPoints(points: Int) {
+    func spawnKillPoints(points: UInt32) {
         if points <= 0 { return }
         let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
         newLabelNode.position = CGPoint(x: 0, y: 50)

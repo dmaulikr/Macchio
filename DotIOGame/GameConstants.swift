@@ -48,12 +48,12 @@ class C {
         .Rich: 20,
         .Glorious: 25
     ]
-    static let orb_pointValues: [GameScene.OrbType: Int] = [
+    static let orb_pointValues: [GameScene.OrbType: UInt32] = [
         .Small: 1,
         .Rich: 5,
-        .Glorious: 0 // varies
+        .Glorious: 5 // varies
     ]
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
-    static let orb_fadeOutForXSeconds: CGFloat = 10
+    static let orb_fadeOutForXSeconds: CGFloat = 5
     static let mine_sizeExaggeration: CGFloat = 1.3 // Makes mines look bigger, but with the same hitbox.
 }

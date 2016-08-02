@@ -19,6 +19,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Blue: SKTexture(imageNamed: "player_blue_lit"),
         .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
+    var score: UInt32 = 0
     var normalSpeed: CGFloat {
         return 60 * pow(1/2, (radius - 50) / 100) + 60
     }
@@ -73,7 +74,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     
 //    var onMineImpulseSpeed: Bool = false
 //    var hasSpeedDebuff: Bool = false
-    var freshlySpawnedMines: [GoopMine] = []
+    var freshlySpawnedMines: [Mine] = []
     
     var minePropulsionSpeedActiveTimeCounter: CGFloat = C.creature_minePropulsionSpeedActiveTime
     var minePropulsionSpeedActiveTimeCounterPreviousValue: CGFloat = C.creature_minePropulsionSpeedActiveTime

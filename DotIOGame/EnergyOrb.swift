@@ -41,6 +41,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
 //    @objc override class func initialize() {
 //        
 //    }
+    var pointValue: Int? // If it is nil, then hopefully the game will figure out the point value based on the type
     
     init(orbColor: Color, type: GameScene.OrbType) {
         self.type = type

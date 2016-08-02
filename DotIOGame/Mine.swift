@@ -1,5 +1,5 @@
 //
-//  GoopMine.swift
+//  Mine.swift
 //  DotIOGame
 //
 //  Created by Ryan Anderson on 7/13/16.
@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class GoopMine: SKSpriteNode, BoundByCircle {
+class Mine: SKSpriteNode, BoundByCircle {
     
     static let shurikenTextures: [Color: SKTexture] = [
         .Red : SKTexture(imageNamed: "shuriken_red"),
@@ -34,7 +34,7 @@ class GoopMine: SKSpriteNode, BoundByCircle {
         self.rps = initialRPS
         self.deltaRPSPerSecond = -rps / lifeSpan
         
-        let myTexture = GoopMine.shurikenTextures[color]
+        let myTexture = Mine.shurikenTextures[color]
         self.leftByPlayerID = leftByPlayerWithID
         super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius * C.mine_sizeExaggeration , height: 2*radius * C.mine_sizeExaggeration))
         self.zRotation = CGFloat.random(min: 0, max: 360).degreesToRadians()

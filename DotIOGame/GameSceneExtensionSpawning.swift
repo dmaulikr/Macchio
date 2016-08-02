@@ -141,8 +141,8 @@ extension GameScene {
     }
     
     
-    func spawnMineAtPosition(atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> GoopMine {
-        let mine = GoopMine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
+    func spawnMineAtPosition(atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> Mine {
+        let mine = Mine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
         mine.zPosition = 1
         addChild(mine)

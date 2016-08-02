@@ -22,6 +22,9 @@ class AIActionComputerBasic: AIActionComputer {
     var anglePerSector: CGFloat {
         return 360.0 / CGFloat(self.sectorDangerRatings.count)
     }
+    var shouldBeBoosting: CGFloat = 0 // a value higher than zero means yes, do boost
+    var shouldLeaveMine: CGFloat = 0 // a value higher than zero means yes, leave the mine
+
     
     enum ObjectType {
         case Mine, OrbBeacon, Orb, SmallCreature, LargeCreature, Wall
@@ -40,6 +43,16 @@ class AIActionComputerBasic: AIActionComputer {
         let weight_smallCreature: CGFloat
         let weight_largeCreature: CGFloat
         let weight_wall: CGFloat
+        
+        
+        //Weights be kinda like voting power
+        let weight_boostAwayFromLargeCreature: CGFloat = 1
+        let weight_boostTowardLargeCreature: CGFloat = -4
+        let weight_boostTowardOrb: CGFloat = 0.1
+        let weight_boostForNoReason: CGFloat = -2
+        
+        let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = -1
+        let weight_leaveMineToCatchSmallerCreature: CGFloat = 1
     }
     
     // Weights represent how dangerous a type of object is. Higher number means higher danger, whereas a negative number signifies something good
@@ -70,6 +83,8 @@ class AIActionComputerBasic: AIActionComputer {
         // Here the action computer should call requestAction() for myCreature to ensure its safety and success
         sectorDangerRatings = [CGFloat](count: numOfSectors, repeatedValue: 0.0)
         sectorContents = [[(objectType: ObjectType, position: CGPoint, radius: CGFloat)]](count: sectorDangerRatings.count, repeatedValue: [])
+        shouldBeBoosting = 0
+        shouldLeaveMine = 0
         
         if let myCreature = myCreature {
             if let gameScene = myCreature.gameScene {
@@ -124,8 +139,11 @@ class AIActionComputerBasic: AIActionComputer {
                 }
                 
                 myCreature.requestAction(AICreature.Action(type: .TurnToAngle, toAngle: CGFloat(indexWithLeastDanger) * anglePerSector + anglePerSector / 2))
+                
+                // ***************************************
                 // The creature has now done the Turning!
-                // Now time to compute other actions and abilities
+                // Now time to compute if the creature should boost or leave a mine (or both)
+                // ***************************************
                 
                 
 //                let chosenIndex = indexWithLeastDanger
@@ -143,35 +161,57 @@ class AIActionComputerBasic: AIActionComputer {
                 let oppositeIndexAdj2 = indexWithinSectorsBounds(opp - 1)
                 let everythingBehindMe = sectorContents[oppositeIndex] + sectorContents[oppositeIndexAdj1] + sectorContents[oppositeIndexAdj2]
                 // Perform deeper analysis
-                // now I'll figure out why I'm going the direction I am and do something to help myself. Whether that's leaving a mine, starting a boost, or stopping a boost
-                var shouldBeBoosting = false
-                var shouldLeaveMine = false
+                // Gather all the object identiiers, then make a decision.
                 
-                let largeCreaturesChasingMe = everythingBehindMe.filter {
-                    $0.objectType == .LargeCreature
-                }
-                let largeCreaturesThatCanBeShurikenned = largerCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - $0.radius - myCreature.radius < leaveMineRange }
+                let largeCreaturesBehindMe = everythingBehindMe.filter { $0.objectType == .LargeCreature }
+                let largeCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .LargeCreature }
+
+                let largeCreaturesBehindMeThatCanBeShurikenned = largerCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - $0.radius - myCreature.radius < leaveMineRange }
                 
                 let smallCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .SmallCreature}
+                
                 let smallCreaturesThatICanCatchByLeavingAMine = smallCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - myCreature.radius < mineTravelDistance }
+                
                 let orbsInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .Orb }
                 
                 
-                if largeCreaturesChasingMe.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 || orbsInFrontOfMe.count > 10 {
-                    shouldBeBoosting = true
+                // Each weight is kind of like voting power. Some of them are things a player would not ever do. But they still exist as weights, so they have their negative voting power
+                shouldBeBoosting += weightSet.weight_boostForNoReason
+                for c in largeCreaturesBehindMe{
+                    assignModifiersForShouldBeBoosting(objectPosition: c.position, weight: weightSet.weight_boostAwayFromLargeCreature)
+                    // TODO actually pass in the closest point to myCreature instead of the center position
+                }
+                for c in largeCreaturesInFrontOfMe {
+                    assignModifiersForShouldBeBoosting(objectPosition: c.position, weight: weightSet.weight_boostTowardLargeCreature)
+                }
+                for orb in orbsInFrontOfMe {
+                    assignModifiersForShouldBeBoosting(objectPosition: orb.position, weight: weightSet.weight_boostTowardOrb)
                 }
                 
-                if largeCreaturesThatCanBeShurikenned.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 {
-                    shouldLeaveMine = true
+                
+                for _ in smallCreaturesThatICanCatchByLeavingAMine {
+                    shouldLeaveMine += weightSet.weight_leaveMineToCatchSmallerCreature
+                }
+                for _ in largeCreaturesBehindMeThatCanBeShurikenned {
+                    shouldLeaveMine += weightSet.weight_leaveMineToAttackPersuingLargeCreature
                 }
                 
-                if shouldBeBoosting {
+//                if largeCreaturesChasingMe.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 || orbsInFrontOfMe.count > 10 {
+//                    shouldBeBoosting = true
+//                }
+//                
+//                if largeCreaturesThatCanBeShurikenned.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 {
+//                    shouldLeaveMine = true
+//                }
+                
+                
+                if shouldBeBoosting > 0 {
                     myCreature.requestAction(AICreature.Action(type: .StartBoost))
                 } else {
                     myCreature.requestAction(AICreature.Action(type: .StopBoost))
                 }
                 
-                if shouldLeaveMine {
+                if shouldLeaveMine > 0 {
                     myCreature.requestAction(AICreature.Action(type: .LeaveMine))
                 }
                 
@@ -219,5 +259,11 @@ class AIActionComputerBasic: AIActionComputer {
         }
         return totalFound
     }
+    
+    func assignModifiersForShouldBeBoosting(objectPosition objectPosition: CGPoint, weight: CGFloat) {
+        let modifier = weight * ((radarDistance - myCreature!.position.distanceTo(objectPosition)) / radarDistance)
+        shouldBeBoosting += modifier
+    }
+    
     
 }
