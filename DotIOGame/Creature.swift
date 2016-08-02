@@ -19,7 +19,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Blue: SKTexture(imageNamed: "player_blue_lit"),
         .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
-    let orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.5
     var normalSpeed: CGFloat {
         return 60 * pow(1/2, (radius - 50) / 100) + 60
     }
@@ -103,7 +102,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         }
     }
     
-    static let percentGrowAmountToBeDepositedUponDeath: CGFloat = 0.50
+    //static let percentGrowAmountToBeDepositedUponDeath: CGFloat = 0.50
     var growAmount: CGFloat { return targetArea }
     
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
@@ -247,7 +246,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         isBoosting = false
         blendMode = SKBlendMode.Alpha
     }
-    let totalPulseTime = 0.5
+    let totalPulseTime = 0.2
     func leaveMine() {
         // Firstly, don't allow the leaving of mines if the player is simply too small or if they haven't waited the cooldown time
         if !canLeaveMine { return }

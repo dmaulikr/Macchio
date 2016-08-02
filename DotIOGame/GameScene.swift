@@ -68,7 +68,7 @@ class GameScene: SKScene {
     
     var playerMovingTouch: UITouch? = nil
     var originalPlayerMovingTouchPositionInCamera: CGPoint? = nil
-    let frozenTouchDetectionTime: CGFloat = 5.0 // If the touch is not moved at all for this many seconds, nullify the touch
+    let frozenTouchDetectionTime: CGFloat = 3.0 // If the touch is not moved at all for this many seconds, nullify the touch
     var frozenTouchCounter: CGFloat = 0
     
     var joyStickBox: SKNode!, controlStick: SKNode!
@@ -300,7 +300,7 @@ class GameScene: SKScene {
             playerSize = convertAreaToScore(player.targetArea)
         }
         if let playerMovingTouch = playerMovingTouch {
-            print(frozenTouchCounter)
+            //print(frozenTouchCounter)
             frozenTouchCounter += CGFloat(deltaTime)
             if frozenTouchCounter >= frozenTouchDetectionTime {
                 frozenTouchCounter = 0
@@ -371,12 +371,7 @@ class GameScene: SKScene {
             orb.runAction(SKAction.sequence([fadeAction, remove]))
             c.targetArea += orb.growAmount
             if c === player {
-                let deltaScore: Int
-                if orb.type == .Small {
-                    deltaScore = 1
-                } else {
-                    deltaScore = 5
-                }
+                let deltaScore: Int = C.orb_pointValues[orb.type]!
                 score += deltaScore
                 spawnSmallScoreTextOnPlayerMouth(deltaScore)
             }
@@ -410,7 +405,7 @@ class GameScene: SKScene {
                         
                         let waitAction = SKAction.waitForDuration(0.3)
                         let spawnOrbClusterAction = SKAction.runBlock {
-                            self.seedAutoOrbClusterWithBudget(areaOfCircleWithRadius(radiusLoss), aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
+                            self.seedOrbCluster(ofType: .Glorious, withBudget: areaOfCircleWithRadius(radiusLoss) * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
                         }
                         runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
                         
@@ -418,7 +413,7 @@ class GameScene: SKScene {
                     } else {
                         // creature just died
                         creatureKillList.append(creature)
-                        seedAutoOrbClusterWithBudget(creature.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: creature.position, withinRadius: creature.targetRadius * creature.orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
+                        seedOrbCluster(ofType: .Glorious, withBudget: creature.growAmount * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: creature.targetRadius * C.creature_orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
 
                         if mine.leftByPlayerID == player?.playerID && creature !== player {
                             spawnKillPoints(convertAreaToScore(creature.targetArea))
@@ -453,7 +448,7 @@ class GameScene: SKScene {
                     if theBigger.radius > theSmaller.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother {
                         if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
                             // The bigger has successfully engulfed the smaller
-                            theBigger.targetArea += theSmaller.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath
+                            theBigger.targetArea += theSmaller.growAmount * C.energyTransferPercent
                             theEaten.append(theSmaller)
                             if theBigger === player {
                                 // add a flying number
@@ -498,7 +493,7 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            seedAutoOrbClusterWithBudget(mine.growAmount * Creature.percentGrowAmountToBeDepositedUponDeath, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
+            seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount * C.energyTransferPercent, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
             mine.removeFromParent()
         }
         
@@ -511,7 +506,7 @@ class GameScene: SKScene {
             
                 let valueForMine: CGFloat
                 if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(C.creature_minRadius) {
-                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * Creature.percentGrowAmountToBeDepositedUponDeath
+                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * C.energyTransferPercent
                 } else {
                     valueForMine = 0
                 }
@@ -712,7 +707,7 @@ class GameScene: SKScene {
         if let player = player {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
             newLabelNode.text = "+\(points)"
-            newLabelNode.position = camera!.convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player)
+            newLabelNode.position = convertPoint(convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player), toNode: camera!)
             camera!.addChild(newLabelNode)
             newLabelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.8))
             newLabelNode.runAction(SKAction.fadeOutWithDuration(0.8), completion: {

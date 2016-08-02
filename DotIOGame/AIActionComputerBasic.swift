@@ -14,7 +14,7 @@ class AIActionComputerBasic: AIActionComputer {
     enum AIState {
         case EatOrbCluster, RunningAway, Chasing
     }
-    var radarDistance: CGFloat = 300
+    var radarDistance: CGFloat = 500
     var state: AIState = .EatOrbCluster
     
     var sectorDangerRatings: [CGFloat] = []
@@ -24,15 +24,31 @@ class AIActionComputerBasic: AIActionComputer {
     }
     
     enum ObjectType {
-        case Mine, OrbBeacon, NaturalOrb, SmallCreature, LargeCreature, Wall
+        case Mine, OrbBeacon, Orb, SmallCreature, LargeCreature, Wall
     }
     
-    let weight_mine: CGFloat = 5
-    let weight_orbBeacon: CGFloat = -3
-    let weight_naturalOrb: CGFloat = -0.1
-    let weight_smallCreature: CGFloat = -2
-    let weight_largeCreature: CGFloat = 2
-    let weight_wall: CGFloat = 5
+//    let weight_mine: CGFloat = 5
+//    //let weight_orbBeacon: CGFloat = -3
+//    let weight_orb: CGFloat = -0.1
+//    let weight_smallCreature: CGFloat = -2
+//    let weight_largeCreature: CGFloat = 2
+//    let weight_wall: CGFloat = 5
+    
+    struct WeightSet {
+        let weight_mine: CGFloat
+        let weight_orb: CGFloat
+        let weight_smallCreature: CGFloat
+        let weight_largeCreature: CGFloat
+        let weight_wall: CGFloat
+    }
+    
+    // Weights represent how dangerous a type of object is. Higher number means higher danger, whereas a negative number signifies something good
+    static let weightSets: [WeightSet] = [
+        WeightSet(weight_mine: 5, weight_orb: -0.1, weight_smallCreature: -2, weight_largeCreature: 2, weight_wall: 5), // All around ok
+        WeightSet(weight_mine: 10, weight_orb: -0.5, weight_smallCreature: -4, weight_largeCreature: 10, weight_wall: 5), // Coward
+        WeightSet(weight_mine: 5, weight_orb: -0.5, weight_smallCreature: -8, weight_largeCreature: -3, weight_wall: 8) // Risk-taker / greedy
+    ]
+    let weightSet: WeightSet = weightSets.randomItem()
     enum WallDirection {
         case Right, Top, Left, Bottom
     }
@@ -63,9 +79,9 @@ class AIActionComputerBasic: AIActionComputer {
                 // Test to find desired sector
                 // mines, smaller creatures, larger creatures, orb clusters
                 let minesNearMe = gameScene.goopMines.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
-                let orbBeaconsNearMe = gameScene.orbBeacons.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
+                //let orbBeaconsNearMe = gameScene.orbBeacons.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 
-                let naturalOrbsNearMe = myCreature.myOrbChunk.filter { $0.artificiallySpawned == false }
+                let orbsNearMe = myCreature.myOrbChunk
                 
                 let allCreaturesNearMe = gameScene.allCreatures.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 let smallCreaturesNearMe = allCreaturesNearMe.filter { $0.targetRadius * C.percentLargerRadiusACreatureMustBeToEngulfAnother < myCreature.targetRadius }
@@ -76,13 +92,13 @@ class AIActionComputerBasic: AIActionComputer {
                 if myCreature.position.y - radarDistance <= 0 { wallsNearMe.append(.Bottom) }
                 if myCreature.position.y + radarDistance >= gameScene.mapSize.height { wallsNearMe.append(.Top) }
 
-                for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weight_mine, objectType: .Mine) }
-                for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
-                for naturalOrb in naturalOrbsNearMe { assignModifiersForSectorAndCatalogueObject(naturalOrb.position, objectRadius: naturalOrb.radius, weight: weight_naturalOrb, objectType: .NaturalOrb) }
+                for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine) }
+                //for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
+                for orb in orbsNearMe { assignModifiersForSectorAndCatalogueObject(orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb) }
                 for smallCreature in smallCreaturesNearMe {
-                    assignModifiersForSectorAndCatalogueObject(smallCreature.position, objectRadius: smallCreature.radius, weight: weight_smallCreature, objectType: .SmallCreature)
+                    assignModifiersForSectorAndCatalogueObject(smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
                 }
-                for largeCreature in largerCreaturesNearMe { assignModifiersForSectorAndCatalogueObject(largeCreature.position, objectRadius: largeCreature.radius, weight: weight_largeCreature, objectType: .LargeCreature) }
+                for largeCreature in largerCreaturesNearMe { assignModifiersForSectorAndCatalogueObject(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature) }
                 for wall in wallsNearMe {
                     let closestPointOnWall: CGPoint
                     switch wall {
@@ -95,7 +111,7 @@ class AIActionComputerBasic: AIActionComputer {
                     case .Bottom:
                         closestPointOnWall = CGPoint(x: myCreature.position.x, y: 0)
                     }
-                    assignModifiersForSectorAndCatalogueObject(closestPointOnWall, objectRadius: 0, weight: weight_wall, objectType: .Wall)
+                    assignModifiersForSectorAndCatalogueObject(closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
                 }
                 
                 var indexWithLeastDanger = -1

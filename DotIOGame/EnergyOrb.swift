@@ -54,10 +54,10 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         if growing {
             radius += 20 * CGFloat(deltaTime)
             if radius >= maxRadius {growing = false}
-        } //else {
-            //radius -= 20 * CGFloat(deltaTime)
-            //if radius <= minRadius {growing = true}
-        //}
+        } else {
+            radius -= 20 * CGFloat(deltaTime)
+            if radius <= minRadius {growing = true}
+        }
     }
     
     

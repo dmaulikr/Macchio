@@ -45,6 +45,7 @@
 		83957BC31D33FBEC00BF4450 /* SKTTimingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */; };
 		83957BC41D33FBEC00BF4450 /* Vector3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957BB61D33FBEC00BF4450 /* Vector3.swift */; };
 		839710061D34650A00696814 /* EnergyOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839710051D34650A00696814 /* EnergyOrb.swift */; };
+		83D3D0211D513E9200C87AEC /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D3D0201D513E9200C87AEC /* ArrayExtension.swift */; };
 		83E1B9761D4B054700B4EEFB /* AIActionComputerBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +90,7 @@
 		83957BB51D33FBEC00BF4450 /* SKTTimingFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKTTimingFunctions.swift; sourceTree = "<group>"; };
 		83957BB61D33FBEC00BF4450 /* Vector3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vector3.swift; sourceTree = "<group>"; };
 		839710051D34650A00696814 /* EnergyOrb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnergyOrb.swift; sourceTree = "<group>"; };
+		83D3D0201D513E9200C87AEC /* ArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
 		83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputerBasic.swift; sourceTree = "<group>"; };
 		C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DotIOGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame.debug.xcconfig"; sourceTree = "<group>"; };
 		F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DotIOGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				83957BA81D33FBEC00BF4450 /* MSButtonNode.swift */,
+				83D3D0201D513E9200C87AEC /* ArrayExtension.swift */,
 				83957BA91D33FBEC00BF4450 /* MSReferenceNode.swift */,
 				83957BAA1D33FBEC00BF4450 /* SKTUtils */,
 			);
@@ -367,6 +370,7 @@
 				839710061D34650A00696814 /* EnergyOrb.swift in Sources */,
 				83957BB71D33FBEC00BF4450 /* MSButtonNode.swift in Sources */,
 				83957BB81D33FBEC00BF4450 /* MSReferenceNode.swift in Sources */,
+				83D3D0211D513E9200C87AEC /* ArrayExtension.swift in Sources */,
 				836713251D3AC7A10062D8C0 /* AICreature.swift in Sources */,
 				83957BC21D33FBEC00BF4450 /* SKTEffects.swift in Sources */,
 				836713171D36CFA40062D8C0 /* BoostButton.swift in Sources */,
