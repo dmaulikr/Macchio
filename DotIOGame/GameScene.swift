@@ -310,20 +310,10 @@ class GameScene: SKScene {
             }
         }
         
-        //DEBUG
-        let orbsInScene = self.children.filter { $0 is EnergyOrb }
-        var orbsInArray = [EnergyOrb]()
-        for orbCol in orbChunks {
-            for chunk in orbCol {
-                orbsInArray += chunk
-            }
-        }
-        print("\(orbsInScene.count) orbs in scene. \(orbsInArray.count) orbs in array. \(Double(orbsInArray.count) / Double(orbsInScene.count) * Double(100))%")
-        
     }
     
     func convertAreaToSizeNumber(area: CGFloat) -> UInt32 {
-        return UInt32(radiusOfCircleWithArea(area)*1000)
+        return UInt32(radiusOfCircleWithArea(area))
     }
     
     func convertAreaToKillPoints(area: CGFloat) -> UInt32 {

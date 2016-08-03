@@ -44,8 +44,24 @@ extension GameScene {
         return seedOrbAtPosition(position, growAmount: growAmount, minRadius: minRadius, maxRadius: maxRadius, artificiallySpawned: artificiallySpawned, inColor: orbColor, asType: type)
     }
 
-    
     func seedOrbCluster(ofType type: OrbType, withBudget growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
+        let eachOrbGrowAmount = C.orb_growAmounts[type]!
+        var budget = growAmount
+            
+        while budget >= eachOrbGrowAmount {
+            let randAngle = CGFloat.random(min: 0, max: 360)
+            let randDist = CGFloat.random(min: 0, max: radius)
+            let randX = aboutPoint.x + (cos(randAngle) * randDist)
+            let randY = aboutPoint.y + (sin(randAngle) * randDist)
+            let randomSpawnPosition = CGPoint(x: randX, y: randY)
+            seedOrbWithSpecifiedType(type, atPosition: randomSpawnPosition)
+            
+            budget -= eachOrbGrowAmount
+        }
+    }
+    
+    func seedOrbClusterFunny(ofType type: OrbType, withBudget growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
+        // ** This is an old method. By old, I mean from yesterday and I don't want to use it any more because it results in the orbs having different values and devalues the glorious orb type.
         // When an orb cluster is seeded, different "shell" levels are given a finite number of orbs at random angles
         // The result is hopefully something that resembles an orb forest.
         var budget = growAmount
@@ -84,27 +100,11 @@ extension GameScene {
             }
         }
         let orbGrowAmount: CGFloat = budget / CGFloat(totalNumOfOrbs) // So this way, the budget I'm given is distributed across all the orbs
+        print("Orb grow amount in cluster: \(orbGrowAmount)")
         
         for eachPosition in placeOrbsAtPositions {
             seedOrbAtPosition(eachPosition, growAmount: orbGrowAmount, minRadius: orbMinRadius, maxRadius: orbMaxRadius, artificiallySpawned: true, inColor: orbColor, asType: type)
         }
-        
-//        var placeOrbsAtRadius = minRadius + orbMinRadius
-//        while budget > 0 {
-//            let numOfOrbsToPlaceAtThisRadius: Int = Int((pi * 2*placeOrbsAtRadius) / (2*orbMinRadius))
-//            if numOfOrbsToPlaceAtThisRadius > 0 {
-//                for _ in 0 ..< numOfOrbsToPlaceAtThisRadius {
-//                    budget -= orbGrowAmount
-//                    if budget <= 0 { break }
-//                    let aRandomAngle = CGFloat.random(min: 0, max: 360)
-//                    let randX = aboutPoint.x + cos(aRandomAngle) * placeOrbsAtRadius
-//                    let randY = aboutPoint.y + sin(aRandomAngle) * placeOrbsAtRadius
-//                    let randomOrbPosition = CGPoint(x: randX, y: randY)
-//                    seedOrbAtPosition(randomOrbPosition, growAmount: orbGrowAmount, minRadius: orbMinRadius, maxRadius: orbMaxRadius, artificiallySpawned: true, inColor: orbColor, asType: type)
-//                }
-//            }
-//            placeOrbsAtRadius += orbMaxRadius
-//        }
 
     }
     

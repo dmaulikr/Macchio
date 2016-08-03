@@ -28,7 +28,7 @@ class C {
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,
         creature_mineCooldownTime: CGFloat = 5.0,
         creature_minRadius: CGFloat = 50,
-        creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.2
+        creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7
     static let percentLargerRadiusACreatureMustBeToEngulfAnother: CGFloat = 1.11
     
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
@@ -36,7 +36,7 @@ class C {
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [
         .Small : 800,
         .Rich : 1500,
-        .Glorious: 100
+        .Glorious: 2000
     ]
     static let orb_minRadii: [GameScene.OrbType: CGFloat] = [
         .Small: 5,
