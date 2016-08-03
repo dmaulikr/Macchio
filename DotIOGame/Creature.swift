@@ -279,7 +279,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         //Called by GameScene after a mine has successfully been spawned at the player's tail
         //inTheProcessOfLeavingAMine = false
         
-        targetRadius = targetRadius * (1-percentSizeSacrificeToLeaveMine)
+        targetRadius = (targetRadius * (1-percentSizeSacrificeToLeaveMine)).clamped(C.creature_minRadius, C.creature_maxRadius)
         //mineCoolDownCounter = 0
         minePropulsionSpeedActiveTimeCounter = 0
         minePropulsionSpeedActiveTimeCounterPreviousValue = 0

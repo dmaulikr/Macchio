@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/Creature.swift"
-            timestampString = "491942079.537727"
+            timestampString = "491942530.963459"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "269"
-            endingLineNumber = "269"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
             landmarkName = "leaveMine()"
             landmarkType = "5">
          </BreakpointContent>

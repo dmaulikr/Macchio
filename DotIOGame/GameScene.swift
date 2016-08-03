@@ -548,15 +548,17 @@ class GameScene: SKScene {
                 
                 
                 creature.freshlySpawnedMines.append(freshMine)
-                //                for otherCreature in allCreatures {
-                //                    if otherCreature === creature { continue }
-                //                    if freshMine.overlappingCircle(otherCreature) {
-                //                        otherCreature.freshlySpawnedMines.append(freshMine)
-                //                    }
-                //                }
-                //                if creature === player {
-                //                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
-                //                }
+                
+                // The commented out code below assigns fresh mines to ANY creature that happens to be overlapping the mine when it spawns.
+//                for otherCreature in allCreatures {
+//                    if otherCreature === creature { continue }
+//                    if freshMine.overlappingCircle(otherCreature) {
+//                        otherCreature.freshlySpawnedMines.append(freshMine)
+//                    }
+//                }
+//                if creature === player {
+//                    //spawnFlyingNumberOnPlayerMouth(-convertAreaToScore(freshMine.growAmount))
+//                }
 
                 
             

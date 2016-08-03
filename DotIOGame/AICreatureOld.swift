@@ -9,8 +9,8 @@
 //import Foundation
 //import SpriteKit
 //
-//class AICreatureOld: Creature {
-//    
+class AICreatureOld: Creature {
+//
 //    var gameScene: GameScene!
 //    enum CreatureState {
 //        case EatOrbs
@@ -441,4 +441,4 @@
 //        return mapRadiansToDegrees0to360((point - self.position).angle)
 //    }
 //    
-//}
+}
