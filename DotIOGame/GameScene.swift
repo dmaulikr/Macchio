@@ -521,7 +521,8 @@ class GameScene: SKScene {
         let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
         goopMines = goopMines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
-            seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount * C.energyTransferPercent, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
+            // when the orb cluster is seeded, mine.growAmount is not multiplied by C.energyTransferPercent, because this was already applied when the creature left the mine. (Remember: energy transfer percent is the grow amount that is kept when it changes state (e.g. creature ->X% mine ->X% orbs)
+            seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
             mine.removeFromParent()
         }
         
@@ -534,7 +535,7 @@ class GameScene: SKScene {
             
                 let valueForMine: CGFloat
                 if creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) > areaOfCircleWithRadius(C.creature_minRadius) {
-                    valueForMine = creature.targetArea * (1-creature.percentSizeSacrificeToLeaveMine) * C.energyTransferPercent
+                    valueForMine = creature.targetArea * creature.percentSizeSacrificeToLeaveMine * C.energyTransferPercent
                 } else {
                     valueForMine = 0
                 }
