@@ -170,7 +170,7 @@ class AIActionComputerBasic: AIActionComputer {
                 
                 let smallCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .SmallCreature}
                 
-                let smallCreaturesThatICanCatchByLeavingAMine = smallCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - myCreature.radius < mineTravelDistance }
+                let smallCreaturesThatICanCatchByLeavingAMine = smallCreaturesInFrontOfMe.filter { $0.position.distanceTo(myCreature.position) - myCreature.radius < mineTravelDistance }
                 
                 let orbsInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .Orb }
                 

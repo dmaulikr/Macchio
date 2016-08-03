@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1.3
+            zoomOutFactor: 3
     )
     
     enum State {
@@ -50,7 +50,7 @@ class GameScene: SKScene {
         return (player != nil ? [player!] : []) + otherCreatures
     }
     
-    var playerScore: Int = 0 {
+    var playerScore: UInt32 = 0 {
         didSet { scoreLabel.text = String(playerScore) }
     }
     var scoreLabel: SKLabelNode!
@@ -298,6 +298,7 @@ class GameScene: SKScene {
         
         if let player = player {
             playerSize = convertAreaToSizeNumber(player.targetArea)
+            playerScore = player.score
         }
         if let playerMovingTouch = playerMovingTouch {
             //print(frozenTouchCounter)
@@ -309,10 +310,20 @@ class GameScene: SKScene {
             }
         }
         
+        //DEBUG
+        let orbsInScene = self.children.filter { $0 is EnergyOrb }
+        var orbsInArray = [EnergyOrb]()
+        for orbCol in orbChunks {
+            for chunk in orbCol {
+                orbsInArray += chunk
+            }
+        }
+        print("\(orbsInScene.count) orbs in scene. \(orbsInArray.count) orbs in array. \(Double(orbsInArray.count) / Double(orbsInScene.count) * Double(100))%")
+        
     }
     
     func convertAreaToSizeNumber(area: CGFloat) -> UInt32 {
-        return UInt32(radiusOfCircleWithArea(area))
+        return UInt32(radiusOfCircleWithArea(area)*1000)
     }
     
     func convertAreaToKillPoints(area: CGFloat) -> UInt32 {
@@ -371,8 +382,14 @@ class GameScene: SKScene {
         
         for orb in orbKillList {
             let fadeAction = SKAction.fadeOutWithDuration(0.3)
-            let remove = SKAction.runBlock { self.removeFromParent() }
-            orb.runAction(SKAction.sequence([fadeAction, remove]))
+            //let remove = SKAction.runBlock { self.removeFromParent() }
+            orb.removeAllActions()
+            orb.runAction(SKAction.sequence([fadeAction]))
+            let waitAction = SKAction.waitForDuration(0.3)
+            let removeOrbAction = SKAction.runBlock {
+                orb.removeFromParent()
+            }
+            self.runAction(SKAction.sequence([waitAction, removeOrbAction]))
             c.targetArea += orb.growAmount
             let deltaScore: UInt32 = C.orb_pointValues[orb.type]!
             c.score += deltaScore
@@ -595,17 +612,23 @@ class GameScene: SKScene {
                 for orb in chunk {
                     if orb.artificiallySpawned == false { currrentOrbCount += 1 }
                 }
-                // Basically take out all the dead orbs
-                orbChunks[colIndex][rowIndex] = orbChunks[colIndex][rowIndex].filter { $0.isAlive }
                 
-                // And for the ones that are near decay, then start a fade action
-                for nearDecayOrb in (orbChunks[colIndex][rowIndex].filter { $0.isNearDecay && !$0.isAlreadyFading }) {
+                // Basically take out all the dead orbs. That means removing them from the array and calling removeFromParent()
+                orbChunks[colIndex][rowIndex] = orbChunks[colIndex][rowIndex].filter { $0.isAlive }
+                let deadOrbs = orbChunks[colIndex][rowIndex].filter { !$0.isAlive }
+                for deadOrb in deadOrbs {
+                    deadOrb.removeFromParent()
+                }
+                
+                // And for the ones that are near decay, start a fade effect.
+                let orbsInNeedOfAFadeEffect = orbChunks[colIndex][rowIndex].filter { $0.isNearDecay && !$0.isAlreadyFading }
+                for nearDecayOrb in orbsInNeedOfAFadeEffect {
                     nearDecayOrb.isAlreadyFading = true
                     nearDecayOrb.runAction(SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds)))
                 }
             }
         }
-        
+                
         let numOfOrbsToSpawnNow = numOfOrbsThatNeedToBeInTheWorld - currrentOrbCount
         if numOfOrbsToSpawnNow > 0 {
             for _ in 0..<numOfOrbsToSpawnNow {
