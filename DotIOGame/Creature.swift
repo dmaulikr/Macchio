@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class Creature: SKSpriteNode, BoundByCircle {
-    // All creatures should eventually extend this class
+    // A generic creature class!
     var playerID: Int = 0
     var playerColor: Color = .Red
     let textures: [Color: SKTexture] = [
@@ -19,7 +19,10 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Blue: SKTexture(imageNamed: "player_blue_lit"),
         .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
+    
     var score: UInt32 = 0
+    var timeSinceLastPassiveScoreGain: CGFloat = 0
+    
     var normalSpeed: CGFloat {
         return 60 * pow(1/2, (radius - 50) / 100) + 60
     }
@@ -215,6 +218,14 @@ class Creature: SKSpriteNode, BoundByCircle {
             stopBoost()
         }
         
+        // Award passive score gain
+        timeSinceLastPassiveScoreGain += CGFloat(deltaTime)
+        let scoreGain = C.creature_passiveScoreIncreasePerSecond(givenRadius: self.targetRadius) * timeSinceLastPassiveScoreGain
+        if scoreGain >= 1 {
+            self.score += UInt32(scoreGain)
+            timeSinceLastPassiveScoreGain = 0
+        }
+        
         thinkAndAct(CGFloat(deltaTime))
         
     }
@@ -307,6 +318,5 @@ class Creature: SKSpriteNode, BoundByCircle {
 //            self.runAction(speedDebuffVisualIndication)
 //        })
     }
-
     
 }

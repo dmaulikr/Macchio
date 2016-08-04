@@ -10,61 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/Creature.swift"
-            timestampString = "491942530.963459"
+            timestampString = "492029565.549614"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
+            startingLineNumber = "273"
+            endingLineNumber = "273"
             landmarkName = "leaveMine()"
             landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DotIOGame/Creature.swift"
-            timestampString = "491942285.54501"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
-            landmarkName = "init(name:playerID:color:startRadius:)"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "DotIOGame.Creature.init (name : Swift.String, playerID : Swift.Int, color : DotIOGame.Color, startRadius : CoreGraphics.CGFloat) -&gt; DotIOGame.Creature"
-                  moduleName = "DotIOGame"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/Creature.swift"
-                  timestampString = "491942285.55941"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118"
-                  offsetFromSymbolStart = "32">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "DotIOGame.Creature.(init (name : Swift.String, playerID : Swift.Int, color : DotIOGame.Color, startRadius : CoreGraphics.CGFloat) -&gt; DotIOGame.Creature).(default argument 3)"
-                  moduleName = "DotIOGame"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ryananderson/Documents/ios/DotIOGame/DotIOGame/Creature.swift"
-                  timestampString = "491942285.559691"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "116"
-                  endingLineNumber = "116"
-                  offsetFromSymbolStart = "8">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -96,6 +48,22 @@
             startingLineNumber = "173"
             endingLineNumber = "173"
             landmarkName = "didMoveToView(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DotIOGame/Creature.swift"
+            timestampString = "492029593.553455"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
+            landmarkName = "update(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -32,6 +32,10 @@ class C {
         creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7
     static let percentLargerRadiusACreatureMustBeToEngulfAnother: CGFloat = 1.11
     
+    static func creature_passiveScoreIncreasePerSecond(givenRadius r: CGFloat) -> CGFloat {
+        return pow(2, r / 110) / 1.5
+    }
+    
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [

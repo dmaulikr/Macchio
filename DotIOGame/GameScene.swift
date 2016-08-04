@@ -307,6 +307,7 @@ class GameScene: SKScene {
         
         updateUI()
         
+        
         if let player = player {
             playerSize = convertAreaToSizeNumber(player.targetArea)
             playerScore = player.score
@@ -674,7 +675,7 @@ class GameScene: SKScene {
                 //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
                 leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
                 leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
-                
+    
                 
                 
                 // Make sure the boost button is greyed if the player can't boost
@@ -815,8 +816,15 @@ class GameScene: SKScene {
             self.player?.removeFromParent()
             self.player = nil
         }
+        
+        //Hide the HUD
+        let hideAction = SKAction.fadeOutWithDuration(0.3)
+        for child in camera!.children {
+            child.runAction(hideAction)
+        }
+        
         let waitALittle = SKAction.waitForDuration(3)
-        let colorizeToBlack = SKAction.colorizeWithColor(UIColor.blackColor(), colorBlendFactor: 0, duration: 1)
+        let colorizeToBlack = SKAction.colorizeWithColor(UIColor.blackColor(), colorBlendFactor: 0, duration: 0.5)
         let sequence = SKAction.sequence([destroyPlayerAction, waitALittle, colorizeToBlack])
         runAction(sequence, completion: restart)
     }
