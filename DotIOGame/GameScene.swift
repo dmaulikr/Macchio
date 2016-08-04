@@ -162,9 +162,10 @@ class GameScene: SKScene {
             smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
             
             leaderBoard = LeaderBoard()
-            //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
             leaderBoard.xScale = 0.4
             leaderBoard.yScale = 0.4
+            //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
+            leaderBoard.position = CGPoint(x: (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale) - 40, y: (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale) - 40)
             camera!.addChild(leaderBoard)
             
         }
