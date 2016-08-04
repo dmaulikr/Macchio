@@ -13,7 +13,7 @@ class LeaderBoard: SKNode {
     
     //The position of this node represents the lower left corner
     let numberOfSlots = 10
-    let slotSize = CGSize(width: 568, height: 32)
+    let slotSize = CGSize(width: 500, height: 32)
     let slotPadding: CGFloat = 20
     
     var slotSprites = [SKSpriteNode]() //Represents the actual rectangles that make up the slots
@@ -101,10 +101,14 @@ class LeaderBoard: SKNode {
                 playerIDs[i] = 0
             }
         } else {
-            for index in 0..<10 {
-                entryLabels[index].playerName.text = sortedData[index].playerName
-                entryLabels[index].score.text = "\(sortedData[index].score)"
-                playerIDs[index] = sortedData[index].playerID
+            var theTop10Datas: [CreatureDataSnapshot] = []
+            for index in sortedData.count - numberOfSlots..<sortedData.count {
+                theTop10Datas.append(sortedData[index])
+            }
+            for (index, data) in theTop10Datas.enumerate() {
+                entryLabels[index].playerName.text = data.playerName
+                entryLabels[index].score.text = "\(data.score)"
+                playerIDs[index] = data.playerID
             }
         }
         
