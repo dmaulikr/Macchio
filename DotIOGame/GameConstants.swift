@@ -15,7 +15,7 @@ let pi = CGFloat(M_PI)
 class C {
     // Not all game constants are here. Yet. My goal is for all of them to be here
     // Functions do count as constants.
-    static let energyTransferPercent: CGFloat = 0.80 //energy transfer percent is the grow amount that is kept when energy changes state (e.g. creature ->X% mine ->X% orbs)
+    static let energyTransferPercent: CGFloat = 0.85 //energy transfer percent is the grow amount that is kept when energy changes state (e.g. creature ->X% mine ->X% orbs)
     static let creaturesToAreaRatio: CGFloat = 0.0000011
     static let orbsToAreaRatio: CGFloat = 0.00002
     
@@ -41,17 +41,17 @@ class C {
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [
         .Small : 800,
         .Rich : 1500,
-        .Glorious: 2000
+        .Glorious: 707
     ]
     static let orb_minRadii: [GameScene.OrbType: CGFloat] = [
-        .Small: 5,
-        .Rich: 16,
-        .Glorious: 20
+        .Small: 16,
+        .Rich: 22,
+        .Glorious: 15
     ]
     static let orb_maxRadii: [GameScene.OrbType: CGFloat] = [
         .Small: 7,
-        .Rich: 20,
-        .Glorious: 25
+        .Rich: 26,
+        .Glorious: 20
     ]
     static let orb_pointValues: [GameScene.OrbType: UInt32] = [
         .Small: 1,
@@ -61,4 +61,40 @@ class C {
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
     static let orb_fadeOutForXSeconds: CGFloat = 5
     static let mine_sizeExaggeration: CGFloat = 1.3 // Makes mines look bigger, but with the same hitbox.
+    
+    
+    
+    
+    static let randomPlayerNames = [
+        "Dont eat me",
+        "Dont eat me!!1",
+        "I WILL EAT U",
+        "get away from me",
+        "this game sucks",
+        "agar.io clone, biatch!",
+        "Are you feeling it now mr crabs?",
+        "Creeper",
+        "Hmmmmmmmm",
+        "Bob",
+        "Casey",
+        "Inky",
+        "Blinky",
+        "Clyde",
+        "", "", "", "", "", "", "", "", "",
+        "FeelTheBern2016",
+        "XXx_Fabi0_xXX",
+        "Team?",
+        "Level 200 pro",
+        "Say hi to Youtube!",
+        "Pro team",
+        "Foo", "Bar",
+        "asdfghj",
+        "qwerty",
+        "Jeff", "Nityam",
+        "Bush did 9/11",
+        "Hitler did nothing wrong",
+        "Trump2016",
+        "XXX_SLaYeR_XxX"
+    ]
+    
 }
