@@ -14,7 +14,7 @@ class MainScene: SKScene {
     var playButton: MSButtonNode!
     
     override func didMoveToView(view: SKView) {
-        playButton = childNodeWithName("playButton") as! MSButtonNode
+        playButton = childNodeWithName("red orb") as! MSButtonNode
         playButton.selectedHandler = {
             let skView = self.view as SKView!
             let scene = GameScene(fileNamed: "GameScene") as GameScene!

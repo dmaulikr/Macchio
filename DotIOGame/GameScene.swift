@@ -97,10 +97,11 @@ class GameScene: SKScene {
     var warningSigns: [WarningSign] = []
     var killPointsLabelOriginal: SKLabelNode!
     var smallScoreLabelOriginal: SKLabelNode!
+    var leaderBoard: LeaderBoard!
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: 1, color: randomColor(), startRadius: 80)
+        player = PlayerCreature(name: "Yoloz Boy 123", playerID: randomID(), color: randomColor(), startRadius: 80)
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)
@@ -159,6 +160,12 @@ class GameScene: SKScene {
             
             killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
             smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
+            
+            leaderBoard = LeaderBoard()
+            //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
+            leaderBoard.xScale = 0.4
+            leaderBoard.yScale = 0.4
+            camera!.addChild(leaderBoard)
             
         }
     }
@@ -744,8 +751,12 @@ class GameScene: SKScene {
                     }
                 }
                 
+                // Update the leaderboard with data from all the creatures that exist
+                let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score) }
+                leaderBoard.update(creatureData)
             }
         }
+        
     }
     
     func spawnSmallScoreTextOnPlayerMouth(points: UInt32) {
@@ -777,7 +788,7 @@ class GameScene: SKScene {
     
     func randomID() -> Int {
         // Generates a random id number, authenticates it, then returns it
-        let randNum = Int(CGFloat.random(min: -500, max: 500))
+        let randNum = Int(CGFloat.random(min: 10, max: 5000))
         let takenIDs: [Int] = allCreatures.map { $0.playerID }
         for id in takenIDs {
             if id == randNum { return randomID() }
@@ -792,24 +803,26 @@ class GameScene: SKScene {
             var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
             touchesEnded(fakeTouches, withEvent: nil)
         }
+        
+        let zoomOutAction = SKAction.scaleBy(1.3, duration: 4)
+        camera!.runAction(zoomOutAction)
+        
         let destroyPlayerAction = SKAction.runBlock {
             self.player?.removeFromParent()
             self.player = nil
         }
-        let zoomOutAction = SKAction.scaleBy(1.3, duration: 3)
-        camera!.runAction(zoomOutAction)
-        
-        let wait = SKAction.waitForDuration(3)
-        let sequence = SKAction.sequence([destroyPlayerAction, wait])
+        let waitALittle = SKAction.waitForDuration(3)
+        let colorizeToBlack = SKAction.colorizeWithColor(UIColor.blackColor(), colorBlendFactor: 0, duration: 1)
+        let sequence = SKAction.sequence([destroyPlayerAction, waitALittle, colorizeToBlack])
         runAction(sequence, completion: restart)
-        
     }
     
     func restart() {
         let skView = self.view as SKView!
         let scene = MainScene(fileNamed:"MainScene") as MainScene!
         scene.scaleMode = .AspectFill
-        skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
+        //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
+        skView.presentScene(scene)
     }
     
 }
