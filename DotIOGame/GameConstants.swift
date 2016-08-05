@@ -19,6 +19,8 @@ class C {
     static let creaturesToAreaRatio: CGFloat = 0.0000011
     static let orbsToAreaRatio: CGFloat = 0.00002
     
+    static let camera_scaleMinimum: CGFloat = 2.5
+    
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000
     
     static let creature_minePercentMassReduction: CGFloat = 0.5,
@@ -26,7 +28,7 @@ class C {
         creature_speedDebuffTime: CGFloat = 1.5,
         creature_maxAngleChangePerSecond: CGFloat = 270,
         creature_minePropulsionSpeedActiveTime: CGFloat = 0.25,
-        creature_mineCooldownTime: CGFloat = 5.0,
+        creature_mineCooldownTime: CGFloat = 4.5,
         creature_minRadius: CGFloat = 50,
         creature_maxRadius: CGFloat = 350,
         creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7
@@ -34,6 +36,16 @@ class C {
     
     static func creature_passiveScoreIncreasePerSecond(givenRadius r: CGFloat) -> CGFloat {
         return pow(2, r / 110) / 1.5
+    }
+    
+    static func creature_passiveSizeLossPerSecond(givenRadius r: CGFloat) -> CGFloat {
+        //return CGFloat( 1.25 * pow(2, (r-30)/100) - 1 )
+        return r / 200
+    }
+    
+    static func creature_normalSpeed(givenRadius r: CGFloat) -> CGFloat {
+        //return 60 * pow(1/2, (r - 50) / 100) + 60
+        return -r/6 + 130
     }
     
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
@@ -61,9 +73,6 @@ class C {
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
     static let orb_fadeOutForXSeconds: CGFloat = 5
     static let mine_sizeExaggeration: CGFloat = 1.3 // Makes mines look bigger, but with the same hitbox.
-    
-    
-    
     
     static let randomPlayerNames = [
         "Dont eat me",

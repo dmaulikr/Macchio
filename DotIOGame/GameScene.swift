@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 3
+            zoomOutFactor: 0.9
     )
     
     enum State {
@@ -59,6 +59,8 @@ class GameScene: SKScene {
         didSet { sizeLabel.text = String(playerSize) }
     }
     var sizeLabel: SKLabelNode!
+    
+    var hud: SKNode!
     
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -98,6 +100,10 @@ class GameScene: SKScene {
     var killPointsLabelOriginal: SKLabelNode!
     var smallScoreLabelOriginal: SKLabelNode!
     var leaderBoard: LeaderBoard!
+    var masterPlayerNameLabel: SKLabelNode!
+    var playerNameLabelNodeXScaleToPlayerRadiusRatio: CGFloat!
+    var playerNameLabelNodeYScaleToPlayerRadiusRatio: CGFloat!
+    var playerNameLabelsAndCorrespondingIDs: [(label: SKLabelNode, playerID: Int)] = []
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
@@ -105,6 +111,7 @@ class GameScene: SKScene {
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)
+            //spawnPlayerNameLabel(forCreature: player)
             cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
             cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
             cameraTarget = player
@@ -112,6 +119,9 @@ class GameScene: SKScene {
             bgGraphics = childNodeWithName("bgGraphics")
             bgGraphics.xScale = mapSize.width / 6000
             bgGraphics.yScale = mapSize.height / 6000
+            
+            hud = SKNode() // Hud will act as a container for ui elements
+            camera!.addChild(hud)
             
             scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
             sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
@@ -122,7 +132,7 @@ class GameScene: SKScene {
             directionArrow.zRotation = player.velocity.angle.degreesToRadians()
             directionArrow.hidden = true
             directionArrowTargetPosition = directionArrow.position
-            camera!.addChild(directionArrow)
+            hud.addChild(directionArrow)
             directionArrowAnchor = SKNode()
             directionArrowAnchor.position = player.position
             directionArrowAnchor.zRotation = player.targetAngle.degreesToRadians()
@@ -137,7 +147,7 @@ class GameScene: SKScene {
             boostButton = BoostButton()
             boostButton.position.x = size.width/2 - boostButton.size.width/2
             boostButton.position.y = -size.height/2 + boostButton.size.height/2
-            camera!.addChild(boostButton)
+            hud.addChild(boostButton)
             boostButton.addButtonIconToParent()
             boostButton.onPressed = player.startBoost
             boostButton.onReleased = player.stopBoost
@@ -145,7 +155,7 @@ class GameScene: SKScene {
             leaveMineButton = MineButton()
             leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
             leaveMineButton.position.y = -size.height/2 + boostButton.size.height + leaveMineButton.size.height / 2
-            camera!.addChild(leaveMineButton)
+            hud.addChild(leaveMineButton)
             leaveMineButton.addButtonIconToParent()
             leaveMineButton.onPressed = player.leaveMine
             leaveMineButton.onReleased = { return }
@@ -169,7 +179,13 @@ class GameScene: SKScene {
             let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots))
             
             leaderBoard.position = CGPoint(x: boardX, y: boardY)
-            camera!.addChild(leaderBoard)
+            hud.addChild(leaderBoard)
+            
+            masterPlayerNameLabel = childNodeWithName("playerNameLabelMaster") as! SKLabelNode
+            playerNameLabelNodeXScaleToPlayerRadiusRatio = masterPlayerNameLabel.xScale / 300
+            playerNameLabelNodeYScaleToPlayerRadiusRatio = masterPlayerNameLabel.yScale / 300
+            
+            spawnPlayerNameLabel(forCreature: player)
             
         }
     }
@@ -437,7 +453,7 @@ class GameScene: SKScene {
                         
                         let waitAction = SKAction.waitForDuration(0.3)
                         let spawnOrbClusterAction = SKAction.runBlock {
-                            self.seedOrbCluster(ofType: .Glorious, withBudget: areaOfCircleWithRadius(radiusLoss) * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
+                            self.seedOrbCluster(ofType: .Glorious, withBudget: (areaOfCircleWithRadius(creature.radius)-areaOfCircleWithRadius(creature.targetRadius)) * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
                         }
                         runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
                         
@@ -658,6 +674,11 @@ class GameScene: SKScene {
             if gameState != .GameOver {
                 camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius * prefs.zoomOutFactor // Follow player on z axis (by rescaling 😀)
                 camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius * prefs.zoomOutFactor
+                
+                camera!.xScale.clamp(C.camera_scaleMinimum, 100) // It'll never get to 100 :P
+                camera!.yScale.clamp(C.camera_scaleMinimum, 100)
+
+                
                 camera!.position = cameraTarget.position //Follow player on the x axis and y axis
                 
                 //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
@@ -751,7 +772,7 @@ class GameScene: SKScene {
 
                             newWarningSign.zPosition = -6
                             warningSigns.append(newWarningSign)
-                            camera!.addChild(newWarningSign)
+                            hud.addChild(newWarningSign)
                         }
                     }
                 }
@@ -759,6 +780,31 @@ class GameScene: SKScene {
                 // Update the leaderboard with data from all the creatures that exist
                 let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score) }
                 leaderBoard.update(creatureData)
+                
+                // Update the player name labels!
+                var keepNameLabelsAndIDs: [(label: SKLabelNode, playerID: Int)] = []
+                for nameLabelAndIDTuple in playerNameLabelsAndCorrespondingIDs {
+                    let labelNode = nameLabelAndIDTuple.label
+                    let correspondingID = nameLabelAndIDTuple.playerID
+                    // First check if any shouldn't exist. Probably because their corresponding player died. If the creature is dead, then we don't know about it (it's not in all creatures)
+                    if let _ = findCreatureByID(correspondingID) {
+                        // The creature exists! This name label deserves to live!
+                        keepNameLabelsAndIDs.append(nameLabelAndIDTuple)
+                    } else {
+                        labelNode.removeFromParent()
+                        print("labelNode removed")
+                    }
+                }
+                playerNameLabelsAndCorrespondingIDs = keepNameLabelsAndIDs
+                
+                // Now with all the bad ID's filtered out, let's update the positions of all the IDs that do exist
+                for (labelNode, playerID) in (playerNameLabelsAndCorrespondingIDs.map {($0.label, $0.playerID)}) {
+                    let correspondingCreature = findCreatureByID(playerID)!
+                    labelNode.position = CGPoint(x: correspondingCreature.position.x, y: correspondingCreature.position.y + (correspondingCreature.radius*1.2))
+                    labelNode.xScale = playerNameLabelNodeXScaleToPlayerRadiusRatio * correspondingCreature.radius
+                    labelNode.yScale = playerNameLabelNodeYScaleToPlayerRadiusRatio * correspondingCreature.radius
+                }
+                
             }
         }
         
@@ -770,7 +816,7 @@ class GameScene: SKScene {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
             newLabelNode.text = "+\(points)"
             newLabelNode.position = convertPoint(convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player), toNode: camera!)
-            camera!.addChild(newLabelNode)
+            hud.addChild(newLabelNode)
             newLabelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.8))
             newLabelNode.runAction(SKAction.fadeOutWithDuration(0.8), completion: {
                 self.removeFromParent()
@@ -783,7 +829,7 @@ class GameScene: SKScene {
         let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
         newLabelNode.position = CGPoint(x: 0, y: 50)
         newLabelNode.text = "+\(points)"
-        camera!.addChild(newLabelNode)
+        hud.addChild(newLabelNode)
         let waitAction = SKAction.waitForDuration(1)
         let fadeAction = SKAction.fadeOutWithDuration(0.5)
         newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
@@ -822,6 +868,10 @@ class GameScene: SKScene {
         for child in camera!.children {
             child.runAction(hideAction)
         }
+        //Hide names
+        for nameLabel in (playerNameLabelsAndCorrespondingIDs.map {$0.label}) {
+            nameLabel.runAction(hideAction)
+        }
         
         let waitALittle = SKAction.waitForDuration(3)
         let colorizeToBlack = SKAction.colorizeWithColor(UIColor.blackColor(), colorBlendFactor: 0, duration: 0.5)
@@ -835,6 +885,14 @@ class GameScene: SKScene {
         scene.scaleMode = .AspectFill
         //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
         skView.presentScene(scene)
+    }
+    
+    // Helper method that returns the reference of a creature with the given ID. Theoretically, all creatures should have a unique ID.
+    func findCreatureByID(id: Int) -> Creature? {
+        for c in allCreatures {
+            if c.playerID == id { return c }
+        }
+        return nil
     }
     
 }

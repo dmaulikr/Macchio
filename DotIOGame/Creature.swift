@@ -23,9 +23,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     var score: UInt32 = 0
     var timeSinceLastPassiveScoreGain: CGFloat = 0
     
-    var normalSpeed: CGFloat {
-        return 60 * pow(1/2, (radius - 50) / 100) + 60
-    }
+    var normalSpeed: CGFloat { return C.creature_normalSpeed(givenRadius: radius) }
     var boostingSpeed: CGFloat { return normalSpeed * 2.3 }
     var minePropulsionSpeed: CGFloat {
         return radius * 7.1
@@ -177,7 +175,7 @@ class Creature: SKSpriteNode, BoundByCircle {
             if isBoosting {
                 targetArea -= boostingSizeLoss * CGFloat(deltaTime)
             } else if targetRadius > 80 {
-                targetRadius -= passiveSizeLoss * CGFloat(deltaTime)
+                targetRadius -= C.creature_passiveSizeLossPerSecond(givenRadius: self.targetRadius) * CGFloat(deltaTime)
             }
         }
         
@@ -235,10 +233,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         // boost, and leaveMine()
     }
     
-    var passiveSizeLoss: CGFloat { // (per second)
-        return CGFloat( 1.25 * pow(2, (radius-30)/100) - 1 )
-    }
-    
+        
     var boostingSizeLoss: CGFloat { // (per second)
         return targetArea / 20
     }
