@@ -23,7 +23,7 @@ class C {
     
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000
     
-    static let creature_minePercentMassReduction: CGFloat = 0.5,
+    static let creature_hitMinePercentMassReduction: CGFloat = 0.5,
         creature_minimumRadiusToApplyMineSizeReductionInsteadOfInstantDeath: CGFloat = 80,
         creature_speedDebuffTime: CGFloat = 1.5,
         creature_maxAngleChangePerSecond: CGFloat = 270,

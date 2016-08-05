@@ -33,6 +33,7 @@ class LeaderBoard: SKNode {
         //Initialize empty slots. Just the sprite nodes. The slot sprites go from lowest to highest. So #10 to #1
         for slotIndex in 0..<numberOfSlots {
             let newSpriteNode = SKSpriteNode(color: UIColor.grayColor(), size: slotSize)
+            newSpriteNode.alpha = 0.7
             newSpriteNode.anchorPoint = CGPoint(x: 0, y: 1)
             let position = CGPoint(x: 0, y: slotSize.height * CGFloat(slotIndex))
             newSpriteNode.position = position

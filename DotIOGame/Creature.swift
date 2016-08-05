@@ -260,16 +260,22 @@ class Creature: SKSpriteNode, BoundByCircle {
         ///canLeaveMine = false
         mineCoolDownCounter = 0
         // Make the creature pulse
-        //let totalPulseTime = 0.5
-        let expandAction = SKAction.scaleBy(1.4, duration: totalPulseTime/2)
+        let expandTime: NSTimeInterval = 0.20
+        let theObjectiveSize = self.targetRadius * 2 * 1.2
+        let growByAmount = theObjectiveSize - self.targetRadius*2
+        let expandAction = SKAction.customActionWithDuration(expandTime, actionBlock: {
+            (node: SKNode, elapsedTime: CGFloat) -> Void in
+            let assignDimension = self.targetRadius*2 + (elapsedTime / CGFloat(expandTime))*growByAmount
+            self.size = CGSize(width: assignDimension, height: assignDimension)
+        })
         //let unexpandAction = SKAction.scaleTo(1, duration: totalPulseTime/2)
         self.runAction(SKAction.sequence([expandAction/*, unexpandAction*/]))
         
-        let waitForEndPulseStage1 = SKAction.waitForDuration(totalPulseTime/2)
+        let waitForExpandToEnd = SKAction.waitForDuration(expandTime)
         let setFlagAction = SKAction.runBlock {
             self.spawnMineAtMyTail = true
         }
-        runAction(SKAction.sequence([waitForEndPulseStage1, setFlagAction]))
+        runAction(SKAction.sequence([waitForExpandToEnd, setFlagAction]))
 //        runAction(waitAction, completion: {
 //        if self.canLeaveMine { self.spawnMineAtMyTail = true }
 //            // GameScene will see that this has turned true and spawn the mine for us

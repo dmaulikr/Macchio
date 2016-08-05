@@ -433,13 +433,14 @@ class GameScene: SKScene {
                     if creature.targetRadius >= C.creature_minimumRadiusToApplyMineSizeReductionInsteadOfInstantDeath {
                         // Creature is large enough so that a size reduction can be applied instead of just instant death
                         let orgRadius = creature.targetRadius
-                        let radiusLoss = creature.targetRadius * C.creature_minePercentMassReduction
+                        let radiusLoss = creature.targetRadius * C.creature_hitMinePercentMassReduction
                         let newRadius = creature.targetRadius - radiusLoss
                         //creature.radius = newRadius
                         creature.targetRadius = newRadius
                         creature.speedDebuffTimeCounter = 0 // Intitiate a speed debuff
                         creature.isBoosting = false
                         
+                        // Award points to the creature who left the mine
                         let deltaScore = convertAreaToKillPoints(areaOfCircleWithRadius(radiusLoss))
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
@@ -447,13 +448,16 @@ class GameScene: SKScene {
                                 break
                             }
                         }
+                        // Show kill points if the creature was the player
                         if mine.leftByPlayerID == player?.playerID && creature !== player {
                             spawnKillPoints(deltaScore)
                         }
                         
+                        
                         let waitAction = SKAction.waitForDuration(0.3)
                         let spawnOrbClusterAction = SKAction.runBlock {
-                            self.seedOrbCluster(ofType: .Glorious, withBudget: (areaOfCircleWithRadius(creature.radius)-areaOfCircleWithRadius(creature.targetRadius)) * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
+                            let budgetOfNewCluster = (areaOfCircleWithRadius(orgRadius) - areaOfCircleWithRadius(newRadius)) * C.energyTransferPercent
+                            self.seedOrbCluster(ofType: .Glorious, withBudget: budgetOfNewCluster, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
                         }
                         runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
                         
@@ -792,7 +796,7 @@ class GameScene: SKScene {
                         keepNameLabelsAndIDs.append(nameLabelAndIDTuple)
                     } else {
                         labelNode.removeFromParent()
-                        print("labelNode removed")
+                        //print("labelNode removed")
                     }
                 }
                 playerNameLabelsAndCorrespondingIDs = keepNameLabelsAndIDs
