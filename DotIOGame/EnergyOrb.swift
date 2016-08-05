@@ -43,7 +43,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
 //    }
     var pointValue: Int? // If it is nil, then hopefully the game will figure out the point value based on the type
     
-    init(orbColor: Color, type: GameScene.OrbType) {
+    init(orbColor: Color, type: GameScene.OrbType, growFromNothing: Bool = true) {
         self.type = type
         let texture = EnergyOrb.orbTextures[orbColor]
         let color = SKColor.whiteColor()
@@ -52,7 +52,45 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         super.init(texture: texture, color: color, size: size)
         zPosition = 0
         blendMode = .Add
+        
+        if growFromNothing {
+            // run a grow action, then pulse forever
+            let growTime: NSTimeInterval = 0.5
+            let growFromNothingAction = SKAction.customActionWithDuration(0.5, actionBlock: {
+                (node: SKNode, timeElapsed: CGFloat) -> Void in
+                self.radius = C.orb_minRadii[type]! * (timeElapsed / CGFloat(growTime))
+            })
+            self.runAction(growFromNothingAction, completion: pulseForever)
+        } else {
+            // fade in instead
+            let fadeInTime: NSTimeInterval = 0.5
+            let fadeInAction = SKAction.customActionWithDuration(fadeInTime, actionBlock: {
+                (node: SKNode, elapsedTime: CGFloat) -> Void in
+                self.alpha = elapsedTime / CGFloat(fadeInTime)
+            })
+            self.runAction(fadeInAction, completion: pulseForever)
+        }
+        
     }
+    
+    func pulseForever() {
+
+        let growDuration: NSTimeInterval = 0.5
+        let growToMaxRadiusActionFromMinRadius = SKAction.customActionWithDuration(0.5, actionBlock: {
+            (node: SKNode, timeElapsed: CGFloat) -> Void in
+            let amountToUltimatelyGrow = C.orb_maxRadii[self.type]! - C.orb_minRadii[self.type]!
+            self.radius = C.orb_minRadii[self.type]! + amountToUltimatelyGrow * (timeElapsed/CGFloat(growDuration))
+        })
+        
+        let growToMinRadiusFromMaxRadius = SKAction.customActionWithDuration(growDuration, actionBlock: {
+            (node: SKNode, timeElapsed: CGFloat) -> Void in
+            let amountToUltimatelyShrink = C.orb_maxRadii[self.type]! - C.orb_minRadii[self.type]!
+            self.radius = C.orb_maxRadii[self.type]! - amountToUltimatelyShrink * (timeElapsed/CGFloat(growDuration))
+        })
+        let sequence = SKAction.sequence([growToMaxRadiusActionFromMinRadius, growToMinRadiusFromMaxRadius])
+        self.runAction(SKAction.repeatActionForever(sequence))
+    }
+    
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -61,13 +99,13 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     func update(deltaTime: CFTimeInterval) {
         if self.artificiallySpawned { lifespanCounter += CGFloat(deltaTime) }
-        if growing {
-            radius += 20 * CGFloat(deltaTime)
-            if radius >= maxRadius {growing = false}
-        } else {
-            radius -= 20 * CGFloat(deltaTime)
-            if radius <= minRadius {growing = true}
-        }
+//        if growing {
+//            radius += 20 * CGFloat(deltaTime)
+//            if radius >= maxRadius {growing = false}
+//        } else {
+//            radius -= 20 * CGFloat(deltaTime)
+//            if radius <= minRadius {growing = true}
+//        }
     }
     
     

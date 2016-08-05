@@ -261,21 +261,24 @@ class Creature: SKSpriteNode, BoundByCircle {
         mineCoolDownCounter = 0
         // Make the creature pulse
         let expandTime: NSTimeInterval = 0.20
-        let theObjectiveSize = self.targetRadius * 2 * 1.2
-        let growByAmount = theObjectiveSize - self.targetRadius*2
+        let theObjectiveRadius = self.targetRadius * 1.2
+        let growRadiusByAmount = theObjectiveRadius - self.targetRadius
         let expandAction = SKAction.customActionWithDuration(expandTime, actionBlock: {
             (node: SKNode, elapsedTime: CGFloat) -> Void in
-            let assignDimension = self.targetRadius*2 + (elapsedTime / CGFloat(expandTime))*growByAmount
-            self.size = CGSize(width: assignDimension, height: assignDimension)
+            let assignRadius = self.targetRadius + (elapsedTime / CGFloat(expandTime))*growRadiusByAmount
+            self.size = CGSize(width: assignRadius*2, height: assignRadius*2)
         })
         //let unexpandAction = SKAction.scaleTo(1, duration: totalPulseTime/2)
         self.runAction(SKAction.sequence([expandAction/*, unexpandAction*/]))
         
         let waitForExpandToEnd = SKAction.waitForDuration(expandTime)
-        let setFlagAction = SKAction.runBlock {
-            self.spawnMineAtMyTail = true
-        }
-        runAction(SKAction.sequence([waitForExpandToEnd, setFlagAction]))
+        //let setFlagAction = SKAction.runBlock {
+        //    self.spawnMineAtMyTail = true
+        //}
+        //runAction(SKAction.sequence([waitForExpandToEnd, setFlagAction]))
+        runAction(waitForExpandToEnd, completion:  {
+            if let _ = self.parent { self.spawnMineAtMyTail = true }
+        })
 //        runAction(waitAction, completion: {
 //        if self.canLeaveMine { self.spawnMineAtMyTail = true }
 //            // GameScene will see that this has turned true and spawn the mine for us
@@ -297,27 +300,6 @@ class Creature: SKSpriteNode, BoundByCircle {
         minePropulsionSpeedActiveTimeCounterPreviousValue = 0
         speedDebuffTimeCounter = 0
         speedDebuffTimeCounterPreviousValue = 0
-//        let impulseSpeedBump = SKAction.sequence([SKAction.runBlock {
-//            self.currentSpeed = self.minePropulsionSpeed
-//            }, SKAction.waitForDuration(NSTimeInterval(minePropulsionSpeedActiveTime)), SKAction.runBlock{
-//            self.currentSpeed = self.normalSpeed
-//            }])
-//        self.runAction(impulseSpeedBump, withKey: C.actionkey_leaveMineImpulseSpeedBump, completion: {
-//            let speedDebuff = SKAction.sequence([SKAction.runBlock {
-//                    self.onMineImpulseSpeed = false
-//                    self.hasSpeedDebuff = true
-//                    self.currentSpeed = self.speedDebuffSpeed
-//                }, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime)), SKAction.runBlock {
-//                    self.currentSpeed = self.normalSpeed
-//                    self.hasSpeedDebuff = false
-//                }])
-//            self.runAction(speedDebuff, withKey: C.actionkey_leaveMineSpeedDebuff)
-//            
-//            let lookSick = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 0.3, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
-//            let goBackToNormal = SKAction.colorizeWithColor(UIColor(white: 0, alpha: 0), colorBlendFactor: 0, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
-//            let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime / 4 * 3)), goBackToNormal])
-//            self.runAction(speedDebuffVisualIndication)
-//        })
     }
     
 }

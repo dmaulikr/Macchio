@@ -877,9 +877,10 @@ class GameScene: SKScene {
             nameLabel.runAction(hideAction)
         }
         
-        let waitALittle = SKAction.waitForDuration(3)
-        let colorizeToBlack = SKAction.colorizeWithColor(UIColor.blackColor(), colorBlendFactor: 0, duration: 0.5)
-        let sequence = SKAction.sequence([destroyPlayerAction, waitALittle, colorizeToBlack])
+        let waitALittle = SKAction.waitForDuration(2)
+        let fadeOutToBlack = SKAction.fadeOutWithDuration(1)
+        let waitALittleLonger = SKAction.waitForDuration(1)
+        let sequence = SKAction.sequence([destroyPlayerAction, waitALittle, fadeOutToBlack, waitALittleLonger])
         runAction(sequence, completion: restart)
     }
     

@@ -16,9 +16,9 @@ extension GameScene {
         case Small, Rich, Glorious
     }
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color, asType type: OrbType) -> EnergyOrb? {
+    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color, asType type: OrbType, growFromNothing: Bool = true) -> EnergyOrb? {
         if let location = convertWorldPointToOrbChunkLocation(position) {
-            let newOrb = EnergyOrb(orbColor: inColor, type: type)
+            let newOrb = EnergyOrb(orbColor: inColor, type: type, growFromNothing: growFromNothing)
             newOrb.position = position
             newOrb.growAmount = growAmount
             newOrb.minRadius = minRadius
@@ -34,14 +34,14 @@ extension GameScene {
 
     
     
-    func seedOrbWithSpecifiedType(type: OrbType, atPosition position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil) -> EnergyOrb? {
+    func seedOrbWithSpecifiedType(type: OrbType, atPosition position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil, growFromNothing: Bool = true) -> EnergyOrb? {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
         else { orbColor = randomColor() }
         let minRadius = C.orb_minRadii[type]!
         let maxRadius = C.orb_maxRadii[type]!
         let growAmount = C.orb_growAmounts[type]!
-        return seedOrbAtPosition(position, growAmount: growAmount, minRadius: minRadius, maxRadius: maxRadius, artificiallySpawned: artificiallySpawned, inColor: orbColor, asType: type)
+        return seedOrbAtPosition(position, growAmount: growAmount, minRadius: minRadius, maxRadius: maxRadius, artificiallySpawned: artificiallySpawned, inColor: orbColor, asType: type, growFromNothing: growFromNothing)
     }
 
     func seedOrbCluster(ofType type: OrbType, withBudget growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
@@ -54,7 +54,7 @@ extension GameScene {
             let randX = aboutPoint.x + (cos(randAngle) * randDist)
             let randY = aboutPoint.y + (sin(randAngle) * randDist)
             let randomSpawnPosition = CGPoint(x: randX, y: randY)
-            seedOrbWithSpecifiedType(type, atPosition: randomSpawnPosition)
+            seedOrbWithSpecifiedType(type, atPosition: randomSpawnPosition, growFromNothing: false)
             
             budget -= eachOrbGrowAmount
         }
@@ -155,7 +155,7 @@ extension GameScene {
         //print("new AI creature spawned")
         //let newCreature = AICreature(theGameScene: self, name: "BS Player Name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: C.creature_minRadius + 60), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
         
-        let newCreature = AICreature(theGameScene: self, name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.35, max: 0.5))
+        let newCreature = AICreature(theGameScene: self, name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.25, max: 0.4))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)

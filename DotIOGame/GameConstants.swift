@@ -51,17 +51,17 @@ class C {
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
     
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [
-        .Small : 800,
+        .Small : 154,
         .Rich : 1500,
         .Glorious: 707
     ]
     static let orb_minRadii: [GameScene.OrbType: CGFloat] = [
-        .Small: 16,
+        .Small: 7,
         .Rich: 22,
         .Glorious: 15
     ]
     static let orb_maxRadii: [GameScene.OrbType: CGFloat] = [
-        .Small: 7,
+        .Small: 9,
         .Rich: 26,
         .Glorious: 20
     ]
@@ -82,14 +82,15 @@ class C {
         "this game sucks",
         "agar.io clone, biatch!",
         "Are you feeling it now mr crabs?",
-        "Creeper",
+        "MCCreeper",
+        "Mr. Crabs",
         "Hmmmmmmmm",
         "Bob",
         "Casey",
         "Inky",
         "Blinky",
         "Clyde",
-        "", "", "", "", "", "", "", "", "",
+        "", "", "", "", "", "", "", "",
         "FeelTheBern2016",
         "XXx_Fabi0_xXX",
         "Team?",
@@ -99,9 +100,6 @@ class C {
         "Foo", "Bar",
         "asdfghj",
         "qwerty",
-        "Jeff", "Nityam",
-        "Bush did 9/11",
-        "Hitler did nothing wrong",
         "Trump2016",
         "XXX_SLaYeR_XxX"
     ]

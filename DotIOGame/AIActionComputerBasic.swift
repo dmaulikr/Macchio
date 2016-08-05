@@ -48,10 +48,10 @@ class AIActionComputerBasic: AIActionComputer {
         //Weights be kinda like voting power
         let weight_boostAwayFromLargeCreature: CGFloat = 1
         let weight_boostTowardLargeCreature: CGFloat = -4
-        let weight_boostTowardOrb: CGFloat = 0.1
+        let weight_boostTowardOrb: CGFloat = 0.3
         let weight_boostForNoReason: CGFloat = -2
         
-        let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = -1
+        let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = 1
         let weight_leaveMineToCatchSmallerCreature: CGFloat = 1
     }
     
@@ -59,7 +59,7 @@ class AIActionComputerBasic: AIActionComputer {
     static let weightSets: [WeightSet] = [
         WeightSet(weight_mine: 5, weight_orb: -0.1, weight_smallCreature: -2, weight_largeCreature: 2, weight_wall: 5), // All around ok
         WeightSet(weight_mine: 10, weight_orb: -0.5, weight_smallCreature: -4, weight_largeCreature: 10, weight_wall: 5), // Coward
-        WeightSet(weight_mine: 5, weight_orb: -0.5, weight_smallCreature: -8, weight_largeCreature: -3, weight_wall: 8) // Risk-taker / greedy
+        WeightSet(weight_mine: 5, weight_orb: -0.5, weight_smallCreature: -8, weight_largeCreature: 9, weight_wall: 8) // Risk-taker / greedy
     ]
     let weightSet: WeightSet = weightSets.randomItem()
     enum WallDirection {
