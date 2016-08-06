@@ -31,7 +31,8 @@ class C {
         creature_mineCooldownTime: CGFloat = 4.5,
         creature_minRadius: CGFloat = 50,
         creature_maxRadius: CGFloat = 350,
-        creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7
+        creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7,
+    creature_deathFadeOutDuration: NSTimeInterval = 0.25
     static let percentLargerRadiusACreatureMustBeToEngulfAnother: CGFloat = 1.11
     
     static func creature_passiveScoreIncreasePerSecond(givenRadius r: CGFloat) -> CGFloat {

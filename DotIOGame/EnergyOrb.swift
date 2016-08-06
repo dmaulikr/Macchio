@@ -53,7 +53,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         zPosition = 0
         blendMode = .Add
         
-        if growFromNothing {
+//        if true {
             // run a grow action, then pulse forever
             let growTime: NSTimeInterval = 0.5
             let growFromNothingAction = SKAction.customActionWithDuration(0.5, actionBlock: {
@@ -61,15 +61,17 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
                 self.radius = C.orb_minRadii[type]! * (timeElapsed / CGFloat(growTime))
             })
             self.runAction(growFromNothingAction, completion: pulseForever)
-        } else {
-            // fade in instead
-            let fadeInTime: NSTimeInterval = 0.5
-            let fadeInAction = SKAction.customActionWithDuration(fadeInTime, actionBlock: {
-                (node: SKNode, elapsedTime: CGFloat) -> Void in
-                self.alpha = elapsedTime / CGFloat(fadeInTime)
-            })
-            self.runAction(fadeInAction, completion: pulseForever)
-        }
+//        } else {
+//            // fade in instead
+//            self.alpha = 0
+//            let fadeInTime: NSTimeInterval = 1
+////            let fadeInAction = SKAction.customActionWithDuration(fadeInTime, actionBlock: {
+////                (node: SKNode, elapsedTime: CGFloat) -> Void in
+////                self.alpha = elapsedTime / CGFloat(fadeInTime)
+////            })
+//            let fadeInAction = SKAction.fadeInWithDuration(fadeInTime)
+//            self.runAction(fadeInAction, completion: pulseForever)
+//        }
         
     }
     

@@ -29,6 +29,7 @@ class GameScene: SKScene {
             showArrow: true,
             zoomOutFactor: 0.9
     )
+    var theEnteredInPlayerName = ""
     
     enum State {
         case Playing, GameOver
@@ -107,7 +108,7 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
-        player = PlayerCreature(name: "Yoloz Boy 123", playerID: randomID(), color: randomColor(), startRadius: 80)
+        player = PlayerCreature(name: theEnteredInPlayerName, playerID: randomID(), color: randomColor(), startRadius: 80)
         if let player = player {
             player.position = computeValidCreatureSpawnPoint(player.radius)
             self.addChild(player)
@@ -488,7 +489,10 @@ class GameScene: SKScene {
             if x === player && gameState != .GameOver {
                 gameOver()
             } else {
-                x.removeFromParent()
+                let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
+                x.runAction(fadeOutAction)
+                let waitForFadeOut = SKAction.waitForDuration(C.creature_deathFadeOutDuration)
+                runAction(waitForFadeOut, completion: { x.removeFromParent() } )
             }
         }
 
@@ -834,6 +838,10 @@ class GameScene: SKScene {
         newLabelNode.position = CGPoint(x: 0, y: 50)
         newLabelNode.text = "+\(points)"
         hud.addChild(newLabelNode)
+        newLabelNode.xScale = 0.5
+        newLabelNode.yScale = 0.5
+        let scaleToNormalSizeAction = SKAction.scaleTo(1, duration: 0.15)
+        newLabelNode.runAction(scaleToNormalSizeAction)
         let waitAction = SKAction.waitForDuration(1)
         let fadeAction = SKAction.fadeOutWithDuration(0.5)
         newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
@@ -862,10 +870,16 @@ class GameScene: SKScene {
         let zoomOutAction = SKAction.scaleBy(1.3, duration: 4)
         camera!.runAction(zoomOutAction)
         
-        let destroyPlayerAction = SKAction.runBlock {
-            self.player?.removeFromParent()
-            self.player = nil
-        }
+        // nillfiying player will remove it from allCreatures; it won't move anymore
+        let player = self.player!
+        self.player = nil
+        
+        let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
+        player.runAction(fadeOutAction)
+        let waitForFade = SKAction.waitForDuration(C.creature_deathFadeOutDuration)
+        runAction(waitForFade, completion: {
+            player.removeFromParent()
+        })
         
         //Hide the HUD
         let hideAction = SKAction.fadeOutWithDuration(0.3)
@@ -880,7 +894,7 @@ class GameScene: SKScene {
         let waitALittle = SKAction.waitForDuration(2)
         let fadeOutToBlack = SKAction.fadeOutWithDuration(1)
         let waitALittleLonger = SKAction.waitForDuration(1)
-        let sequence = SKAction.sequence([destroyPlayerAction, waitALittle, fadeOutToBlack, waitALittleLonger])
+        let sequence = SKAction.sequence([waitALittle, fadeOutToBlack, waitALittleLonger])
         runAction(sequence, completion: restart)
     }
     

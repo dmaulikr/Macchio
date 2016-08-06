@@ -45,7 +45,7 @@ class AIActionComputerBasic: AIActionComputer {
         let weight_wall: CGFloat
         
         
-        //Weights be kinda like voting power
+        //Weights be kinda like voting power. + = yes , - = no
         let weight_boostAwayFromLargeCreature: CGFloat = 1
         let weight_boostTowardLargeCreature: CGFloat = -4
         let weight_boostTowardOrb: CGFloat = 0.3
