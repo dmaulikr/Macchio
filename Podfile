@@ -5,4 +5,5 @@ target 'DotIOGame' do
   use_frameworks!
   # Pods for DotIOGame
   pod 'Mixpanel'
+  pod 'IQKeyboardManagerSwift'
 end

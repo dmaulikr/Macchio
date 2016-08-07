@@ -13,6 +13,7 @@ import UIKit
 class MainScene: SKScene, UITextFieldDelegate {
     
     var playButton: MSButtonNode!
+    var presetPlayerName: String?
     var playerNameText: UITextField! = nil
     var enteredPlayerName: String = ""
     override func didMoveToView(view: SKView) {
@@ -41,10 +42,14 @@ class MainScene: SKScene, UITextFieldDelegate {
         playerNameText.textColor = SKColor.blackColor()
         playerNameText.placeholder = "Enter your name here"
         playerNameText.backgroundColor = SKColor.whiteColor()
-        playerNameText.autocorrectionType = UITextAutocorrectionType.Yes
+        playerNameText.autocorrectionType = UITextAutocorrectionType.No
+        if let presetPlayerName = presetPlayerName {
+            playerNameText.text = presetPlayerName
+            enteredPlayerName = presetPlayerName
+        }
         
         playerNameText.clearButtonMode = UITextFieldViewMode.WhileEditing
-        playerNameText.autocapitalizationType = UITextAutocapitalizationType.AllCharacters
+        playerNameText.autocapitalizationType = UITextAutocapitalizationType.None
         self.view!.addSubview(playerNameText)
         
 //        highScoreText = UITextField(frame: CGRectMake(size.width/2, size.height/2+20, 320, 40))
@@ -68,6 +73,13 @@ class MainScene: SKScene, UITextFieldDelegate {
         // Hides the keyboard!
         textField.resignFirstResponder()
         return true
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        if let text = textField.text {
+            enteredPlayerName = text
+        }
+        textField.resignFirstResponder()
     }
     
     

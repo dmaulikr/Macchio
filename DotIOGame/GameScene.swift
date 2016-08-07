@@ -895,12 +895,13 @@ class GameScene: SKScene {
         let fadeOutToBlack = SKAction.fadeOutWithDuration(1)
         let waitALittleLonger = SKAction.waitForDuration(1)
         let sequence = SKAction.sequence([waitALittle, fadeOutToBlack, waitALittleLonger])
-        runAction(sequence, completion: restart)
+        runAction(sequence, completion: goBackToMainScene)
     }
     
-    func restart() {
+    func goBackToMainScene() {
         let skView = self.view as SKView!
         let scene = MainScene(fileNamed:"MainScene") as MainScene!
+        scene.presetPlayerName = theEnteredInPlayerName
         scene.scaleMode = .AspectFill
         //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
         skView.presentScene(scene)

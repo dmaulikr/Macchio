@@ -46,7 +46,7 @@ class C {
     
     static func creature_normalSpeed(givenRadius r: CGFloat) -> CGFloat {
         //return 60 * pow(1/2, (r - 50) / 100) + 60
-        return -r/6 + 130
+        return -r/6 + 160
     }
     
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
@@ -69,7 +69,7 @@ class C {
     static let orb_pointValues: [GameScene.OrbType: UInt32] = [
         .Small: 1,
         .Rich: 5,
-        .Glorious: 7 // varies
+        .Glorious: 5
     ]
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
     static let orb_fadeOutForXSeconds: CGFloat = 5

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A608F45604312C4781CDEB2849285FCA"
+               BlueprintIdentifier = "E815B1DEAAA9E00E8481D023A85DEC42"
                BuildableName = "Pods_DotIOGame.framework"
                BlueprintName = "Pods-DotIOGame"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A608F45604312C4781CDEB2849285FCA"
+            BlueprintIdentifier = "E815B1DEAAA9E00E8481D023A85DEC42"
             BuildableName = "Pods_DotIOGame.framework"
             BlueprintName = "Pods-DotIOGame"
             ReferencedContainer = "container:Pods.xcodeproj">
