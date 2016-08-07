@@ -197,7 +197,7 @@ class GameScene: SKScene {
         let randY = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.height - creatureStartRadius)
         let randPoint = CGPoint(x: randX, y: randY)
         for otherLiveCreature in allCreatures {
-            if otherLiveCreature.position.distanceTo(randPoint) - creatureStartRadius - otherLiveCreature.radius < 200 {
+            if otherLiveCreature.position.distanceTo(randPoint) - creatureStartRadius - otherLiveCreature.radius < 400 {
                 return computeValidCreatureSpawnPoint(creatureStartRadius)
             }
         }

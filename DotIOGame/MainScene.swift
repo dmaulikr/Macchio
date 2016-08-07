@@ -16,15 +16,28 @@ class MainScene: SKScene, UITextFieldDelegate {
     var presetPlayerName: String?
     var playerNameText: UITextField! = nil
     var enteredPlayerName: String = ""
+    
+    var loadingImage: SKSpriteNode!
+    
     override func didMoveToView(view: SKView) {
+        loadingImage = childNodeWithName("loadingImage") as! SKSpriteNode
+        loadingImage.userInteractionEnabled = false
+        
         playButton = childNodeWithName("red orb") as! MSButtonNode
         playButton.selectedHandler = {
-            self.playerNameText.removeFromSuperview()
-            let skView = self.view as SKView!
-            let scene = GameScene(fileNamed: "GameScene") as GameScene!
-            scene.scaleMode = .AspectFill
-            scene.theEnteredInPlayerName = self.enteredPlayerName
-            skView.presentScene(scene)
+            self.loadingImage.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            
+            let goToGameScene = SKAction.runBlock {
+                self.playerNameText.removeFromSuperview()
+                let skView = self.view as SKView!
+                let scene = GameScene(fileNamed: "GameScene") as GameScene!
+                scene.scaleMode = .AspectFill
+                scene.theEnteredInPlayerName = self.enteredPlayerName
+                skView.presentScene(scene)
+            }
+            let waitATinyBit = SKAction.waitForDuration(0.01)
+            let sequence = SKAction.sequence([waitATinyBit, goToGameScene])
+            self.runAction(sequence)
         }
         
         // create the UITextField instance with positions... half of the screen width minus half of the textfield width.
@@ -40,7 +53,7 @@ class MainScene: SKScene, UITextFieldDelegate {
         
         playerNameText.borderStyle = UITextBorderStyle.RoundedRect
         playerNameText.textColor = SKColor.blackColor()
-        playerNameText.placeholder = "Enter your name here"
+        playerNameText.placeholder = "Nickname"
         playerNameText.backgroundColor = SKColor.whiteColor()
         playerNameText.autocorrectionType = UITextAutocorrectionType.No
         if let presetPlayerName = presetPlayerName {
@@ -52,16 +65,6 @@ class MainScene: SKScene, UITextFieldDelegate {
         playerNameText.autocapitalizationType = UITextAutocapitalizationType.None
         self.view!.addSubview(playerNameText)
         
-//        highScoreText = UITextField(frame: CGRectMake(size.width/2, size.height/2+20, 320, 40))
-//        highScoreText.borderStyle = UITextBorderStyle.RoundedRect
-//        highScoreText.textColor = UIColor.whiteColor()
-//        highScoreText.placeholder = "Enter your name in here"
-//        highScoreText.backgroundColor = UIColor.darkGrayColor()
-//        highScoreText.autocorrectionType = UITextAutocorrectionType.No
-//        highScoreText.keyboardType = UIKeyboardType.ASCIICapable
-//        highScoreText.clearButtonMode = UITextFieldViewMode.WhileEditing
-//        highScoreText.autocapitalizationType = UITextAutocapitalizationType.None
-//        self.view!.addSubview(highScoreText)
         
     }
     
