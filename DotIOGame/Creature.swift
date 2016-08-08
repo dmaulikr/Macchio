@@ -71,7 +71,8 @@ class Creature: SKSpriteNode, BoundByCircle {
     var spawnMineAtMyTail = false // Set to true in leaveMine. GameScene will repeatedly check leaveMineAtMyTail and will leave a mine if it is true.
     //var inTheProcessOfLeavingAMine = false
     let percentSizeSacrificeToLeaveMine: CGFloat = 0.10 // Constant to be twiddled with
-    var mineCoolDownCounter: CGFloat = 4
+    var mineCoolDownCounter: CGFloat = C.creature_mineCooldownTime
+    var mineCoolDownCounterPreviousValue: CGFloat = C.creature_mineCooldownTime
     
 //    var onMineImpulseSpeed: Bool = false
 //    var hasSpeedDebuff: Bool = false
@@ -207,6 +208,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         }
         
         // Mine cooldown
+        mineCoolDownCounterPreviousValue = mineCoolDownCounter
         if mineCoolDownCounter < C.creature_mineCooldownTime {
             mineCoolDownCounter += CGFloat(deltaTime)
         }

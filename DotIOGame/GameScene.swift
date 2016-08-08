@@ -206,8 +206,7 @@ class GameScene: SKScene {
         
         loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
         loadingImage.position = CGPoint(x: 0, y: 0)
-        let moveJustOutOfTheScreen = SKAction.moveTo(CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
-        loadingImage.runAction(moveJustOutOfTheScreen)
+        
         //}
     }
     
@@ -724,6 +723,14 @@ class GameScene: SKScene {
                 //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
                 leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
                 leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
+                if player.mineCoolDownCounter >= C.creature_mineCooldownTime &&
+                    player.mineCoolDownCounterPreviousValue < C.creature_mineCooldownTime {
+                    // The player has their mine ready for the first time this frame
+                    let rotate = SKAction.rotateByAngle(CGFloat(180).degreesToRadians(), duration: 0.7)
+                    leaveMineButton.buttonIcon.runAction(rotate)
+                    let cropNode = leaveMineButton.greenPart.parent as! SKCropNode
+                    cropNode.maskNode?.runAction(rotate)
+                }
     
                 
                 
@@ -831,6 +838,11 @@ class GameScene: SKScene {
                     labelNode.position = CGPoint(x: correspondingCreature.position.x, y: correspondingCreature.position.y + (correspondingCreature.radius*1.2))
                     labelNode.xScale = playerNameLabelNodeXScaleToPlayerRadiusRatio * correspondingCreature.radius
                     labelNode.yScale = playerNameLabelNodeYScaleToPlayerRadiusRatio * correspondingCreature.radius
+                }
+                
+                if loadingImage.position.x == 0 && loadingImage.position.y == 0 && !loadingImage.hasActions() {
+                    let moveJustOutOfTheScreen = SKAction.moveTo(CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
+                    loadingImage.runAction(moveJustOutOfTheScreen)
                 }
                 
             }
