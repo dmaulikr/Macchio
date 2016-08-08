@@ -109,6 +109,9 @@ class GameScene: SKScene {
     var restartButton: MSButtonNode!
     var backToMenuButton: MSButtonNode!
     
+    var loadingImage: SKSpriteNode!
+    let loadingImageMoveTime = 0.2
+    
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         player = PlayerCreature(name: theEnteredInPlayerName, playerID: randomID(), color: randomColor(), startRadius: 80)
@@ -182,8 +185,8 @@ class GameScene: SKScene {
         leaderBoard.xScale = 0.3
         leaderBoard.yScale = 0.3
         //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
-        let boardX = (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale)-30
-        let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots))
+        let boardX = (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale)-10
+        let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots)) - 10
         
         leaderBoard.position = CGPoint(x: boardX, y: boardY)
         hud.addChild(leaderBoard)
@@ -201,6 +204,10 @@ class GameScene: SKScene {
         restartButton.selectedHandler = restartGameScene
         backToMenuButton.selectedHandler = goBackToMainScene
         
+        loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
+        loadingImage.position = CGPoint(x: 0, y: 0)
+        let moveJustOutOfTheScreen = SKAction.moveTo(CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
+        loadingImage.runAction(moveJustOutOfTheScreen)
         //}
     }
     
@@ -471,7 +478,7 @@ class GameScene: SKScene {
                         let waitAction = SKAction.waitForDuration(0.3)
                         let spawnOrbClusterAction = SKAction.runBlock {
                             let budgetOfNewCluster = (areaOfCircleWithRadius(orgRadius) - areaOfCircleWithRadius(newRadius)) * C.energyTransferPercent
-                            self.seedOrbCluster(ofType: .Glorious, withBudget: budgetOfNewCluster, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: creature.targetRadius, exclusivelyInColor: creature.playerColor)
+                            self.seedOrbCluster(ofType: .Glorious, withBudget: budgetOfNewCluster, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: newRadius, exclusivelyInColor: creature.playerColor)
                         }
                         runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
                         
@@ -799,7 +806,7 @@ class GameScene: SKScene {
                 }
                 
                 // Update the leaderboard with data from all the creatures that exist
-                let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score) }
+                let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score, color: $0.playerColor) }
                 leaderBoard.update(creatureData)
                 
                 // Update the player name labels!
@@ -880,7 +887,7 @@ class GameScene: SKScene {
             touchesEnded(fakeTouches, withEvent: nil)
         }
         
-        let zoomOutAction = SKAction.scaleBy(1.3, duration: 4)
+        let zoomOutAction = SKAction.scaleBy(3, duration: 30)
         camera!.runAction(zoomOutAction)
         
         // nillfiying player will remove it from allCreatures; it won't move anymore
@@ -896,9 +903,10 @@ class GameScene: SKScene {
         
         //Hide the HUD
         let hideAction = SKAction.fadeOutWithDuration(0.3)
-        for child in camera!.children {
-            child.runAction(hideAction)
-        }
+//        for child in hud.children {
+//            child.runAction(hideAction)
+//        }
+        hud.runAction(hideAction)
         //Hide names
         for nameLabel in (playerNameLabelsAndCorrespondingIDs.map {$0.label}) {
             nameLabel.runAction(hideAction)
@@ -915,7 +923,8 @@ class GameScene: SKScene {
         let showTheButtons = SKAction.runBlock {
             // Showing the buttons in itself is starting an additional SKAction that will cause them to fade in. And then another action to wait for them to fade in and after they are visible, change their state to active. Bear with me.
             let btnFadeInTime = 0.5
-            let fadeInAction = SKAction.fadeInWithDuration(btnFadeInTime)
+            //let fadeInAction = SKAction.fadeInWithDuration(btnFadeInTime)
+            let fadeInAction = SKAction.fadeAlphaTo(0.85, duration: btnFadeInTime)
             self.restartButton.runAction(fadeInAction)
             self.backToMenuButton.runAction(fadeInAction)
             
@@ -932,11 +941,18 @@ class GameScene: SKScene {
     }
     
     func restartGameScene() {
-        let skView = self.view as SKView!
-        let scene = GameScene(fileNamed:"GameScene") as GameScene!
-        scene.theEnteredInPlayerName = theEnteredInPlayerName
-        scene.scaleMode = .AspectFill
-        skView.presentScene(scene)
+        let moveToCenterOfScreen = SKAction.moveTo(CGPoint(x: 0, y: 0), duration: loadingImageMoveTime)
+        loadingImage.runAction(moveToCenterOfScreen)
+        let waitForLoadingImageToMoveToTheCenterOfScreen = SKAction.waitForDuration(loadingImageMoveTime + 0.1)
+        let presentNewGameScene = SKAction.runBlock {
+            let skView = self.view as SKView!
+            let scene = GameScene(fileNamed:"GameScene") as GameScene!
+            scene.theEnteredInPlayerName = self.theEnteredInPlayerName
+            scene.scaleMode = .AspectFill
+            skView.presentScene(scene)
+        }
+    
+        runAction(SKAction.sequence([waitForLoadingImageToMoveToTheCenterOfScreen, presentNewGameScene]))
     }
     
     func goBackToMainScene() {

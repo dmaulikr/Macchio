@@ -28,7 +28,6 @@ class MainScene: SKScene, UITextFieldDelegate {
             self.loadingImage.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
             
             let goToGameScene = SKAction.runBlock {
-                self.playerNameText.removeFromSuperview()
                 let skView = self.view as SKView!
                 let scene = GameScene(fileNamed: "GameScene") as GameScene!
                 scene.scaleMode = .AspectFill
@@ -37,6 +36,7 @@ class MainScene: SKScene, UITextFieldDelegate {
             }
             let waitATinyBit = SKAction.waitForDuration(0.01)
             let sequence = SKAction.sequence([waitATinyBit, goToGameScene])
+            self.playerNameText.removeFromSuperview()
             self.runAction(sequence)
         }
         

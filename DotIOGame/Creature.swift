@@ -13,9 +13,9 @@ class Creature: SKSpriteNode, BoundByCircle {
     // A generic creature class!
     var playerID: Int = 0
     var playerColor: Color = .Red
-    let textures: [Color: SKTexture] = [
+    static let textures: [Color: SKTexture] = [
         .Red : SKTexture(imageNamed: "player_red_lit"),
-        .Green: SKTexture(imageNamed: "player_green"),
+        //.Green: SKTexture(imageNamed: "player_green"),
         .Blue: SKTexture(imageNamed: "player_blue_lit"),
         .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
@@ -110,7 +110,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     init(name: String, playerID: Int, color: Color, startRadius: CGFloat = 50) {
         self.playerID = playerID
         playerColor = color
-        let texture = textures[color]
+        let texture = Creature.textures[color]
         let color = SKColor.whiteColor()
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)

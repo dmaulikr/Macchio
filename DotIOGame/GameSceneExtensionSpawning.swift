@@ -50,7 +50,7 @@ extension GameScene {
             
         while budget >= eachOrbGrowAmount {
             let randAngle = CGFloat.random(min: 0, max: 360)
-            let randDist = CGFloat.random(min: 0, max: radius)
+            let randDist = CGFloat.random(min: minRadius, max: radius)
             let randX = aboutPoint.x + (cos(randAngle) * randDist)
             let randY = aboutPoint.y + (sin(randAngle) * randDist)
             let randomSpawnPosition = CGPoint(x: randX, y: randY)
@@ -157,6 +157,7 @@ extension GameScene {
         
         let newCreature = AICreature(theGameScene: self, name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.25, max: 0.4))
         newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
+        newCreature.score = UInt32(CGFloat.random(min: 0, max: 600))
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         addChild(newCreature)
