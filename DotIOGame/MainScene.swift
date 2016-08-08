@@ -42,7 +42,7 @@ class MainScene: SKScene, UITextFieldDelegate {
         
         // create the UITextField instance with positions... half of the screen width minus half of the textfield width.
         // Same for the height.
-        playerNameText = UITextField(frame: CGRectMake(view.bounds.width / 2 - 160, view.bounds.height / 2 - 20, 320, 40))
+        playerNameText = UITextField(frame: CGRectMake(view.bounds.width / 2 - 125, view.bounds.height / 2 - 20 - 70, 250, 40))
         
         // add the UITextField to the GameScene's view
         view.addSubview(playerNameText)
