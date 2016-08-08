@@ -106,89 +106,102 @@ class GameScene: SKScene {
     var playerNameLabelNodeYScaleToPlayerRadiusRatio: CGFloat!
     var playerNameLabelsAndCorrespondingIDs: [(label: SKLabelNode, playerID: Int)] = []
     
+    var restartButton: MSButtonNode!
+    var backToMenuButton: MSButtonNode!
+    
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         player = PlayerCreature(name: theEnteredInPlayerName, playerID: randomID(), color: randomColor(), startRadius: 80)
-        if let player = player {
-            player.position = computeValidCreatureSpawnPoint(player.radius)
-            self.addChild(player)
-            //spawnPlayerNameLabel(forCreature: player)
-            cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player.radius
-            cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player.radius
-            cameraTarget = player
-            
-            bgGraphics = childNodeWithName("bgGraphics")
-            bgGraphics.xScale = mapSize.width / 6000
-            bgGraphics.yScale = mapSize.height / 6000
-            
-            hud = SKNode() // Hud will act as a container for ui elements
-            camera!.addChild(hud)
-            
-            scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
-            sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
-            
-            directionArrow = SKSpriteNode(imageNamed: "arrow.png")
-            directionArrow.zPosition = 100
-            directionArrow.size = CGSize(width: player.size.width/5, height: player.size.height/5)
-            directionArrow.zRotation = player.velocity.angle.degreesToRadians()
-            directionArrow.hidden = true
-            directionArrowTargetPosition = directionArrow.position
-            hud.addChild(directionArrow)
-            directionArrowAnchor = SKNode()
-            directionArrowAnchor.position = player.position
-            directionArrowAnchor.zRotation = player.targetAngle.degreesToRadians()
-            directionArrowDragMultiplierToPlayerRadiusRatio = 1 / player.radius
-            self.addChild(directionArrowAnchor)
-            
-            camera!.zPosition = 100
-            joyStickBox = childNodeWithName("//joyStickBox")
-            controlStick = childNodeWithName("//controlStick")
-            joyStickBox.hidden = true
-            
-            boostButton = BoostButton()
-            boostButton.position.x = size.width/2 - boostButton.size.width/2
-            boostButton.position.y = -size.height/2 + boostButton.size.height/2
-            hud.addChild(boostButton)
-            boostButton.addButtonIconToParent()
-            boostButton.onPressed = player.startBoost
-            boostButton.onReleased = player.stopBoost
-            
-            leaveMineButton = MineButton()
-            leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
-            leaveMineButton.position.y = -size.height/2 + boostButton.size.height + leaveMineButton.size.height / 2
-            hud.addChild(leaveMineButton)
-            leaveMineButton.addButtonIconToParent()
-            leaveMineButton.onPressed = player.leaveMine
-            leaveMineButton.onReleased = { return }
-            
-            // Initialize orbChunks with empty arrays
-            for col in 0..<numOfChunkColumns {
-                orbChunks.append([])
-                for _ in 0..<numOfChunkRows {
-                    orbChunks[col].append([])
-                }
-            }
-            
-            killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
-            smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
-            
-            leaderBoard = LeaderBoard()
-            leaderBoard.xScale = 0.3
-            leaderBoard.yScale = 0.3
-            //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
-            let boardX = (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale)-30
-            let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots))
-            
-            leaderBoard.position = CGPoint(x: boardX, y: boardY)
-            hud.addChild(leaderBoard)
-            
-            masterPlayerNameLabel = childNodeWithName("playerNameLabelMaster") as! SKLabelNode
-            playerNameLabelNodeXScaleToPlayerRadiusRatio = masterPlayerNameLabel.xScale / 300
-            playerNameLabelNodeYScaleToPlayerRadiusRatio = masterPlayerNameLabel.yScale / 300
-            
-            spawnPlayerNameLabel(forCreature: player)
-            
+        defer {
+            spawnPlayerNameLabel(forCreature: player!)
         }
+        //if let player = player {
+        player!.position = computeValidCreatureSpawnPoint(player!.radius)
+        self.addChild(player!)
+        //spawnPlayerNameLabel(forCreature: player)
+        cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
+        cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player!.radius
+        cameraTarget = player
+        
+        bgGraphics = childNodeWithName("bgGraphics")
+        bgGraphics.xScale = mapSize.width / 6000
+        bgGraphics.yScale = mapSize.height / 6000
+        
+        hud = SKNode() // Hud will act as a container for ui elements
+        camera!.addChild(hud)
+        
+        scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
+        sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
+        
+        directionArrow = SKSpriteNode(imageNamed: "arrow.png")
+        directionArrow.zPosition = 100
+        directionArrow.size = CGSize(width: player!.size.width/5, height: player!.size.height/5)
+        directionArrow.zRotation = player!.velocity.angle.degreesToRadians()
+        directionArrow.hidden = true
+        directionArrowTargetPosition = directionArrow.position
+        hud.addChild(directionArrow)
+        directionArrowAnchor = SKNode()
+        directionArrowAnchor.position = player!.position
+        directionArrowAnchor.zRotation = player!.targetAngle.degreesToRadians()
+        directionArrowDragMultiplierToPlayerRadiusRatio = 1 / player!.radius
+        self.addChild(directionArrowAnchor)
+        
+        camera!.zPosition = 100
+        joyStickBox = childNodeWithName("//joyStickBox")
+        controlStick = childNodeWithName("//controlStick")
+        joyStickBox.hidden = true
+        
+        boostButton = BoostButton()
+        boostButton.position.x = size.width/2 - boostButton.size.width/2
+        boostButton.position.y = -size.height/2 + boostButton.size.height/2
+        hud.addChild(boostButton)
+        boostButton.addButtonIconToParent()
+        boostButton.onPressed = player!.startBoost
+        boostButton.onReleased = player!.stopBoost
+        
+        leaveMineButton = MineButton()
+        leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
+        leaveMineButton.position.y = -size.height/2 + boostButton.size.height + leaveMineButton.size.height / 2
+        hud.addChild(leaveMineButton)
+        leaveMineButton.addButtonIconToParent()
+        leaveMineButton.onPressed = player!.leaveMine
+        leaveMineButton.onReleased = { return }
+        
+        // Initialize orbChunks with empty arrays
+        for col in 0..<numOfChunkColumns {
+            orbChunks.append([])
+            for _ in 0..<numOfChunkRows {
+                orbChunks[col].append([])
+            }
+        }
+        
+        killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
+        smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
+        
+        leaderBoard = LeaderBoard()
+        leaderBoard.xScale = 0.3
+        leaderBoard.yScale = 0.3
+        //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
+        let boardX = (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale)-30
+        let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots))
+        
+        leaderBoard.position = CGPoint(x: boardX, y: boardY)
+        hud.addChild(leaderBoard)
+        
+        masterPlayerNameLabel = childNodeWithName("playerNameLabelMaster") as! SKLabelNode
+        let dummyPlayer = childNodeWithName("playerdummy") as! SKSpriteNode
+        let dummyRadius = dummyPlayer.size.width / 2
+        playerNameLabelNodeXScaleToPlayerRadiusRatio = masterPlayerNameLabel.xScale / dummyRadius
+        playerNameLabelNodeYScaleToPlayerRadiusRatio = masterPlayerNameLabel.yScale / dummyRadius
+            
+        restartButton = childNodeWithName("//restartButton") as! MSButtonNode
+        backToMenuButton = childNodeWithName("//backToMenuButton") as! MSButtonNode
+        restartButton.state = .MSButtonNodeStateHidden
+        backToMenuButton.state = .MSButtonNodeStateHidden
+        restartButton.selectedHandler = restartGameScene
+        backToMenuButton.selectedHandler = goBackToMainScene
+        
+        //}
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
@@ -890,12 +903,40 @@ class GameScene: SKScene {
         for nameLabel in (playerNameLabelsAndCorrespondingIDs.map {$0.label}) {
             nameLabel.runAction(hideAction)
         }
+//        
+//        let waitALittle = SKAction.waitForDuration(2)
+//        let fadeOutToBlack = SKAction.fadeOutWithDuration(1)
+//        let waitALittleLonger = SKAction.waitForDuration(1)
+//        let sequence = SKAction.sequence([waitALittle, fadeOutToBlack, waitALittleLonger])
+//        runAction(sequence, completion: {
+//            
+//        })
+        let waitOneSecond = SKAction.waitForDuration(1)
+        let showTheButtons = SKAction.runBlock {
+            // Showing the buttons in itself is starting an additional SKAction that will cause them to fade in. And then another action to wait for them to fade in and after they are visible, change their state to active. Bear with me.
+            let btnFadeInTime = 0.5
+            let fadeInAction = SKAction.fadeInWithDuration(btnFadeInTime)
+            self.restartButton.runAction(fadeInAction)
+            self.backToMenuButton.runAction(fadeInAction)
+            
+            let waitForButtonsToFadeIn = SKAction.waitForDuration(btnFadeInTime)
+            let enableTheButtons = SKAction.runBlock {
+                self.restartButton.state = .MSButtonNodeStateActive
+                self.backToMenuButton.state = .MSButtonNodeStateActive
+            }
+            self.runAction(SKAction.sequence([waitForButtonsToFadeIn, enableTheButtons]))
+        }
+        self.runAction(SKAction.sequence([waitOneSecond, showTheButtons]))
         
-        let waitALittle = SKAction.waitForDuration(2)
-        let fadeOutToBlack = SKAction.fadeOutWithDuration(1)
-        let waitALittleLonger = SKAction.waitForDuration(1)
-        let sequence = SKAction.sequence([waitALittle, fadeOutToBlack, waitALittleLonger])
-        runAction(sequence, completion: goBackToMainScene)
+        
+    }
+    
+    func restartGameScene() {
+        let skView = self.view as SKView!
+        let scene = GameScene(fileNamed:"GameScene") as GameScene!
+        scene.theEnteredInPlayerName = theEnteredInPlayerName
+        scene.scaleMode = .AspectFill
+        skView.presentScene(scene)
     }
     
     func goBackToMainScene() {
