@@ -31,7 +31,9 @@ class Mine: SKSpriteNode, BoundByCircle {
         self.radius = radius
         self.growAmount = growAmount
         self.leftByPlayerColor = color
-        self.rps = initialRPS
+        let positiveRPS = CGFloat.random() > 0.5
+        if positiveRPS { self.rps = initialRPS }
+        else { self.rps = -initialRPS }
         self.deltaRPSPerSecond = -rps / lifeSpan
         
         let myTexture = Mine.shurikenTextures[color]
