@@ -592,8 +592,17 @@ class GameScene: SKScene {
         for mine in mineKillList {
             // when the orb cluster is seeded, mine.growAmount is not multiplied by C.energyTransferPercent, because this was already applied when the creature left the mine. (Remember: energy transfer percent is the grow amount that is kept when it changes state (e.g. creature ->X% mine ->X% orbs)
             seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
-            mine.removeFromParent()
+            let shrinkAction = SKAction.scaleTo(0, duration: 1)
+            mine.runAction(shrinkAction)
+            let waitForShrink = SKAction.waitForDuration(1)
+            runAction(waitForShrink, completion: {
+                mine.removeFromParent()
+            })
         }
+//        let minesInScene = self.children.filter { $0 is Mine }
+//        if minesInScene.count > 0 {
+//            print(goopMines.count / minesInScene.count)
+//        }
         
         // SPAWNING of mines (behind players with their flags on) 👹 💣
         // Here I believe all creatures will be treated equally
