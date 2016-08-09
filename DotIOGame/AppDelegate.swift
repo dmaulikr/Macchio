@@ -17,6 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch
+        
+        Mixpanel.sharedInstanceWithToken("30cb0f6331d6b6f0d738dd1520584afe")
+        let mixpanel: Mixpanel = Mixpanel.sharedInstance()
+        mixpanel.track("App launched")
+        
+        // IQKeyboardManager makes text fields slide so that they are not covered by the keyboard.
         IQKeyboardManager.sharedManager().enable = true
         return true
     }

@@ -20,6 +20,7 @@ class LeaderBoard: SKNode {
     var entryLabels = [(place: SKLabelNode, playerName: SKLabelNode, score: SKLabelNode)!]() // 0  is first place. 1 = 2nd, etc
     var playerIDs = [Int]()
     var masterLabelNode: SKLabelNode!
+    var sortedData: [CreatureDataSnapshot] = []
     
     override init() {
         
@@ -86,7 +87,7 @@ class LeaderBoard: SKNode {
     func update(creatureDataSnapshots: [CreatureDataSnapshot]) {
         
         // The data's should be sorted in order from lowest score to highest score
-        let sortedData = creatureDataSnapshots.sort(byScore)
+        sortedData = creatureDataSnapshots.sort(byScore)
         
 //        
 //        let numberOfElementsToRead = sortedData.count <= numberOfSlots ? sortedData.count : numberOfSlots
@@ -137,6 +138,16 @@ class LeaderBoard: SKNode {
             }
         }
         
+    }
+    
+    func getRankOfCreature(withID creatureID: Int) -> Int? {
+        // Note: sorted data is sorted from lowest score to highest score
+        for (index, data) in sortedData.enumerate() {
+            if data.playerID == creatureID {
+                return sortedData.count - index
+            }
+        }
+        return nil
     }
     
     struct CreatureDataSnapshot {

@@ -29,6 +29,8 @@ class GameScene: SKScene {
             showArrow: true,
             zoomOutFactor: 0.9
     )
+    let mixpanelTracker = RYNMixpanelTracker()
+    
     var theEnteredInPlayerName = ""
     
     enum State {
@@ -49,6 +51,10 @@ class GameScene: SKScene {
     var otherCreatures: [Creature] = []
     var allCreatures: [Creature] {
         return (player != nil ? [player!] : []) + otherCreatures
+    }
+    
+    enum PointSource {
+        case Orbs, KillsEat, KillsMine, Size
     }
     
     var playerScore: UInt32 = 0 {
@@ -206,6 +212,7 @@ class GameScene: SKScene {
         
         loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
         loadingImage.position = CGPoint(x: 0, y: 0)
+        
         
         //}
     }
@@ -429,8 +436,12 @@ class GameScene: SKScene {
             }
             self.runAction(SKAction.sequence([waitAction, removeOrbAction]))
             c.targetArea += orb.growAmount
+            
+            // Award Points
             let deltaScore: UInt32 = C.orb_pointValues[orb.type]!
-            c.score += deltaScore
+            c.awardPoints(deltaScore, fromSource: .Orbs)
+            //c.score += deltaScore
+            //c.scoreFromOrbs += deltaScore
 
             if c === player {
                 spawnSmallScoreTextOnPlayerMouth(deltaScore)
@@ -464,7 +475,8 @@ class GameScene: SKScene {
                         let deltaScore = convertAreaToKillPoints(areaOfCircleWithRadius(radiusLoss))
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
-                                creature.score += deltaScore
+                                //creature.score += deltaScore
+                                creature.awardPoints(deltaScore, fromSource: .KillsMine)
                                 break
                             }
                         }
@@ -533,7 +545,8 @@ class GameScene: SKScene {
                             theBigger.targetArea += theSmaller.growAmount * C.energyTransferPercent
                             theEaten.append(theSmaller)
                             let deltaScore = convertAreaToKillPoints(theSmaller.targetArea)
-                            theBigger.score += deltaScore
+                            //theBigger.score += deltaScore
+                            theBigger.awardPoints(deltaScore, fromSource: .KillsEat)
                             if theBigger === player {
                                 // add a flying number
                                 //spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
@@ -541,7 +554,7 @@ class GameScene: SKScene {
                             }
                         }
                     } else {
-                        // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap
+                        // Since the two creatures are pretty close in size, they can't eat each other. They can't even overlap. They just bump into eachother
                         // Displacement = r1 - (dist - r2) = r1 - dist + r2
                         let displaceDistance = theBigger.radius - theBigger.position.distanceTo(theSmaller.position) + theSmaller.radius
                         // For now just displace theSmaller by the distance value and at the apppropriate angle
@@ -840,6 +853,7 @@ class GameScene: SKScene {
                     labelNode.yScale = playerNameLabelNodeYScaleToPlayerRadiusRatio * correspondingCreature.radius
                 }
                 
+                // If the loading image is still in the center, then get it off the screen (the game state is not game over in this block
                 if loadingImage.position.x == 0 && loadingImage.position.y == 0 && !loadingImage.hasActions() {
                     let moveJustOutOfTheScreen = SKAction.moveTo(CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
                     loadingImage.runAction(moveJustOutOfTheScreen)
@@ -847,6 +861,13 @@ class GameScene: SKScene {
                 
             }
         }
+        
+        // No matter what, move bgGraphics along with the camera so that we get that parallax effect.
+        // Note that the position of bgGraphics represents the lower left corner of the background
+        let centerOfMap = CGPoint(x: mapSize.width/2, y: mapSize.height/2)
+        //bgGraphics.position = camera!.position.distanceTo(centerOfMap) / CGFloat(20)
+        bgGraphics.position = (camera!.position - centerOfMap) / CGPoint(x: 4, y: 4)
+        
         
     }
     
@@ -894,11 +915,13 @@ class GameScene: SKScene {
     func gameOver() {
         gameState = .GameOver
         
+        // If the player is still touching the UI, then nullify the touch, getting rid of the arrow
         if let playerMovingTouch = playerMovingTouch {
             var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
             touchesEnded(fakeTouches, withEvent: nil)
         }
         
+        // Let the camera zoom out over so slowly
         let zoomOutAction = SKAction.scaleBy(3, duration: 30)
         camera!.runAction(zoomOutAction)
         
@@ -906,6 +929,10 @@ class GameScene: SKScene {
         let player = self.player!
         self.player = nil
         
+        // Track the players final state into mixpanel
+        mixpanelTracker.trackGameFinished(Double(player.timePlayed), finalScore: Int(player.score), percentScoreFromSize: player.percentScoreFromSize, percentScoreFromOrbs: player.percentScoreFromOrbs, percentScoreFromKills: player.percentScoreFromKills, finalRank: leaderBoard.getRankOfCreature(withID: player.playerID)!)
+        
+        // The rest are visual effects
         let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
         player.runAction(fadeOutAction)
         let waitForFade = SKAction.waitForDuration(C.creature_deathFadeOutDuration)

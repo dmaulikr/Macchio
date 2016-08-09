@@ -229,7 +229,7 @@ class AIActionComputerBasic: AIActionComputer {
         if angle < 0 { angle += 360 }
         else if angle > 360 { angle -= 360 }
         let index = Int(angle / anglePerSector)
-        let modifier = ((radarDistance - positionRelativeToMyCreature.length()) / radarDistance) * weight
+        let modifier = ((radarDistance - positionRelativeToMyCreature.length() + objectRadius) / radarDistance) * weight
         sectorDangerRatings[index] += modifier
         
         sectorDangerRatings[indexWithinSectorsBounds(index + 1)] += modifier / 2

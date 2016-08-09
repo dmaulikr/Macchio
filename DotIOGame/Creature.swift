@@ -19,9 +19,22 @@ class Creature: SKSpriteNode, BoundByCircle {
         .Blue: SKTexture(imageNamed: "player_blue_lit"),
         .Yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
+    var timePlayed: CGFloat = 0
     
     var score: UInt32 = 0
+    var scoreFromKills: Int = 0
+    var percentScoreFromKills: Double {
+        return Double(scoreFromKills) / Double(score)
+    }
+    var scoreFromSize: Int = 0
     var timeSinceLastPassiveScoreGain: CGFloat = 0
+    var percentScoreFromSize: Double {
+        return Double(scoreFromSize) / Double(score)
+    }
+    var scoreFromOrbs: Int = 0
+    var percentScoreFromOrbs: Double {
+        return Double(scoreFromOrbs) / Double(score)
+    }
     
     var normalSpeed: CGFloat { return C.creature_normalSpeed(givenRadius: radius) }
     var boostingSpeed: CGFloat { return normalSpeed * 2.3 }
@@ -136,6 +149,7 @@ class Creature: SKSpriteNode, BoundByCircle {
     func update(deltaTime: CFTimeInterval) {
         position.x += positionDeltas.dx * CGFloat(deltaTime)
         position.y += positionDeltas.dy * CGFloat(deltaTime)
+        self.timePlayed += CGFloat(deltaTime)
         
         // The player's current angle approaches its target angle
         let myAngle = velocity.angle
@@ -222,7 +236,8 @@ class Creature: SKSpriteNode, BoundByCircle {
         timeSinceLastPassiveScoreGain += CGFloat(deltaTime)
         let scoreGain = C.creature_passiveScoreIncreasePerSecond(givenRadius: self.targetRadius) * timeSinceLastPassiveScoreGain
         if scoreGain >= 1 {
-            self.score += UInt32(scoreGain)
+            //self.score += UInt32(scoreGain)
+            self.awardPoints(UInt32(scoreGain), fromSource: .Size)
             timeSinceLastPassiveScoreGain = 0
         }
         
@@ -302,6 +317,20 @@ class Creature: SKSpriteNode, BoundByCircle {
         minePropulsionSpeedActiveTimeCounterPreviousValue = 0
         speedDebuffTimeCounter = 0
         speedDebuffTimeCounterPreviousValue = 0
+    }
+    
+    func awardPoints(deltaScore: UInt32, fromSource: GameScene.PointSource) {
+        //Score should be modified from here only
+        score += deltaScore
+        switch fromSource {
+        case .Size:
+            scoreFromSize += Int(deltaScore)
+        case .KillsEat, .KillsMine:
+            scoreFromKills += Int(deltaScore)
+        case .Orbs:
+            scoreFromOrbs += Int(deltaScore)
+        }
+        
     }
     
 }
