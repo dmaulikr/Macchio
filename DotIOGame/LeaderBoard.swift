@@ -153,7 +153,7 @@ class LeaderBoard: SKNode {
     struct CreatureDataSnapshot {
         let playerName: String
         let playerID: Int
-        let score: UInt32
+        let score: Int
         let color: Color
     }
     

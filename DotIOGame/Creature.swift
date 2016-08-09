@@ -21,19 +21,19 @@ class Creature: SKSpriteNode, BoundByCircle {
     ]
     var timePlayed: CGFloat = 0
     
-    var score: UInt32 = 0
+    var score: Int = 0
     var scoreFromKills: Int = 0
     var percentScoreFromKills: Double {
-        return Double(scoreFromKills) / Double(score)
+        return (Double(scoreFromKills) / Double(score)) * 100.0
     }
     var scoreFromSize: Int = 0
     var timeSinceLastPassiveScoreGain: CGFloat = 0
     var percentScoreFromSize: Double {
-        return Double(scoreFromSize) / Double(score)
+        return (Double(scoreFromSize) / Double(score)) * 100.0
     }
     var scoreFromOrbs: Int = 0
     var percentScoreFromOrbs: Double {
-        return Double(scoreFromOrbs) / Double(score)
+        return (Double(scoreFromOrbs) / Double(score)) * 100.0
     }
     
     var normalSpeed: CGFloat { return C.creature_normalSpeed(givenRadius: radius) }
@@ -237,7 +237,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         let scoreGain = C.creature_passiveScoreIncreasePerSecond(givenRadius: self.targetRadius) * timeSinceLastPassiveScoreGain
         if scoreGain >= 1 {
             //self.score += UInt32(scoreGain)
-            self.awardPoints(UInt32(scoreGain), fromSource: .Size)
+            self.awardPoints(Int(scoreGain), fromSource: .Size)
             timeSinceLastPassiveScoreGain = 0
         }
         
@@ -319,7 +319,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         speedDebuffTimeCounterPreviousValue = 0
     }
     
-    func awardPoints(deltaScore: UInt32, fromSource: GameScene.PointSource) {
+    func awardPoints(deltaScore: Int, fromSource: GameScene.PointSource) {
         //Score should be modified from here only
         score += deltaScore
         switch fromSource {

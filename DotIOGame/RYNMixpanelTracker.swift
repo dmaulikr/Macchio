@@ -24,5 +24,7 @@ class RYNMixpanelTracker {
                         "Percent Score From Kills": percentScoreFromKills,
                         "Final Rank": finalRank
         ])
+        //print("Size: \(percentScoreFromSize) \nOrbs: \(percentScoreFromOrbs) \nKills: \(percentScoreFromKills)")
+        
     }
 }

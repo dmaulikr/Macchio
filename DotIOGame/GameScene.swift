@@ -57,12 +57,12 @@ class GameScene: SKScene {
         case Orbs, KillsEat, KillsMine, Size
     }
     
-    var playerScore: UInt32 = 0 {
+    var playerScore: Int = 0 {
         didSet { scoreLabel.text = String(playerScore) }
     }
     var scoreLabel: SKLabelNode!
     
-    var playerSize: UInt32 = 0 {
+    var playerSize: Int = 0 {
         didSet { sizeLabel.text = String(playerSize) }
     }
     var sizeLabel: SKLabelNode!
@@ -367,11 +367,11 @@ class GameScene: SKScene {
         
     }
     
-    func convertAreaToSizeNumber(area: CGFloat) -> UInt32 {
-        return UInt32(radiusOfCircleWithArea(area))
+    func convertAreaToSizeNumber(area: CGFloat) -> Int {
+        return Int(radiusOfCircleWithArea(area))
     }
     
-    func convertAreaToKillPoints(area: CGFloat) -> UInt32 {
+    func convertAreaToKillPoints(area: CGFloat) -> Int {
         //return Int(radiusOfCircleWithArea(area) * 100) / 100
         let radius = radiusOfCircleWithArea(area)
         switch radius {
@@ -438,7 +438,7 @@ class GameScene: SKScene {
             c.targetArea += orb.growAmount
             
             // Award Points
-            let deltaScore: UInt32 = C.orb_pointValues[orb.type]!
+            let deltaScore: Int = C.orb_pointValues[orb.type]!
             c.awardPoints(deltaScore, fromSource: .Orbs)
             //c.score += deltaScore
             //c.scoreFromOrbs += deltaScore
@@ -502,7 +502,8 @@ class GameScene: SKScene {
                         let deltaScore = convertAreaToKillPoints(creature.targetArea)
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
-                                creature.score += deltaScore
+                                //creature.score += deltaScore
+                                creature.awardPoints(deltaScore, fromSource: .KillsMine)
                                 break
                             }
                         }
@@ -871,7 +872,7 @@ class GameScene: SKScene {
         
     }
     
-    func spawnSmallScoreTextOnPlayerMouth(points: UInt32) {
+    func spawnSmallScoreTextOnPlayerMouth(points: Int) {
         if points == 0 { return }
         if let player = player {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
@@ -885,7 +886,7 @@ class GameScene: SKScene {
         }
     }
     
-    func spawnKillPoints(points: UInt32) {
+    func spawnKillPoints(points: Int) {
         if points <= 0 { return }
         let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
         newLabelNode.position = CGPoint(x: 0, y: 50)

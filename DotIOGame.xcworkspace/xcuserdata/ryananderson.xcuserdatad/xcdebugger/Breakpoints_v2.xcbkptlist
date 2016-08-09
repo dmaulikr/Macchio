@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/GameScene.swift"
-            timestampString = "492463460.201212"
+            timestampString = "492468513.043206"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "984"
-            endingLineNumber = "984"
-            landmarkName = "restartGameScene()"
+            startingLineNumber = "511"
+            endingLineNumber = "511"
+            landmarkName = "handleCreatureAndMineCollisions()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -42,28 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/GameScene.swift"
-            timestampString = "492463460.201212"
+            timestampString = "492468513.043206"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "983"
-            endingLineNumber = "983"
-            landmarkName = "restartGameScene()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DotIOGame/GameScene.swift"
-            timestampString = "492463460.201212"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "742"
-            endingLineNumber = "742"
-            landmarkName = "updateUI()"
+            startingLineNumber = "505"
+            endingLineNumber = "505"
+            landmarkName = "handleCreatureAndMineCollisions()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
