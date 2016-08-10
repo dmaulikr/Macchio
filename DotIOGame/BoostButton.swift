@@ -12,8 +12,9 @@ import SpriteKit
 class BoostButton: SKSpriteNode {
     
     
-    let defaultTexture = SKTexture(imageNamed: "boost_button_default")
-    let pressedTexture = SKTexture(imageNamed: "boost_button_pressed")
+//    let defaultTexture = SKTexture(imageNamed: "boost_button_default")
+//    let pressedTexture = SKTexture(imageNamed: "boost_button_pressed")
+    let iconTexture = SKTexture(imageNamed: "boost_button")
     let unableToPressTexture = SKTexture(imageNamed: "boost_button_pressed")
     var onPressed: () -> Void = { print("No boost pressed action set") }
     var onReleased: () -> Void = { print("No boost realeased action set.") }
@@ -36,7 +37,7 @@ class BoostButton: SKSpriteNode {
     }
     
     func addButtonIconToParent() {
-        buttonIcon = SKSpriteNode(texture: defaultTexture, size: CGSize(width: 80, height: 80)) //This size variable doesn't matter, as the actual hitbox of the button is independant of the size of the button icon
+        buttonIcon = SKSpriteNode(texture: iconTexture, size: CGSize(width: 80, height: 80)) //This size variable doesn't matter, as the actual hitbox of the button is independant of the size of the button icon
         buttonIcon.zPosition = self.zPosition - 1
         buttonIcon.alpha = 1
         buttonIcon.position = self.position

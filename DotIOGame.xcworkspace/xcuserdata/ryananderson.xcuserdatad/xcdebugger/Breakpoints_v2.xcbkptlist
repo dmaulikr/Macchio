@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/GameScene.swift"
-            timestampString = "492468513.043206"
+            timestampString = "492474640.423095"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "511"
-            endingLineNumber = "511"
+            startingLineNumber = "516"
+            endingLineNumber = "516"
             landmarkName = "handleCreatureAndMineCollisions()"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "DotIOGame/GameScene.swift"
-            timestampString = "492468513.043206"
+            timestampString = "492474640.423095"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "505"
-            endingLineNumber = "505"
+            startingLineNumber = "510"
+            endingLineNumber = "510"
             landmarkName = "handleCreatureAndMineCollisions()"
             landmarkType = "5">
          </BreakpointContent>

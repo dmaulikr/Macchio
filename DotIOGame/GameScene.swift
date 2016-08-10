@@ -86,6 +86,7 @@ class GameScene: SKScene {
     var boostButton: BoostButton!
     var leaveMineButton: MineButton!
     
+    var orbLayer: SKNode!
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
     var orbBeacons: [OrbBeacon] = []
     func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
@@ -99,6 +100,7 @@ class GameScene: SKScene {
     var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(C.orbsToAreaRatio * mapSize.width * mapSize.height) }
+    
     var numOfCreaturesThatMustExist: Int { return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height) }
     
     var goopMines: [Mine] = []
@@ -175,6 +177,9 @@ class GameScene: SKScene {
         leaveMineButton.addButtonIconToParent()
         leaveMineButton.onPressed = player!.leaveMine
         leaveMineButton.onReleased = { return }
+        
+        orbLayer = SKNode()
+        self.addChild(orbLayer)
         
         // Initialize orbChunks with empty arrays
         for col in 0..<numOfChunkColumns {
@@ -758,12 +763,13 @@ class GameScene: SKScene {
                 
                 
                 // Make sure the boost button is greyed if the player can't boost
-                if !player.canBoost {
-                    boostButton.buttonIcon.texture = boostButton.unableToPressTexture
-                } else if player.isBoosting {
-                    boostButton.buttonIcon.texture = boostButton.pressedTexture
+//                if !player.canBoost {
+//                    boostButton.buttonIcon.texture = boostButton.unableToPressTexture
+//                } else
+                if player.isBoosting {
+                    boostButton.buttonIcon.alpha = 0.6
                 } else {
-                    boostButton.buttonIcon.texture = boostButton.defaultTexture
+                    boostButton.buttonIcon.alpha = 1
                 }
                 
                 // update the positions of warning signs

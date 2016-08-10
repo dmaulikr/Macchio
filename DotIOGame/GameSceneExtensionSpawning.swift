@@ -25,7 +25,7 @@ extension GameScene {
             newOrb.maxRadius = maxRadius
             newOrb.artificiallySpawned = artificiallySpawned
             orbChunks[location.x][location.y].append(newOrb)
-            addChild(newOrb)
+            orbLayer.addChild(newOrb)
             return newOrb
         }
         return nil
