@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "83957B8B1D32FDDE00BF4450"
-               BuildableName = "DotIOGame.app"
-               BlueprintName = "DotIOGame"
-               ReferencedContainer = "container:DotIOGame.xcodeproj">
+               BuildableName = "Macchio.app"
+               BlueprintName = "Macchio"
+               ReferencedContainer = "container:Macchio.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,16 +33,16 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "83957B8B1D32FDDE00BF4450"
-            BuildableName = "DotIOGame.app"
-            BlueprintName = "DotIOGame"
-            ReferencedContainer = "container:DotIOGame.xcodeproj">
+            BuildableName = "Macchio.app"
+            BlueprintName = "Macchio"
+            ReferencedContainer = "container:Macchio.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "83957B8B1D32FDDE00BF4450"
-            BuildableName = "DotIOGame.app"
-            BlueprintName = "DotIOGame"
-            ReferencedContainer = "container:DotIOGame.xcodeproj">
+            BuildableName = "Macchio.app"
+            BlueprintName = "Macchio"
+            ReferencedContainer = "container:Macchio.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "83957B8B1D32FDDE00BF4450"
-            BuildableName = "DotIOGame.app"
-            BlueprintName = "DotIOGame"
-            ReferencedContainer = "container:DotIOGame.xcodeproj">
+            BuildableName = "Macchio.app"
+            BlueprintName = "Macchio"
+            ReferencedContainer = "container:Macchio.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

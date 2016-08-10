@@ -66,6 +66,7 @@ class GameScene: SKScene {
         didSet { sizeLabel.text = String(playerSize) }
     }
     var sizeLabel: SKLabelNode!
+    var rankLabel: SKLabelNode!
     
     var hud: SKNode!
     
@@ -143,6 +144,7 @@ class GameScene: SKScene {
         
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
+        rankLabel = childNodeWithName("//rankLabel") as! SKLabelNode
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
@@ -359,6 +361,7 @@ class GameScene: SKScene {
         if let player = player {
             playerSize = convertAreaToSizeNumber(player.targetArea)
             playerScore = player.score
+            rankLabel.text = "Rank \(leaderBoard.getRankOfCreature(withID: player.playerID)!) of \(allCreatures.count)"
         }
         if let playerMovingTouch = playerMovingTouch {
             //print(frozenTouchCounter)

@@ -68,7 +68,7 @@
 		836713221D3984410062D8C0 /* Creature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Creature.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		836713241D3AC7A10062D8C0 /* AICreature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreature.swift; sourceTree = "<group>"; };
 		839388801D4670BE002AD481 /* TouchPoint.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TouchPoint.sks; sourceTree = "<group>"; };
-		83957B8C1D32FDDE00BF4450 /* DotIOGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DotIOGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		83957B8C1D32FDDE00BF4450 /* Macchio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macchio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83957B911D32FDDE00BF4450 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		83957B931D32FDDE00BF4450 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GameScene.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -134,7 +134,7 @@
 		83957B8D1D32FDDE00BF4450 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				83957B8C1D32FDDE00BF4450 /* DotIOGame.app */,
+				83957B8C1D32FDDE00BF4450 /* Macchio.app */,
 			);
 			name = Products;
 			path = ..;
@@ -235,9 +235,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		83957B8B1D32FDDE00BF4450 /* DotIOGame */ = {
+		83957B8B1D32FDDE00BF4450 /* Macchio */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 83957BA21D32FDDE00BF4450 /* Build configuration list for PBXNativeTarget "DotIOGame" */;
+			buildConfigurationList = 83957BA21D32FDDE00BF4450 /* Build configuration list for PBXNativeTarget "Macchio" */;
 			buildPhases = (
 				1ED72636B55A2D942B307198 /* [CP] Check Pods Manifest.lock */,
 				83957B881D32FDDE00BF4450 /* Sources */,
@@ -250,9 +250,9 @@
 			);
 			dependencies = (
 			);
-			name = DotIOGame;
+			name = Macchio;
 			productName = DotIOGame;
-			productReference = 83957B8C1D32FDDE00BF4450 /* DotIOGame.app */;
+			productReference = 83957B8C1D32FDDE00BF4450 /* Macchio.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -271,7 +271,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83957B871D32FDDE00BF4450 /* Build configuration list for PBXProject "DotIOGame" */;
+			buildConfigurationList = 83957B871D32FDDE00BF4450 /* Build configuration list for PBXProject "Macchio" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -284,7 +284,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				83957B8B1D32FDDE00BF4450 /* DotIOGame */,
+				83957B8B1D32FDDE00BF4450 /* Macchio */,
 			);
 		};
 /* End PBXProject section */
@@ -513,8 +513,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = DotIOGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.rkanderson.Macchio;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rkanderson15.macchio;
+				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
@@ -528,8 +528,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = DotIOGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.github.rkanderson.Macchio;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.rkanderson15.macchio;
+				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
@@ -537,7 +537,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		83957B871D32FDDE00BF4450 /* Build configuration list for PBXProject "DotIOGame" */ = {
+		83957B871D32FDDE00BF4450 /* Build configuration list for PBXProject "Macchio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83957BA01D32FDDE00BF4450 /* Debug */,
@@ -546,7 +546,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83957BA21D32FDDE00BF4450 /* Build configuration list for PBXNativeTarget "DotIOGame" */ = {
+		83957BA21D32FDDE00BF4450 /* Build configuration list for PBXNativeTarget "Macchio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83957BA31D32FDDE00BF4450 /* Debug */,
