@@ -267,7 +267,7 @@
 				TargetAttributes = {
 					83957B8B1D32FDDE00BF4450 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 57NTTRWNKQ;
+						DevelopmentTeam = KL2Z4DVRAU;
 					};
 				};
 			};
@@ -513,9 +513,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = DotIOGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.rkanderson15.macchio;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryankanderson.macchio;
 				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -528,9 +529,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = DotIOGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.rkanderson15.macchio;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryankanderson.macchio;
 				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
