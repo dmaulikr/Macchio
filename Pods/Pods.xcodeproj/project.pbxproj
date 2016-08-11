@@ -31,10 +31,10 @@
 		196ED3BE2BABD2DD3646BBD356C61AA1 /* UIColor+MPColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 25BDCA0E8683A8ED09B42DBFFE93105C /* UIColor+MPColor.m */; };
 		1B21E63E48885FD4C3166347976E0007 /* MPLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 44B6042840EEC09D7BD437B050CE566B /* MPLogo.png */; };
 		1EB6D5F3A7EEE866B086007760A26A3F /* MPPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E0E12EDF5877846D4DE6BCB79405A /* MPPropertyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1F6ABD9E315D8DE95F816C10E5F08227 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B2FB4771FE624861753D1F1E1D89838 /* Foundation.framework */; };
 		20EE438B9E3EB4EBC55E9F532FC3699B /* UIApplication+AutomaticEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FB5958B491866198A9A7AE95E86116F /* UIApplication+AutomaticEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		22DA5905329D233898DCA000EBB46E15 /* MPWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 37610C5A34F67830EF77699402009DA7 /* MPWebSocket.m */; };
 		233F44C7D4F261465125EF8A6022DEA1 /* NSInvocation+MPHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = CD170168D151E535F571545FC92C0FAA /* NSInvocation+MPHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		249E7D7D1157B4CF2BD9C88F43FA8610 /* Pods-DotIOGame-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD2C7D6FE8AD39D8B24FB2EA04B23C2 /* Pods-DotIOGame-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2641CD2EBD374904D2E5759683B97B76 /* IQUIScrollView+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA84E4C91FF795D9BDC15CFBC9469AAF /* IQUIScrollView+Additions.swift */; };
 		26C3425F45F1374791CB8B07AD01942D /* IQKeyboardManager.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6E185A1B0C08A4C248AF1FA96AFEBA05 /* IQKeyboardManager.bundle */; };
 		2724F07490062663A57CFFBB339235DA /* MPTypeDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D18308F42B22E95D4CA19E229F6D2B /* MPTypeDescription.m */; };
@@ -57,6 +57,8 @@
 		46AF33BAF0F7EE049BEAE1EE61C64C4B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FDB3FD8E5F4566D97AD903A34BC3C1 /* QuartzCore.framework */; };
 		49F174FCBE409BBBBDF98E6E3064F215 /* MPABTestDesignerClearRequestMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F055CC70F21CFF27A7AAD4471D0276D /* MPABTestDesignerClearRequestMessage.m */; };
 		4A36207F1EDC805A77E9502550F2A775 /* MPApplicationStateSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3647BF1947D3A3E02B0E936D27AC1D61 /* MPApplicationStateSerializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4A7CDF2AB0D8E0DB4A8802E2A6F3A4E5 /* Pods-Macchio-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA49A47A8FD07158E1C78932A678E59 /* Pods-Macchio-dummy.m */; };
+		4C4A5D7D8F9347C8A86EA0D045604824 /* Pods-Macchio-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BB0DB5715CE2C44DD8C7C280BC24BC8 /* Pods-Macchio-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D1D5E2D9437B040448A976C7DDE7F09 /* MPTweak.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3D25EB331B642198E05179A34AA6D1 /* MPTweak.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4E0E20C3FB4C65FCFB1A203DB0DB84AD /* MPNSNumberToCGFloatValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = DC7F9E2DB255FB59E5E36DAB0DFE30CF /* MPNSNumberToCGFloatValueTransformer.m */; };
 		4EACC04FBBEE327D655924039F47F3C9 /* MPSwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D64289A9E9CB316E79D7E992E103594 /* MPSwizzler.m */; };
@@ -87,7 +89,6 @@
 		7331307FAD09EB323F04E28B97E2F111 /* MPABTestDesignerMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B238B8BD3817F77A186A8CE8403FDE5 /* MPABTestDesignerMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		746550A0A18C273F2F09AE9086FD8B9F /* MPNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 561F46400E47E2C74E57FDB08A884A44 /* MPNetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75B4786D5DC19F3FE1E8BE0C45EFB5CA /* NSNotificationCenter+AutomaticEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 03CDC29F3B9B0ED667F884025A8644D4 /* NSNotificationCenter+AutomaticEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		765459C73E607ADE2EE0101BBA76AF71 /* Pods-DotIOGame-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F62EB767406EC6843BD788090D048914 /* Pods-DotIOGame-dummy.m */; };
 		765E9DA9AC7B886E732088442710EF3D /* UIView+MPHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C1F71CE3F3026B954BACC0A540718A /* UIView+MPHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		767D84EAC1901EAACFA743B7B72BE822 /* MPAbstractABTestDesignerMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 788081184A62D0FFF3650F98708173FE /* MPAbstractABTestDesignerMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7C92E170DBD212198B6D04B20E2548CB /* MPABTestDesignerSnapshotResponseMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = D2E4BA6152589B46C2EEFD3E7ABA439F /* MPABTestDesignerSnapshotResponseMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -163,7 +164,6 @@
 		D5306770701F8DBE12A39B3BF35AB205 /* MPEnumDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 997B81C3AA946EDD16C3EA23951CA45E /* MPEnumDescription.m */; };
 		D746B1ADE6DFD4CD3CA33F5947FBF9A4 /* MPCGSizeToNSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 61B4CD1DE9340CC21FF032BDDF591B26 /* MPCGSizeToNSDictionaryValueTransformer.m */; };
 		D7EF87EDCD9BB051569C306A1E283983 /* MPUIImageToNSDictionaryValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DC39527752D1D0279887D6DD8962A2 /* MPUIImageToNSDictionaryValueTransformer.m */; };
-		DAAE59338F4ED62143B8401525D5E53B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B2FB4771FE624861753D1F1E1D89838 /* Foundation.framework */; };
 		DCF9FBC5E6A24DAD9EA24D81848FD980 /* MPSurveyNavigationController.h in Headers */ = {isa = PBXBuildFile; fileRef = B268F53BC6CC26BA2837D150C62E67E5 /* MPSurveyNavigationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD7E571657CD8C7EC5EF443D0F6C635D /* UIImage+MPImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = B81463070A5009B74BC57910D3B3AF63 /* UIImage+MPImageEffects.m */; };
 		DE8C9160B2CB3DD8ECB1F5FBF1EAA095 /* Mixpanel-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E32867DCED59BC2FC6295607F305CF /* Mixpanel-dummy.m */; };
@@ -200,19 +200,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5BED1999E654798D86EBD879062896AF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1520003FEBEC114D6C84F832AFEDB994;
-			remoteInfo = IQKeyboardManagerSwift;
-		};
-		7D1C3816FA250EFA42BD177216E4B588 /* PBXContainerItemProxy */ = {
+		E283C96AF664D3C55E47BEE47414A7D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8EFE724FDDAA2478F44F082C05BA272C;
 			remoteInfo = Mixpanel;
+		};
+		FF90103F41AA8011AE48C1741F4879D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1520003FEBEC114D6C84F832AFEDB994;
+			remoteInfo = IQKeyboardManagerSwift;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -221,10 +221,8 @@
 		0140D4B68CF4957387119EECE5497D21 /* MPSwizzle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPSwizzle.m; path = Mixpanel/MPSwizzle.m; sourceTree = "<group>"; };
 		0183418A37319CA9BC5284E4F511BC88 /* MixpanelPeople.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MixpanelPeople.m; path = Mixpanel/MixpanelPeople.m; sourceTree = "<group>"; };
 		01F988BA37A9CDCF86230639ED922F36 /* IQUIWindow+Hierarchy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "IQUIWindow+Hierarchy.swift"; path = "IQKeyboardManagerSwift/Categories/IQUIWindow+Hierarchy.swift"; sourceTree = "<group>"; };
-		0353B14935DA0619F93939F011852284 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03CDC29F3B9B0ED667F884025A8644D4 /* NSNotificationCenter+AutomaticEvents.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+AutomaticEvents.h"; path = "Mixpanel/NSNotificationCenter+AutomaticEvents.h"; sourceTree = "<group>"; };
 		093E781C12D7719AF554558A831EB7F7 /* IQPreviousNextView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IQPreviousNextView.swift; path = IQKeyboardManagerSwift/IQToolbar/IQPreviousNextView.swift; sourceTree = "<group>"; };
-		0A182D8B103DCB21E3B909D0DBDA8AD8 /* Pods-DotIOGame-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DotIOGame-resources.sh"; sourceTree = "<group>"; };
 		0B9F62FFAC35B8074CD882D59F48C6DE /* MPLogo@2x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "MPLogo@2x.png"; path = "Mixpanel/Images/MPLogo@2x.png"; sourceTree = "<group>"; };
 		11FEF3780B791E91746FBF9DE53F6364 /* MPObjectIdentityProvider.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPObjectIdentityProvider.m; path = Mixpanel/MPObjectIdentityProvider.m; sourceTree = "<group>"; };
 		13BFFDE8637A336EA299700A1A428A11 /* IQUIView+IQKeyboardToolbar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "IQUIView+IQKeyboardToolbar.swift"; path = "IQKeyboardManagerSwift/IQToolbar/IQUIView+IQKeyboardToolbar.swift"; sourceTree = "<group>"; };
@@ -234,6 +232,7 @@
 		157654998633DFEDCA607CE1C282A807 /* MPClassDescription.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPClassDescription.m; path = Mixpanel/MPClassDescription.m; sourceTree = "<group>"; };
 		15E982E5D883DF6EDE0398E4B7C9DA0E /* MPABTestDesignerClearRequestMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerClearRequestMessage.h; path = Mixpanel/MPABTestDesignerClearRequestMessage.h; sourceTree = "<group>"; };
 		1958E478E419F9B5B42370E9F1BE9F93 /* MPNotificationViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPNotificationViewController.h; path = Mixpanel/MPNotificationViewController.h; sourceTree = "<group>"; };
+		19C46C1D5FFC6D2A202125EA60E92A0C /* Pods-Macchio-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Macchio-frameworks.sh"; sourceTree = "<group>"; };
 		19E32867DCED59BC2FC6295607F305CF /* Mixpanel-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Mixpanel-dummy.m"; sourceTree = "<group>"; };
 		1B238B8BD3817F77A186A8CE8403FDE5 /* MPABTestDesignerMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerMessage.h; path = Mixpanel/MPABTestDesignerMessage.h; sourceTree = "<group>"; };
 		1B83D3E2B285DF916D3842066AFBC864 /* MPLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPLogger.h; path = Mixpanel/MPLogger.h; sourceTree = "<group>"; };
@@ -245,6 +244,8 @@
 		1ED07D0B28E4394D15999C5C34C7C375 /* MPABTestDesignerDeviceInfoResponseMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerDeviceInfoResponseMessage.h; path = Mixpanel/MPABTestDesignerDeviceInfoResponseMessage.h; sourceTree = "<group>"; };
 		1FB5958B491866198A9A7AE95E86116F /* UIApplication+AutomaticEvents.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIApplication+AutomaticEvents.h"; path = "Mixpanel/UIApplication+AutomaticEvents.h"; sourceTree = "<group>"; };
 		20428537CC7CC87D2698071EDA3B1B72 /* MPDismissKeyboard.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = MPDismissKeyboard.png; path = Mixpanel/Images/MPDismissKeyboard.png; sourceTree = "<group>"; };
+		224555137818560DE1C9E6F0A39DFE09 /* Pods-Macchio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Macchio.release.xcconfig"; sourceTree = "<group>"; };
+		22672B9FA58CA24861E1D28F929673FC /* Pods_Macchio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Macchio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		22FA38D6BCBE726CA115DD1D4664BF9B /* MPABTestDesignerChangeRequestMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerChangeRequestMessage.h; path = Mixpanel/MPABTestDesignerChangeRequestMessage.h; sourceTree = "<group>"; };
 		236DC8A6CADED19BB82D11DCAEB37186 /* MPABTestDesignerClearResponseMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerClearResponseMessage.h; path = Mixpanel/MPABTestDesignerClearResponseMessage.h; sourceTree = "<group>"; };
 		245F0827C9D8185BFCD73F4D27C92DCD /* UIView+MPHelpers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+MPHelpers.m"; path = "Mixpanel/UIView+MPHelpers.m"; sourceTree = "<group>"; };
@@ -256,6 +257,7 @@
 		293CDFA075A39EE519ACF5303DA7292C /* MPABTestDesignerDisconnectMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerDisconnectMessage.m; path = Mixpanel/MPABTestDesignerDisconnectMessage.m; sourceTree = "<group>"; };
 		29D7B511C5C4E7EBEFC08186AAF97856 /* IQToolbar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IQToolbar.swift; path = IQKeyboardManagerSwift/IQToolbar/IQToolbar.swift; sourceTree = "<group>"; };
 		2BEB7E83154BA075F3A18BA20BC22B29 /* MPSurveyQuestion.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPSurveyQuestion.m; path = Mixpanel/MPSurveyQuestion.m; sourceTree = "<group>"; };
+		2EDD4F79DFE0256BB1ACA5EC2137EDB2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2FB201247572A9503B7B170CC6357D12 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		325AA9250FA47BFA8F4D29FB2C6EBFBC /* MPFoundation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPFoundation.h; path = Mixpanel/MPFoundation.h; sourceTree = "<group>"; };
 		3291A810928FBD10C1A769938A2D69CB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -284,7 +286,6 @@
 		561F46400E47E2C74E57FDB08A884A44 /* MPNetwork.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPNetwork.h; path = Mixpanel/MPNetwork.h; sourceTree = "<group>"; };
 		56F7870A8210DCD470402870846EF268 /* Mixpanel-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mixpanel-umbrella.h"; sourceTree = "<group>"; };
 		57B8D3DF796721CE2967CE1E5F906B98 /* MPNSAttributedStringToNSDictionaryValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPNSAttributedStringToNSDictionaryValueTransformer.m; path = Mixpanel/MPNSAttributedStringToNSDictionaryValueTransformer.m; sourceTree = "<group>"; };
-		5904CDBFB079539DD5F4BE9669BE63D1 /* Pods-DotIOGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DotIOGame.debug.xcconfig"; sourceTree = "<group>"; };
 		595E462871C0A9C1D600DBE97A867112 /* MPObjectSerializerConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPObjectSerializerConfig.h; path = Mixpanel/MPObjectSerializerConfig.h; sourceTree = "<group>"; };
 		5A5A0B55EFA0C1892BEFB526150B158E /* IQKeyboardManagerConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IQKeyboardManagerConstants.swift; path = IQKeyboardManagerSwift/Constants/IQKeyboardManagerConstants.swift; sourceTree = "<group>"; };
 		5BE0683FC2BD4300FFE77872F5D6BAEB /* MPNotification.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPNotification.m; path = Mixpanel/MPNotification.m; sourceTree = "<group>"; };
@@ -323,6 +324,7 @@
 		8B2FB4771FE624861753D1F1E1D89838 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		8CA3AC3FEBDBD73223C7A73CFDA874D9 /* MPABTestDesignerConnection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerConnection.m; path = Mixpanel/MPABTestDesignerConnection.m; sourceTree = "<group>"; };
 		8D04F581C02A7765ABEB5788D0DDD50F /* MPUITableViewBinding.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPUITableViewBinding.m; path = Mixpanel/MPUITableViewBinding.m; sourceTree = "<group>"; };
+		8D14275D5E830542AD7D3B7505A19EF7 /* Pods-Macchio-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Macchio-acknowledgements.markdown"; sourceTree = "<group>"; };
 		8FF01EE86064CF365924BB43322AACCA /* IQKeyboardManagerSwift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "IQKeyboardManagerSwift-umbrella.h"; sourceTree = "<group>"; };
 		901A2E8619EDA4D957A23B6D4A751760 /* Mixpanel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Mixpanel.h; path = Mixpanel/Mixpanel.h; sourceTree = "<group>"; };
 		912242D3BF301B8005F9B0DF4EF77449 /* UIApplication+AutomaticEvents.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIApplication+AutomaticEvents.m"; path = "Mixpanel/UIApplication+AutomaticEvents.m"; sourceTree = "<group>"; };
@@ -332,8 +334,10 @@
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		95001A0A4C5A5EB51F325CDF8F946F56 /* UIImage+MPAverageColor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+MPAverageColor.m"; path = "Mixpanel/UIImage+MPAverageColor.m"; sourceTree = "<group>"; };
 		96BF5B8ADE76EA5B50C88C3373047C6A /* IQKeyboardManagerConstantsInternal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IQKeyboardManagerConstantsInternal.swift; path = IQKeyboardManagerSwift/Constants/IQKeyboardManagerConstantsInternal.swift; sourceTree = "<group>"; };
+		96D09876B714898F52D39EC4BD34733E /* Pods-Macchio.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-Macchio.modulemap"; sourceTree = "<group>"; };
+		97A01B04D64F0440588A42198357EF0A /* Pods-Macchio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Macchio.debug.xcconfig"; sourceTree = "<group>"; };
 		997B81C3AA946EDD16C3EA23951CA45E /* MPEnumDescription.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPEnumDescription.m; path = Mixpanel/MPEnumDescription.m; sourceTree = "<group>"; };
-		9A080A0244CAF8D4D22C5BF946253779 /* Pods-DotIOGame-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DotIOGame-acknowledgements.plist"; sourceTree = "<group>"; };
+		9BB0DB5715CE2C44DD8C7C280BC24BC8 /* Pods-Macchio-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Macchio-umbrella.h"; sourceTree = "<group>"; };
 		9C74CE9D2AA72FA3636497F98703A1DE /* AutomaticEventsConstants.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AutomaticEventsConstants.h; path = Mixpanel/AutomaticEventsConstants.h; sourceTree = "<group>"; };
 		9D9BF82274E927AAFBA527D341E193E4 /* MPTweakInline.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPTweakInline.m; path = Mixpanel/MPTweakInline.m; sourceTree = "<group>"; };
 		9E10421D3A600C4025A0830F626FA576 /* MPABTestDesignerTweakResponseMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerTweakResponseMessage.m; path = Mixpanel/MPABTestDesignerTweakResponseMessage.m; sourceTree = "<group>"; };
@@ -348,6 +352,8 @@
 		AA2C819FA5D350E0ABD3D645300685E4 /* IQKeyboardManagerSwift.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = IQKeyboardManagerSwift.xcconfig; sourceTree = "<group>"; };
 		AA3D25EB331B642198E05179A34AA6D1 /* MPTweak.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPTweak.h; path = Mixpanel/MPTweak.h; sourceTree = "<group>"; };
 		AB94C3B30ED9B9FB6E700C21EBD81696 /* MPABTestDesignerConnection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerConnection.h; path = Mixpanel/MPABTestDesignerConnection.h; sourceTree = "<group>"; };
+		ABF79E412B020B34A261E6B7FD2BD14A /* Mixpanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mixpanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF0A62DD3D73CD244B612F5B4BCB009C /* IQKeyboardManagerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IQKeyboardManagerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5CEED20E41B6E78C81EC9DC8AF96C5 /* MPUIColorToNSStringValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPUIColorToNSStringValueTransformer.m; path = Mixpanel/MPUIColorToNSStringValueTransformer.m; sourceTree = "<group>"; };
 		B268F53BC6CC26BA2837D150C62E67E5 /* MPSurveyNavigationController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPSurveyNavigationController.h; path = Mixpanel/MPSurveyNavigationController.h; sourceTree = "<group>"; };
 		B3EF046A6E5DCBF729F279CFF9D531AE /* MPABTestDesignerDeviceInfoRequestMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerDeviceInfoRequestMessage.m; path = Mixpanel/MPABTestDesignerDeviceInfoRequestMessage.m; sourceTree = "<group>"; };
@@ -355,10 +361,9 @@
 		B54013E69D1B9FFDF16F01C8F592B02D /* MPUIControlBinding.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPUIControlBinding.m; path = Mixpanel/MPUIControlBinding.m; sourceTree = "<group>"; };
 		B6FC565FF994A65098642DE367E4A7A4 /* MPABTestDesignerSnapshotRequestMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerSnapshotRequestMessage.m; path = Mixpanel/MPABTestDesignerSnapshotRequestMessage.m; sourceTree = "<group>"; };
 		B81463070A5009B74BC57910D3B3AF63 /* UIImage+MPImageEffects.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+MPImageEffects.m"; path = "Mixpanel/UIImage+MPImageEffects.m"; sourceTree = "<group>"; };
-		B8D7729E837D74B0F3BFECFE5DBEA2E4 /* Mixpanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mixpanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAF32FD92BBE827A27D51EFABC5AA64A /* MPAbstractABTestDesignerMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPAbstractABTestDesignerMessage.m; path = Mixpanel/MPAbstractABTestDesignerMessage.m; sourceTree = "<group>"; };
-		BB8D28138AE61D1302448D92A7E179BA /* Pods-DotIOGame.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-DotIOGame.modulemap"; sourceTree = "<group>"; };
 		BBBFAB11155705E06CA4D082BD4FC4F6 /* MPDesignerEventBindingRequestMesssage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPDesignerEventBindingRequestMesssage.m; path = Mixpanel/MPDesignerEventBindingRequestMesssage.m; sourceTree = "<group>"; };
+		BCA49A47A8FD07158E1C78932A678E59 /* Pods-Macchio-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Macchio-dummy.m"; sourceTree = "<group>"; };
 		BD7A2972174D2051DE176DB16F8E7C51 /* MPTweakStore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPTweakStore.h; path = Mixpanel/MPTweakStore.h; sourceTree = "<group>"; };
 		BDF5B6304B345C34DF5A6629E3829740 /* MPSwizzle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPSwizzle.h; path = Mixpanel/MPSwizzle.h; sourceTree = "<group>"; };
 		BDFF7D0D260D026DC437E821BC812A05 /* MPEventBinding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPEventBinding.h; path = Mixpanel/MPEventBinding.h; sourceTree = "<group>"; };
@@ -367,6 +372,7 @@
 		C009D60A2371BCFA0F5B13E457DCCE14 /* MPABTestDesignerDeviceInfoRequestMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerDeviceInfoRequestMessage.h; path = Mixpanel/MPABTestDesignerDeviceInfoRequestMessage.h; sourceTree = "<group>"; };
 		C2B71EBF5D5CFC7B9ED697F8650DD8BD /* MPObjectSerializerConfig.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPObjectSerializerConfig.m; path = Mixpanel/MPObjectSerializerConfig.m; sourceTree = "<group>"; };
 		C2E768AFF535E9304B0A47F9422E39AC /* MPResources.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPResources.m; path = Mixpanel/MPResources.m; sourceTree = "<group>"; };
+		C4CD1DC3A65BF6CEBB47B84001571ECF /* Pods-Macchio-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Macchio-resources.sh"; sourceTree = "<group>"; };
 		C5F54CCADE60892751A331895E10ECDD /* MPTweakStore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPTweakStore.m; path = Mixpanel/MPTweakStore.m; sourceTree = "<group>"; };
 		C6C69C047EB43036E20BDF8A2082076D /* MPArrowLeft.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = MPArrowLeft.png; path = Mixpanel/Images/MPArrowLeft.png; sourceTree = "<group>"; };
 		C6CC8FC11F25B8530AF1DFBA0B54F8BC /* MPObjectIdentifierProvider.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPObjectIdentifierProvider.h; path = Mixpanel/MPObjectIdentifierProvider.h; sourceTree = "<group>"; };
@@ -375,7 +381,6 @@
 		CC88743578462D10AD2E090DF9A7A342 /* MPUITableViewBinding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPUITableViewBinding.h; path = Mixpanel/MPUITableViewBinding.h; sourceTree = "<group>"; };
 		CC8E78A60C07A7DA1CE338807BF06B8A /* MPUIFontToNSDictionaryValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPUIFontToNSDictionaryValueTransformer.m; path = Mixpanel/MPUIFontToNSDictionaryValueTransformer.m; sourceTree = "<group>"; };
 		CD170168D151E535F571545FC92C0FAA /* NSInvocation+MPHelpers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSInvocation+MPHelpers.h"; path = "Mixpanel/NSInvocation+MPHelpers.h"; sourceTree = "<group>"; };
-		CFD2AFEEE0FEA1FB682CC6029251DF54 /* Pods-DotIOGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DotIOGame.release.xcconfig"; sourceTree = "<group>"; };
 		D0579E4A9E334D892A021E41E7E7B31B /* MPABTestDesignerDisconnectMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerDisconnectMessage.h; path = Mixpanel/MPABTestDesignerDisconnectMessage.h; sourceTree = "<group>"; };
 		D07E631BD50886176D5E8A60E9515B11 /* _MPTweakBindObserver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = _MPTweakBindObserver.h; path = Mixpanel/_MPTweakBindObserver.h; sourceTree = "<group>"; };
 		D157FF143297CBB8C176CE3554CBC9BC /* MPABTestDesignerTweakRequestMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerTweakRequestMessage.m; path = Mixpanel/MPABTestDesignerTweakRequestMessage.m; sourceTree = "<group>"; };
@@ -388,6 +393,7 @@
 		DA4CD5195AAE6D59C17385E3537F66C1 /* MPNotificationViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPNotificationViewController.m; path = Mixpanel/MPNotificationViewController.m; sourceTree = "<group>"; };
 		DC7F9E2DB255FB59E5E36DAB0DFE30CF /* MPNSNumberToCGFloatValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPNSNumberToCGFloatValueTransformer.m; path = Mixpanel/MPNSNumberToCGFloatValueTransformer.m; sourceTree = "<group>"; };
 		DE9E17A6F7E24C7A490C6F4693C345C7 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		DF55E03CFC31F0C521FA67E333B8961A /* Pods-Macchio-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Macchio-acknowledgements.plist"; sourceTree = "<group>"; };
 		E1890896B24B8F211767544D181404B8 /* MPABTestDesignerSnapshotResponseMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerSnapshotResponseMessage.m; path = Mixpanel/MPABTestDesignerSnapshotResponseMessage.m; sourceTree = "<group>"; };
 		E3D18308F42B22E95D4CA19E229F6D2B /* MPTypeDescription.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPTypeDescription.m; path = Mixpanel/MPTypeDescription.m; sourceTree = "<group>"; };
 		E50D855CBCD86148F219851B260AF2C4 /* MPABTestDesignerChangeResponseMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MPABTestDesignerChangeResponseMessage.h; path = Mixpanel/MPABTestDesignerChangeResponseMessage.h; sourceTree = "<group>"; };
@@ -408,9 +414,7 @@
 		EFC220261811EF00BE3AD5A8B2E89DF7 /* IQNSArray+Sort.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "IQNSArray+Sort.swift"; path = "IQKeyboardManagerSwift/Categories/IQNSArray+Sort.swift"; sourceTree = "<group>"; };
 		F047246948ECE6FE4606E6661C238257 /* MPSurveyNavigationController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPSurveyNavigationController.m; path = Mixpanel/MPSurveyNavigationController.m; sourceTree = "<group>"; };
 		F22DA3A2E3F2CB63D8BB1EF463C11B9C /* IQUITextFieldView+Additions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "IQUITextFieldView+Additions.swift"; path = "IQKeyboardManagerSwift/Categories/IQUITextFieldView+Additions.swift"; sourceTree = "<group>"; };
-		F284B5512A43557682E0F8CB6E072B46 /* IQKeyboardManagerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IQKeyboardManagerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5B2D56CD1DDAE66A1923E502D48971E /* NSInvocation+MPHelpers.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSInvocation+MPHelpers.m"; path = "Mixpanel/NSInvocation+MPHelpers.m"; sourceTree = "<group>"; };
-		F62EB767406EC6843BD788090D048914 /* Pods-DotIOGame-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DotIOGame-dummy.m"; sourceTree = "<group>"; };
 		F7A073E1DB3113A7EA57FF63E10ED21E /* MPCloseButton.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = MPCloseButton.png; path = Mixpanel/Images/MPCloseButton.png; sourceTree = "<group>"; };
 		F7C815B805C68994EE990ED5726B90AC /* MPNotification~iphonelandscape.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = "MPNotification~iphonelandscape.storyboard"; path = "Mixpanel/MPNotification~iphonelandscape.storyboard"; sourceTree = "<group>"; };
 		F7CDAA96DE1766E8D8185AA1DBAEED47 /* MPABTestDesignerDeviceInfoResponseMessage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPABTestDesignerDeviceInfoResponseMessage.m; path = Mixpanel/MPABTestDesignerDeviceInfoResponseMessage.m; sourceTree = "<group>"; };
@@ -418,11 +422,7 @@
 		FA84E4C91FF795D9BDC15CFBC9469AAF /* IQUIScrollView+Additions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "IQUIScrollView+Additions.swift"; path = "IQKeyboardManagerSwift/Categories/IQUIScrollView+Additions.swift"; sourceTree = "<group>"; };
 		FAE2B3C6EEC691DE1D93FB3156C3733A /* IQTitleBarButtonItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IQTitleBarButtonItem.swift; path = IQKeyboardManagerSwift/IQToolbar/IQTitleBarButtonItem.swift; sourceTree = "<group>"; };
 		FB8BCA3A9289C459C1E93799FE65DF36 /* Mixpanel-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mixpanel-prefix.pch"; sourceTree = "<group>"; };
-		FBAAD7BB155DDBF4C5E27B807C773529 /* Pods-DotIOGame-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DotIOGame-acknowledgements.markdown"; sourceTree = "<group>"; };
-		FC445C79589C63654E571D972679D57D /* Pods_DotIOGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DotIOGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		FE6F596F1D880FAF8D41335DBDC0ADCD /* Pods-DotIOGame-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DotIOGame-frameworks.sh"; sourceTree = "<group>"; };
 		FEBD24E803C3049F9D2EE5ECF6125B81 /* MPCGColorRefToNSStringValueTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MPCGColorRefToNSStringValueTransformer.m; path = Mixpanel/MPCGColorRefToNSStringValueTransformer.m; sourceTree = "<group>"; };
-		FFD2C7D6FE8AD39D8B24FB2EA04B23C2 /* Pods-DotIOGame-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-DotIOGame-umbrella.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -450,11 +450,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FD1DEC54648C5ADDD1279D88DD24DCC0 /* Frameworks */ = {
+		DC376064C3CCC676C506B03C6F4560EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAAE59338F4ED62143B8401525D5E53B /* Foundation.framework in Frameworks */,
+				1F6ABD9E315D8DE95F816C10E5F08227 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,22 +616,22 @@
 			name = Mixpanel;
 			sourceTree = "<group>";
 		};
-		46D3BA86A969C230215F8755236DE474 /* Pods-DotIOGame */ = {
+		4DD645F0C0B69703288B8CC89481C865 /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				0353B14935DA0619F93939F011852284 /* Info.plist */,
-				BB8D28138AE61D1302448D92A7E179BA /* Pods-DotIOGame.modulemap */,
-				FBAAD7BB155DDBF4C5E27B807C773529 /* Pods-DotIOGame-acknowledgements.markdown */,
-				9A080A0244CAF8D4D22C5BF946253779 /* Pods-DotIOGame-acknowledgements.plist */,
-				F62EB767406EC6843BD788090D048914 /* Pods-DotIOGame-dummy.m */,
-				FE6F596F1D880FAF8D41335DBDC0ADCD /* Pods-DotIOGame-frameworks.sh */,
-				0A182D8B103DCB21E3B909D0DBDA8AD8 /* Pods-DotIOGame-resources.sh */,
-				FFD2C7D6FE8AD39D8B24FB2EA04B23C2 /* Pods-DotIOGame-umbrella.h */,
-				5904CDBFB079539DD5F4BE9669BE63D1 /* Pods-DotIOGame.debug.xcconfig */,
-				CFD2AFEEE0FEA1FB682CC6029251DF54 /* Pods-DotIOGame.release.xcconfig */,
+				FCDDFC067F3685566FC0BDD062F5D2BC /* Pods-Macchio */,
 			);
-			name = "Pods-DotIOGame";
-			path = "Target Support Files/Pods-DotIOGame";
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		5087120D01E70882EC3692AF6502DB80 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AF0A62DD3D73CD244B612F5B4BCB009C /* IQKeyboardManagerSwift.framework */,
+				ABF79E412B020B34A261E6B7FD2BD14A /* Mixpanel.framework */,
+				22672B9FA58CA24861E1D28F929673FC /* Pods_Macchio.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		7828874D224BDDD42EEC7B88F9DF8401 /* Support Files */ = {
@@ -654,8 +654,8 @@
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				F4CDA5FA9197A41E0081E84F932906EB /* Frameworks */,
 				80830FADD35FA7DC4C3C10972C4390C2 /* Pods */,
-				FF0D48707DF25538CE6D75957E1C3DDB /* Products */,
-				AEAFDBF0A12B421797B71300FE158212 /* Targets Support Files */,
+				5087120D01E70882EC3692AF6502DB80 /* Products */,
+				4DD645F0C0B69703288B8CC89481C865 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
@@ -689,14 +689,6 @@
 				7828874D224BDDD42EEC7B88F9DF8401 /* Support Files */,
 			);
 			path = Mixpanel;
-			sourceTree = "<group>";
-		};
-		AEAFDBF0A12B421797B71300FE158212 /* Targets Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				46D3BA86A969C230215F8755236DE474 /* Pods-DotIOGame */,
-			);
-			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
 		C397DB51D1DCD5600DB40DE1E49DE731 /* Resources */ = {
@@ -770,14 +762,22 @@
 			path = "../Target Support Files/IQKeyboardManagerSwift";
 			sourceTree = "<group>";
 		};
-		FF0D48707DF25538CE6D75957E1C3DDB /* Products */ = {
+		FCDDFC067F3685566FC0BDD062F5D2BC /* Pods-Macchio */ = {
 			isa = PBXGroup;
 			children = (
-				F284B5512A43557682E0F8CB6E072B46 /* IQKeyboardManagerSwift.framework */,
-				B8D7729E837D74B0F3BFECFE5DBEA2E4 /* Mixpanel.framework */,
-				FC445C79589C63654E571D972679D57D /* Pods_DotIOGame.framework */,
+				2EDD4F79DFE0256BB1ACA5EC2137EDB2 /* Info.plist */,
+				96D09876B714898F52D39EC4BD34733E /* Pods-Macchio.modulemap */,
+				8D14275D5E830542AD7D3B7505A19EF7 /* Pods-Macchio-acknowledgements.markdown */,
+				DF55E03CFC31F0C521FA67E333B8961A /* Pods-Macchio-acknowledgements.plist */,
+				BCA49A47A8FD07158E1C78932A678E59 /* Pods-Macchio-dummy.m */,
+				19C46C1D5FFC6D2A202125EA60E92A0C /* Pods-Macchio-frameworks.sh */,
+				C4CD1DC3A65BF6CEBB47B84001571ECF /* Pods-Macchio-resources.sh */,
+				9BB0DB5715CE2C44DD8C7C280BC24BC8 /* Pods-Macchio-umbrella.h */,
+				97A01B04D64F0440588A42198357EF0A /* Pods-Macchio.debug.xcconfig */,
+				224555137818560DE1C9E6F0A39DFE09 /* Pods-Macchio.release.xcconfig */,
 			);
-			name = Products;
+			name = "Pods-Macchio";
+			path = "Target Support Files/Pods-Macchio";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -866,11 +866,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E9A96DDE050A6B4E376104C7C15B8350 /* Headers */ = {
+		E23F4FBA856A4FCA361E4BE5831342E5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				249E7D7D1157B4CF2BD9C88F43FA8610 /* Pods-DotIOGame-umbrella.h in Headers */,
+				4C4A5D7D8F9347C8A86EA0D045604824 /* Pods-Macchio-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,7 +892,7 @@
 			);
 			name = IQKeyboardManagerSwift;
 			productName = IQKeyboardManagerSwift;
-			productReference = F284B5512A43557682E0F8CB6E072B46 /* IQKeyboardManagerSwift.framework */;
+			productReference = AF0A62DD3D73CD244B612F5B4BCB009C /* IQKeyboardManagerSwift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		8EFE724FDDAA2478F44F082C05BA272C /* Mixpanel */ = {
@@ -910,26 +910,26 @@
 			);
 			name = Mixpanel;
 			productName = Mixpanel;
-			productReference = B8D7729E837D74B0F3BFECFE5DBEA2E4 /* Mixpanel.framework */;
+			productReference = ABF79E412B020B34A261E6B7FD2BD14A /* Mixpanel.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		E815B1DEAAA9E00E8481D023A85DEC42 /* Pods-DotIOGame */ = {
+		A7B41F2BAC0918887E08F077F62F2231 /* Pods-Macchio */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 899B73BB0E68A29A8B3F37B94A88AFD4 /* Build configuration list for PBXNativeTarget "Pods-DotIOGame" */;
+			buildConfigurationList = 1FC25E3CAA68202A5A74A433BD6E87E3 /* Build configuration list for PBXNativeTarget "Pods-Macchio" */;
 			buildPhases = (
-				1F80415585FEA6E7EADA5648AD6F2A0F /* Sources */,
-				FD1DEC54648C5ADDD1279D88DD24DCC0 /* Frameworks */,
-				E9A96DDE050A6B4E376104C7C15B8350 /* Headers */,
+				08C9EBEB088C200D6272340CAB413589 /* Sources */,
+				DC376064C3CCC676C506B03C6F4560EF /* Frameworks */,
+				E23F4FBA856A4FCA361E4BE5831342E5 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1B925FF1F04446EEB161B610EEC2DC67 /* PBXTargetDependency */,
-				C43F19C71A4C9914CF316CF71D4FBDD0 /* PBXTargetDependency */,
+				6E21A0D01075F85976BDF00F9CCFD046 /* PBXTargetDependency */,
+				52C20E1C2A4469E4A9ECA2E43FAD5145 /* PBXTargetDependency */,
 			);
-			name = "Pods-DotIOGame";
-			productName = "Pods-DotIOGame";
-			productReference = FC445C79589C63654E571D972679D57D /* Pods_DotIOGame.framework */;
+			name = "Pods-Macchio";
+			productName = "Pods-Macchio";
+			productReference = 22672B9FA58CA24861E1D28F929673FC /* Pods_Macchio.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -949,13 +949,13 @@
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
-			productRefGroup = FF0D48707DF25538CE6D75957E1C3DDB /* Products */;
+			productRefGroup = 5087120D01E70882EC3692AF6502DB80 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				1520003FEBEC114D6C84F832AFEDB994 /* IQKeyboardManagerSwift */,
 				8EFE724FDDAA2478F44F082C05BA272C /* Mixpanel */,
-				E815B1DEAAA9E00E8481D023A85DEC42 /* Pods-DotIOGame */,
+				A7B41F2BAC0918887E08F077F62F2231 /* Pods-Macchio */,
 			);
 		};
 /* End PBXProject section */
@@ -996,6 +996,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		08C9EBEB088C200D6272340CAB413589 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A7CDF2AB0D8E0DB4A8802E2A6F3A4E5 /* Pods-Macchio-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		161601383DEA1F2FC6BB5588B4EE58C9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1017,14 +1025,6 @@
 				BACEB4A1F7183C8A34C16333AA0CFC88 /* IQUIView+IQKeyboardToolbar.swift in Sources */,
 				3B082E6ACCC2D096E28EE29CE82F89F6 /* IQUIViewController+Additions.swift in Sources */,
 				5DCD12C2C139245388578C182CACC06D /* IQUIWindow+Hierarchy.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1F80415585FEA6E7EADA5648AD6F2A0F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				765459C73E607ADE2EE0101BBA76AF71 /* Pods-DotIOGame-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1111,17 +1111,17 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1B925FF1F04446EEB161B610EEC2DC67 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = IQKeyboardManagerSwift;
-			target = 1520003FEBEC114D6C84F832AFEDB994 /* IQKeyboardManagerSwift */;
-			targetProxy = 5BED1999E654798D86EBD879062896AF /* PBXContainerItemProxy */;
-		};
-		C43F19C71A4C9914CF316CF71D4FBDD0 /* PBXTargetDependency */ = {
+		52C20E1C2A4469E4A9ECA2E43FAD5145 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Mixpanel;
 			target = 8EFE724FDDAA2478F44F082C05BA272C /* Mixpanel */;
-			targetProxy = 7D1C3816FA250EFA42BD177216E4B588 /* PBXContainerItemProxy */;
+			targetProxy = E283C96AF664D3C55E47BEE47414A7D0 /* PBXContainerItemProxy */;
+		};
+		6E21A0D01075F85976BDF00F9CCFD046 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = IQKeyboardManagerSwift;
+			target = 1520003FEBEC114D6C84F832AFEDB994 /* IQKeyboardManagerSwift */;
+			targetProxy = FF90103F41AA8011AE48C1741F4879D4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1265,9 +1265,9 @@
 			};
 			name = Debug;
 		};
-		619D89123B1E4CF45E46C876DD678B9C /* Debug */ = {
+		88E0FE15C4E15544475B14E7C72A7195 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5904CDBFB079539DD5F4BE9669BE63D1 /* Pods-DotIOGame.debug.xcconfig */;
+			baseConfigurationReference = 97A01B04D64F0440588A42198357EF0A /* Pods-Macchio.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -1278,18 +1278,18 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-DotIOGame/Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-Macchio/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-DotIOGame/Pods-DotIOGame.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-Macchio/Pods-Macchio.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = Pods_DotIOGame;
+				PRODUCT_NAME = Pods_Macchio;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1328,9 +1328,9 @@
 			};
 			name = Release;
 		};
-		D141ED849FFDAF37DD02D4F061E04840 /* Release */ = {
+		CFC85624EC4C125075D049CBB8D8898A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFD2AFEEE0FEA1FB682CC6029251DF54 /* Pods-DotIOGame.release.xcconfig */;
+			baseConfigurationReference = 224555137818560DE1C9E6F0A39DFE09 /* Pods-Macchio.release.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -1341,18 +1341,18 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-DotIOGame/Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-Macchio/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-DotIOGame/Pods-DotIOGame.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-Macchio/Pods-Macchio.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = Pods_DotIOGame;
+				PRODUCT_NAME = Pods_Macchio;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1393,20 +1393,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1FC25E3CAA68202A5A74A433BD6E87E3 /* Build configuration list for PBXNativeTarget "Pods-Macchio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88E0FE15C4E15544475B14E7C72A7195 /* Debug */,
+				CFC85624EC4C125075D049CBB8D8898A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E62115DE8C09934BF8D2FE5D15FED1E /* Debug */,
 				3FA451D268613890FA8A5A03801E11D5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		899B73BB0E68A29A8B3F37B94A88AFD4 /* Build configuration list for PBXNativeTarget "Pods-DotIOGame" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				619D89123B1E4CF45E46C876DD678B9C /* Debug */,
-				D141ED849FFDAF37DD02D4F061E04840 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

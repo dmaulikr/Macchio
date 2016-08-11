@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		26A015BB28344B8BE6D90EEE /* Pods_DotIOGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */; };
+		0BA2E2BEC507ED8A7FF528F1 /* Pods_Macchio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F9A468A9E075E3FBCCCDC6E /* Pods_Macchio.framework */; };
 		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		833102691D46A27200B8844A /* WarningSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102681D46A27200B8844A /* WarningSign.swift */; };
 		8331028F1D4819F200B8844A /* GameSceneExtensionSpawning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */; };
@@ -53,7 +53,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DotIOGame.release.xcconfig"; path = "Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame.release.xcconfig"; sourceTree = "<group>"; };
+		1D6F892D9806B8E2A8094646 /* Pods-Macchio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Macchio.release.xcconfig"; path = "Pods/Target Support Files/Pods-Macchio/Pods-Macchio.release.xcconfig"; sourceTree = "<group>"; };
+		4F9A468A9E075E3FBCCCDC6E /* Pods_Macchio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Macchio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		833102681D46A27200B8844A /* WarningSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarningSign.swift; sourceTree = "<group>"; };
 		8331028E1D4819F200B8844A /* GameSceneExtensionSpawning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GameSceneExtensionSpawning.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -98,8 +99,7 @@
 		83D8A49F1D529A2C00A7C653 /* GameOverScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameOverScene.sks; sourceTree = "<group>"; };
 		83D8A4A31D529B7D00A7C653 /* LeaderBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeaderBoard.swift; sourceTree = "<group>"; };
 		83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputerBasic.swift; sourceTree = "<group>"; };
-		C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DotIOGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame.debug.xcconfig"; sourceTree = "<group>"; };
-		F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DotIOGame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F35BDB5988B8511E3884CB70 /* Pods-Macchio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Macchio.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Macchio/Pods-Macchio.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26A015BB28344B8BE6D90EEE /* Pods_DotIOGame.framework in Frameworks */,
+				0BA2E2BEC507ED8A7FF528F1 /* Pods_Macchio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 		628DD06EE9F9CAF563FDDEA4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F043375BF3059FA911B9A769 /* Pods_DotIOGame.framework */,
+				4F9A468A9E075E3FBCCCDC6E /* Pods_Macchio.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -226,8 +226,8 @@
 		94E63BEEF1B80A951F0F6C94 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */,
-				2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */,
+				F35BDB5988B8511E3884CB70 /* Pods-Macchio.debug.xcconfig */,
+				1D6F892D9806B8E2A8094646 /* Pods-Macchio.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -334,7 +334,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Macchio/Pods-Macchio-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		41A99EECE9FB1E7BA77C45C7 /* [CP] Embed Pods Frameworks */ = {
@@ -349,7 +349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DotIOGame/Pods-DotIOGame-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Macchio/Pods-Macchio-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -506,7 +506,7 @@
 		};
 		83957BA31D32FDDE00BF4450 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C92BA53FE73E94E5F87D17B8 /* Pods-DotIOGame.debug.xcconfig */;
+			baseConfigurationReference = F35BDB5988B8511E3884CB70 /* Pods-Macchio.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -522,7 +522,7 @@
 		};
 		83957BA41D32FDDE00BF4450 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2CC6E8F050215BB001C39ECA /* Pods-DotIOGame.release.xcconfig */;
+			baseConfigurationReference = 1D6F892D9806B8E2A8094646 /* Pods-Macchio.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
