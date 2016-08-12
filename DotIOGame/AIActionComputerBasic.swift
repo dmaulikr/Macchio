@@ -30,13 +30,6 @@ class AIActionComputerBasic: AIActionComputer {
         case Mine, OrbBeacon, Orb, SmallCreature, LargeCreature, Wall
     }
     
-//    let weight_mine: CGFloat = 5
-//    //let weight_orbBeacon: CGFloat = -3
-//    let weight_orb: CGFloat = -0.1
-//    let weight_smallCreature: CGFloat = -2
-//    let weight_largeCreature: CGFloat = 2
-//    let weight_wall: CGFloat = 5
-    
     struct WeightSet {
         let weight_mine: CGFloat
         let weight_orb: CGFloat
@@ -53,7 +46,7 @@ class AIActionComputerBasic: AIActionComputer {
         
         let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = 2
         let weight_leaveMineToCatchSmallerCreature: CGFloat = 2
-        let bias_leaveMineForNoReason: CGFloat = -1    //////
+        let bias_leaveMineForNoReason: CGFloat = -1
         let leaveMineForPersuingCreatureInRange: CGFloat = 200
     }
     
@@ -88,13 +81,13 @@ class AIActionComputerBasic: AIActionComputer {
         
         if let myCreature = myCreature {
             if let gameScene = myCreature.gameScene {
-                //let myCurrentGhost = myCreature.computeUltimateStateAsGhost(myCreature.pendingActions)
-                // Establish a danger circle and determine which angle I should request
                 
-                // Test to find desired sector
-                // mines, smaller creatures, larger creatures, orb clusters
+                // Before doing any cool ai stuff, lets update the radar distance to be like something the player would see
+                radarDistance = (gameScene.calculateCameraScale(forGivenPlayerRadius: myCreature.radius)).dy * gameScene.size.height
+                
+                // First things first, figure out the ideal direction to turn.
+                // We do this by assigning numbers to each sector around mycreature and going toward the one with the highest number.
                 let minesNearMe = gameScene.goopMines.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
-                //let orbBeaconsNearMe = gameScene.orbBeacons.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 
                 let orbsNearMe = myCreature.myOrbChunk
                 

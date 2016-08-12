@@ -730,11 +730,10 @@ class GameScene: SKScene {
         //      ---- UI-ey things ----
         if let player = player {
             if gameState != .GameOver {
-                camera!.xScale = cameraScaleToPlayerRadiusRatios.x * player.radius * prefs.zoomOutFactor // Follow player on z axis (by rescaling 😀)
-                camera!.yScale = cameraScaleToPlayerRadiusRatios.y * player.radius * prefs.zoomOutFactor
-                
-                camera!.xScale.clamp(C.camera_scaleMinimum, 100) // It'll never get to 100 :P
-                camera!.yScale.clamp(C.camera_scaleMinimum, 100)
+    
+                let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
+                camera!.xScale = theCameraScale.dx
+                camera!.yScale = theCameraScale.dy
 
                 
                 camera!.position = cameraTarget.position //Follow player on the x axis and y axis
@@ -1028,6 +1027,12 @@ class GameScene: SKScene {
             if c.playerID == id { return c }
         }
         return nil
+    }
+    
+    func calculateCameraScale(forGivenPlayerRadius playerRadius: CGFloat) -> CGVector {
+        let theResultingXScale = (cameraScaleToPlayerRadiusRatios.x * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+        let theResultingYScale = (cameraScaleToPlayerRadiusRatios.y * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+        return CGVector(dx: theResultingXScale, dy: theResultingYScale)
     }
     
 }
