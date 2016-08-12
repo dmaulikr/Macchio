@@ -108,22 +108,22 @@ class AIActionComputerBasic: AIActionComputer {
                 if myCreature.position.y + radarDistance >= gameScene.mapSize.height { wallsNearMe.append(.Top) }
 
                 for mine in minesNearMe {
-                    assignModifiersForSector(mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine)
+                    assignModifiersForSector(objectPosition: mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine)
                     catalogueObject(atPosition: mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine)
                 }
                 for orb in orbsNearMe {
-                    assignModifiersForSector(orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb)
+                    assignModifiersForSector(objectPosition: orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb)
                     catalogueObject(atPosition: orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb)
                 }
                 for smallCreature in smallCreaturesNearMe {
-                    assignModifiersForSector(smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
+                    assignModifiersForSector(objectPosition: smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
                     catalogueObject(atPosition: smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
                 }
                 for largeCreature in largerCreaturesNearMe {
-                    assignModifiersForSector(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature)
+                    assignModifiersForSector(objectPosition: largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature)
                     
                     // Also apply the other weight that functions on the distance directly. TODO
-                    assignModifiersForSector(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_moveTowardLargeCreatureJustToGetALittleCloser, objectType: .LargeCreature, makeModifierFunction: {
+                    assignModifiersForSector(objectPosition: largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_moveTowardLargeCreatureJustToGetALittleCloser, objectType: .LargeCreature, makeModifierFunction: {
                         (distanceAway: CGFloat, weight: CGFloat) in
                         return (distanceAway/self.radarDistance) * weight
                     })
@@ -145,7 +145,7 @@ class AIActionComputerBasic: AIActionComputer {
                     case .Bottom:
                         closestPointOnWall = CGPoint(x: myCreature.position.x, y: 0)
                     }
-                    assignModifiersForSector(closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
+                    assignModifiersForSector(objectPosition: closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
                     catalogueObject(atPosition: closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
                 }
                 
@@ -231,7 +231,7 @@ class AIActionComputerBasic: AIActionComputer {
     }
     
     
-    func assignModifiersForSector(objectPosition: CGPoint, objectRadius: CGFloat, weight: CGFloat, objectType: ObjectType, makeModifierFunction: ((distanceAway: CGFloat, weight: CGFloat) -> CGFloat)? = nil) {
+    func assignModifiersForSector(objectPosition objectPosition: CGPoint, objectRadius: CGFloat, weight: CGFloat, objectType: ObjectType, makeModifierFunction: ((distanceAway: CGFloat, weight: CGFloat) -> CGFloat)? = nil) {
         
         let makeModifier: (distanceAway: CGFloat, weight: CGFloat) -> CGFloat
         if let makeModifierFunction = makeModifierFunction {
