@@ -17,10 +17,10 @@ class AIActionComputerBasic: AIActionComputer {
     var radarDistance: CGFloat = 500
     var state: AIState = .EatOrbCluster
     
-    var sectorDangerRatings: [CGFloat] = []
+    var sectorRatings: [CGFloat] = []
     var sectorContents: [[(objectType: ObjectType, position: CGPoint, radius: CGFloat)]] = []
     var anglePerSector: CGFloat {
-        return 360.0 / CGFloat(self.sectorDangerRatings.count)
+        return 360.0 / CGFloat(self.sectorRatings.count)
     }
     var shouldBeBoosting: CGFloat = 0 // a value higher than zero means yes, do boost
     var shouldLeaveMine: CGFloat = 0 // a value higher than zero means yes, leave the mine
@@ -42,47 +42,47 @@ class AIActionComputerBasic: AIActionComputer {
         let weight_orb: CGFloat
         let weight_smallCreature: CGFloat
         let weight_largeCreature: CGFloat
+        let weight_moveTowardLargeCreatureJustToGetALittleCloser: CGFloat = 1
         let weight_wall: CGFloat
-        
         
         //Weights be kinda like voting power. + = yes , - = no
         let weight_boostAwayFromLargeCreature: CGFloat = 1
         let weight_boostTowardLargeCreature: CGFloat = -4
         let weight_boostTowardOrb: CGFloat = 0.3
-        let weight_boostForNoReason: CGFloat = -2
+        let bias_boostForNoReason: CGFloat = -2
         
-        let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = 1
-        let weight_leaveMineToCatchSmallerCreature: CGFloat = 1
+        let weight_leaveMineToAttackPersuingLargeCreature: CGFloat = 2
+        let weight_leaveMineToCatchSmallerCreature: CGFloat = 2
+        let bias_leaveMineForNoReason: CGFloat = -1    //////
+        let leaveMineForPersuingCreatureInRange: CGFloat = 200
     }
     
-    // Weights represent how dangerous a type of object is. Higher number means higher danger, whereas a negative number signifies something good
+    // Weights represent how good a type of object is. Higher number means better, negative means it's bad. 
     static let weightSets: [WeightSet] = [
-        WeightSet(weight_mine: 5, weight_orb: -0.1, weight_smallCreature: -2, weight_largeCreature: 2, weight_wall: 5), // All around ok
-        WeightSet(weight_mine: 10, weight_orb: -0.5, weight_smallCreature: -4, weight_largeCreature: 10, weight_wall: 5), // Coward
-        WeightSet(weight_mine: 5, weight_orb: -0.5, weight_smallCreature: -8, weight_largeCreature: 9, weight_wall: 8) // Risk-taker / greedy
+        WeightSet(weight_mine: -5, weight_orb: 0.1, weight_smallCreature: 2, weight_largeCreature: -2, weight_wall: -5) // All around ok
+//        WeightSet(weight_mine: 10, weight_orb: -0.5, weight_smallCreature: -4, weight_largeCreature: 10, weight_wall: 5), // Coward
+//        WeightSet(weight_mine: 5, weight_orb: -0.5, weight_smallCreature: -8, weight_largeCreature: 9, weight_wall: 8) // Risk-taker / greedy
     ]
     let weightSet: WeightSet = weightSets.randomItem()
     enum WallDirection {
         case Right, Top, Left, Bottom
     }
     
-    let leaveMineRange: CGFloat = 200
     var mineTravelDistance: CGFloat { return myCreature!.minePropulsionSpeed * C.creature_minePropulsionSpeedActiveTime }
 
-    // TODO add distance fall off weight
     let numOfSectors = 8
     
     override init(gameScene: GameScene, controlCreature myCreature: AICreature) {
         super.init(gameScene: gameScene, controlCreature: myCreature)
-        sectorDangerRatings = [CGFloat](count: numOfSectors, repeatedValue: 0.0)
+        sectorRatings = [CGFloat](count: numOfSectors, repeatedValue: 0.0)
         sectorContents = [[(objectType: ObjectType, position: CGPoint, radius: CGFloat)]](count: numOfSectors, repeatedValue: [] )
     }
     
     override func requestActions() {
         // Basically like an update()
         // Here the action computer should call requestAction() for myCreature to ensure its safety and success
-        sectorDangerRatings = [CGFloat](count: numOfSectors, repeatedValue: 0.0)
-        sectorContents = [[(objectType: ObjectType, position: CGPoint, radius: CGFloat)]](count: sectorDangerRatings.count, repeatedValue: [])
+        sectorRatings = [CGFloat](count: numOfSectors, repeatedValue: 0.0)
+        sectorContents = [[(objectType: ObjectType, position: CGPoint, radius: CGFloat)]](count: sectorRatings.count, repeatedValue: [])
         shouldBeBoosting = 0
         shouldLeaveMine = 0
         
@@ -107,13 +107,32 @@ class AIActionComputerBasic: AIActionComputer {
                 if myCreature.position.y - radarDistance <= 0 { wallsNearMe.append(.Bottom) }
                 if myCreature.position.y + radarDistance >= gameScene.mapSize.height { wallsNearMe.append(.Top) }
 
-                for mine in minesNearMe { assignModifiersForSectorAndCatalogueObject(mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine) }
-                //for orbBeacon in orbBeaconsNearMe { assignModifiersForSectorAndCatalogueObject(orbBeacon.position, objectRadius: orbBeacon.radius, weight: weight_orbBeacon, objectType: .OrbBeacon) }
-                for orb in orbsNearMe { assignModifiersForSectorAndCatalogueObject(orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb) }
-                for smallCreature in smallCreaturesNearMe {
-                    assignModifiersForSectorAndCatalogueObject(smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
+                for mine in minesNearMe {
+                    assignModifiersForSector(mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine)
+                    catalogueObject(atPosition: mine.position, objectRadius: mine.radius, weight: weightSet.weight_mine, objectType: .Mine)
                 }
-                for largeCreature in largerCreaturesNearMe { assignModifiersForSectorAndCatalogueObject(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature) }
+                for orb in orbsNearMe {
+                    assignModifiersForSector(orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb)
+                    catalogueObject(atPosition: orb.position, objectRadius: orb.radius, weight: weightSet.weight_orb, objectType: .Orb)
+                }
+                for smallCreature in smallCreaturesNearMe {
+                    assignModifiersForSector(smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
+                    catalogueObject(atPosition: smallCreature.position, objectRadius: smallCreature.radius, weight: weightSet.weight_smallCreature, objectType: .SmallCreature)
+                }
+                for largeCreature in largerCreaturesNearMe {
+                    assignModifiersForSector(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature)
+                    
+                    // Also apply the other weight that functions on the distance directly. TODO
+                    assignModifiersForSector(largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_moveTowardLargeCreatureJustToGetALittleCloser, objectType: .LargeCreature, makeModifierFunction: {
+                        (distanceAway: CGFloat, weight: CGFloat) in
+                        return (distanceAway/self.radarDistance) * weight
+                    })
+                    
+
+                    
+                    catalogueObject(atPosition: largeCreature.position, objectRadius: largeCreature.radius, weight: weightSet.weight_largeCreature, objectType: .LargeCreature)
+                    
+                }
                 for wall in wallsNearMe {
                     let closestPointOnWall: CGPoint
                     switch wall {
@@ -126,19 +145,20 @@ class AIActionComputerBasic: AIActionComputer {
                     case .Bottom:
                         closestPointOnWall = CGPoint(x: myCreature.position.x, y: 0)
                     }
-                    assignModifiersForSectorAndCatalogueObject(closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
+                    assignModifiersForSector(closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
+                    catalogueObject(atPosition: closestPointOnWall, objectRadius: 0, weight: weightSet.weight_wall, objectType: .Wall)
                 }
                 
-                var indexWithLeastDanger = -1
-                var leastDangerValue: CGFloat = 9999
-                for (index, sector) in sectorDangerRatings.enumerate() {
-                    if sector < leastDangerValue {
-                        leastDangerValue = sector
-                        indexWithLeastDanger = index
+                var bestIndex = -1
+                var bestValue: CGFloat = -9999
+                for (index, sectorValue) in sectorRatings.enumerate() {
+                    if sectorValue > bestValue {
+                        bestValue = sectorValue
+                        bestIndex = index
                     }
                 }
                 
-                myCreature.requestAction(AICreature.Action(type: .TurnToAngle, toAngle: CGFloat(indexWithLeastDanger) * anglePerSector + anglePerSector / 2))
+                myCreature.requestAction(AICreature.Action(type: .TurnToAngle, toAngle: CGFloat(bestIndex) * anglePerSector + anglePerSector / 2))
                 
                 // ***************************************
                 // The creature has now done the Turning!
@@ -146,16 +166,12 @@ class AIActionComputerBasic: AIActionComputer {
                 // ***************************************
                 
                 
-//                let chosenIndex = indexWithLeastDanger
-//                let chosenIndexAdj1 = indexWithinSectorsBounds(indexWithLeastDanger + 1)
-//                let chosenIndexAdj2 = indexWithinSectorsBounds(indexWithLeastDanger - 1)
                 let currentIndex = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector))
                 let currentIndexAdj1 = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector) + 1)
                 let currentIndexAdj2 = indexWithinSectorsBounds(Int(myCreature.velocity.angle / anglePerSector) - 1)
                 let everythingInFrontOfMe = sectorContents[currentIndex] + sectorContents[currentIndexAdj1] + sectorContents[currentIndexAdj2]
 
-//                let opp = indexWithLeastDanger + sectorDangerRatings.count/2
-                let opp = currentIndex + sectorDangerRatings.count/2
+                let opp = currentIndex + sectorRatings.count/2
                 let oppositeIndex = indexWithinSectorsBounds(opp)
                 let oppositeIndexAdj1 = indexWithinSectorsBounds(opp + 1)
                 let oppositeIndexAdj2 = indexWithinSectorsBounds(opp - 1)
@@ -166,7 +182,7 @@ class AIActionComputerBasic: AIActionComputer {
                 let largeCreaturesBehindMe = everythingBehindMe.filter { $0.objectType == .LargeCreature }
                 let largeCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .LargeCreature }
 
-                let largeCreaturesBehindMeThatCanBeShurikenned = largerCreaturesNearMe.filter { $0.position.distanceTo(myCreature.position) - $0.radius - myCreature.radius < leaveMineRange }
+                let largeCreaturesBehindMeThatCanBeShurikenned = largeCreaturesBehindMe.filter { $0.position.distanceTo(myCreature.position) - $0.radius - myCreature.radius < weightSet.leaveMineForPersuingCreatureInRange }
                 
                 let smallCreaturesInFrontOfMe = everythingInFrontOfMe.filter { $0.objectType == .SmallCreature}
                 
@@ -176,10 +192,9 @@ class AIActionComputerBasic: AIActionComputer {
                 
                 
                 // Each weight is kind of like voting power. Some of them are things a player would not ever do. But they still exist as weights, so they have their negative voting power
-                shouldBeBoosting += weightSet.weight_boostForNoReason
+                shouldBeBoosting += weightSet.bias_boostForNoReason
                 for c in largeCreaturesBehindMe{
                     assignModifiersForShouldBeBoosting(objectPosition: c.position, weight: weightSet.weight_boostAwayFromLargeCreature)
-                    // TODO actually pass in the closest point to myCreature instead of the center position
                 }
                 for c in largeCreaturesInFrontOfMe {
                     assignModifiersForShouldBeBoosting(objectPosition: c.position, weight: weightSet.weight_boostTowardLargeCreature)
@@ -188,7 +203,7 @@ class AIActionComputerBasic: AIActionComputer {
                     assignModifiersForShouldBeBoosting(objectPosition: orb.position, weight: weightSet.weight_boostTowardOrb)
                 }
                 
-                
+                shouldLeaveMine += weightSet.bias_leaveMineForNoReason
                 for _ in smallCreaturesThatICanCatchByLeavingAMine {
                     shouldLeaveMine += weightSet.weight_leaveMineToCatchSmallerCreature
                 }
@@ -196,13 +211,6 @@ class AIActionComputerBasic: AIActionComputer {
                     shouldLeaveMine += weightSet.weight_leaveMineToAttackPersuingLargeCreature
                 }
                 
-//                if largeCreaturesChasingMe.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 || orbsInFrontOfMe.count > 10 {
-//                    shouldBeBoosting = true
-//                }
-//                
-//                if largeCreaturesThatCanBeShurikenned.count > 0 || smallCreaturesThatICanCatchByLeavingAMine.count > 0 {
-//                    shouldLeaveMine = true
-//                }
                 
                 
                 if shouldBeBoosting > 0 {
@@ -223,31 +231,54 @@ class AIActionComputerBasic: AIActionComputer {
     }
     
     
-    func assignModifiersForSectorAndCatalogueObject(objectPosition: CGPoint, objectRadius: CGFloat, weight: CGFloat, objectType: ObjectType) {
+    func assignModifiersForSector(objectPosition: CGPoint, objectRadius: CGFloat, weight: CGFloat, objectType: ObjectType, makeModifierFunction: ((distanceAway: CGFloat, weight: CGFloat) -> CGFloat)? = nil) {
+        
+        let makeModifier: (distanceAway: CGFloat, weight: CGFloat) -> CGFloat
+        if let makeModifierFunction = makeModifierFunction {
+            makeModifier = makeModifierFunction
+        } else {
+            // By default, the weights will increase in strength linearly as they get closer to myCreature
+            makeModifier = {
+                (distanceAway: CGFloat, weight: CGFloat) in
+                return ((self.radarDistance - distanceAway) / self.radarDistance) * weight
+            }
+        }
+        
         let positionRelativeToMyCreature = objectPosition - myCreature!.position
         var angle = positionRelativeToMyCreature.angle.radiansToDegrees()
         if angle < 0 { angle += 360 }
         else if angle > 360 { angle -= 360 }
         let index = Int(angle / anglePerSector)
-        let modifier = ((radarDistance - positionRelativeToMyCreature.length() + objectRadius) / radarDistance) * weight
-        sectorDangerRatings[index] += modifier
+        //let modifier = ((radarDistance - positionRelativeToMyCreature.length() + objectRadius) / radarDistance) * weight
+        let modifier = makeModifier(distanceAway: positionRelativeToMyCreature.length() - objectRadius, weight: weight)
         
-        sectorDangerRatings[indexWithinSectorsBounds(index + 1)] += modifier / 2
-        sectorDangerRatings[indexWithinSectorsBounds(index - 1)] += modifier / 2
+        sectorRatings[index] += modifier
         
-        let oppositeIndex = index + sectorDangerRatings.count / 2
-        sectorDangerRatings[indexWithinSectorsBounds(oppositeIndex)] -= modifier
-        sectorDangerRatings[indexWithinSectorsBounds(oppositeIndex + 1)] -= modifier / 2
-        sectorDangerRatings[indexWithinSectorsBounds(oppositeIndex - 1)] -= modifier / 2
+        sectorRatings[indexWithinSectorsBounds(index + 1)] += modifier / 2
+        sectorRatings[indexWithinSectorsBounds(index - 1)] += modifier / 2
+        
+        let oppositeIndex = index + sectorRatings.count / 2
+        sectorRatings[indexWithinSectorsBounds(oppositeIndex)] -= modifier
+        sectorRatings[indexWithinSectorsBounds(oppositeIndex + 1)] -= modifier / 2
+        sectorRatings[indexWithinSectorsBounds(oppositeIndex - 1)] -= modifier / 2
         
         sectorContents[indexWithinSectorsBounds(index)].append( (objectType: objectType, position: objectPosition, radius: objectRadius) )
     
     }
     
+    func catalogueObject(atPosition objectPosition: CGPoint, objectRadius: CGFloat, weight: CGFloat, objectType: ObjectType) {
+        let positionRelativeToMyCreature = objectPosition - myCreature!.position
+        var angle = positionRelativeToMyCreature.angle.radiansToDegrees()
+        if angle < 0 { angle += 360 }
+        else if angle > 360 { angle -= 360 }
+        let index = Int(angle / anglePerSector)
+        sectorContents[indexWithinSectorsBounds(index)].append((objectType: objectType, position: objectPosition, radius: objectRadius))
+    }
+    
     func indexWithinSectorsBounds(index: Int) -> Int {
         var newIndex = index
-        if index < 0 { newIndex += sectorDangerRatings.count }
-        else if index >= sectorDangerRatings.count { newIndex -= sectorDangerRatings.count }
+        if index < 0 { newIndex += sectorRatings.count }
+        else if index >= sectorRatings.count { newIndex -= sectorRatings.count }
         return newIndex
     }
     
