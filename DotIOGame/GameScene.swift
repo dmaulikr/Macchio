@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 0.9
+            zoomOutFactor: 0.35
     )
     let mixpanelTracker = RYNMixpanelTracker()
     
@@ -127,10 +127,15 @@ class GameScene: SKScene {
         defer {
             spawnPlayerNameLabel(forCreature: player!)
         }
-        //if let player = player {
+
         player!.position = computeValidCreatureSpawnPoint(player!.radius)
         self.addChild(player!)
-        //spawnPlayerNameLabel(forCreature: player)
+        
+//        let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player!.radius)
+//        camera!.xScale = theCameraScale.dx
+//        camera!.yScale = theCameraScale.dy
+        camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+        camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
         cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player!.radius
         cameraTarget = player
@@ -734,7 +739,6 @@ class GameScene: SKScene {
                 let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
                 camera!.xScale = theCameraScale.dx
                 camera!.yScale = theCameraScale.dy
-
                 
                 camera!.position = cameraTarget.position //Follow player on the x axis and y axis
                 
@@ -774,10 +778,33 @@ class GameScene: SKScene {
                     boostButton.buttonIcon.alpha = 1
                 }
                 
-                // update the positions of warning signs
-                var warningSignKillList: [WarningSign] = []
+                
+                // Warning Signs dealt with here! ⚠️
                 let testingRange = C.alertPlayerAboutLargerCreaturesInRange * cameraScaleToPlayerRadiusRatios.x * player.radius
+                // spawn new warning signs if a large enough player is within range (range scales with camera)
+                for creature in otherCreatures {
+                    if creature === player { continue }
+                    if creature.radius > player.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother && creature.position.distanceTo(camera!.position) - creature.radius < testingRange {
+                        var warningSignAlreadyExists = false
+                        for sign in warningSigns {
+                            if sign.correspondingCreature === creature { warningSignAlreadyExists = true }
+                        }
+                        if !warningSignAlreadyExists {
+                            let newWarningSign = WarningSign(creature: creature)
+                            newWarningSign.position = camera!.convertPoint(creature.position, fromNode: self)
+                            newWarningSign.position.x.clamp(-size.width / 2 + newWarningSign.size.width/2, size.width / 2 - newWarningSign.size.width/2)
+                            newWarningSign.position.y.clamp(-size.height / 2 + newWarningSign.size.height/2, size.height / 2 - newWarningSign.size.height/2)
+                            
+                            newWarningSign.zPosition = -6
+                            warningSigns.append(newWarningSign)
+                            hud.addChild(newWarningSign)
+                        }
+                    }
+                }
 
+                
+                // update the positions of warning signs and despawn/hide them as necessary
+                var warningSignKillList: [WarningSign] = []
                 for warningSign in warningSigns {
                     if let correspondingCreature = warningSign.correspondingCreature {
                         let creaturePositionInRelationToCamera = camera!.convertPoint(correspondingCreature.position, fromNode: self)
@@ -789,9 +816,12 @@ class GameScene: SKScene {
                         // 1) is the corresponding creature too far away?
                         if camera!.position.distanceTo(correspondingCreature.position) - correspondingCreature.radius > testingRange {
                             warningSignKillList.append(warningSign)
+                        } else if correspondingCreature.radius < player.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother {
+                        // 2) despawn the warning sign if the corresponding creature can no longer eat the player
+                            warningSignKillList.append(warningSign)
                         }
                         
-                        // 2) Hide if the corresponding creature inside the camera?
+                        // 3) Hide if the corresponding creature inside the camera?
                         let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians 😁
                         let closestX = correspondingCreature.position.x + cos(angleToCamera) * correspondingCreature.radius
                         let closestY = correspondingCreature.position.y + sin(angleToCamera) * correspondingCreature.radius
@@ -822,26 +852,6 @@ class GameScene: SKScene {
                 }
                 
                 
-                // spawn new warning signs if a large enough player is within range (range scales with camera)
-                for creature in otherCreatures {
-                    if creature === player { continue }
-                    if creature.radius > player.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother && creature.position.distanceTo(camera!.position) - creature.radius < testingRange {
-                        var warningSignAlreadyExists = false
-                        for sign in warningSigns {
-                            if sign.correspondingCreature === creature { warningSignAlreadyExists = true }
-                        }
-                        if !warningSignAlreadyExists {
-                            let newWarningSign = WarningSign(creature: creature)
-                            newWarningSign.position = camera!.convertPoint(creature.position, fromNode: self)
-                            newWarningSign.position.x.clamp(-size.width / 2 + newWarningSign.size.width/2, size.width / 2 - newWarningSign.size.width/2)
-                            newWarningSign.position.y.clamp(-size.height / 2 + newWarningSign.size.height/2, size.height / 2 - newWarningSign.size.height/2)
-
-                            newWarningSign.zPosition = -6
-                            warningSigns.append(newWarningSign)
-                            hud.addChild(newWarningSign)
-                        }
-                    }
-                }
                 
                 // Update the leaderboard with data from all the creatures that exist
                 let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score, color: $0.playerColor) }
