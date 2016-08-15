@@ -58,12 +58,12 @@ class GameScene: SKScene {
     }
     
     var playerScore: Int = 0 {
-        didSet { scoreLabel.text = String(playerScore) }
+        didSet { scoreLabel.text = "Score: \(playerScore)" }
     }
     var scoreLabel: SKLabelNode!
     
     var playerSize: Int = 0 {
-        didSet { sizeLabel.text = String(playerSize) }
+        didSet { sizeLabel.text = "Your Size: \(playerSize)" }
     }
     var sizeLabel: SKLabelNode!
     var rankLabel: SKLabelNode!
@@ -131,9 +131,6 @@ class GameScene: SKScene {
         player!.position = computeValidCreatureSpawnPoint(player!.radius)
         self.addChild(player!)
         
-//        let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player!.radius)
-//        camera!.xScale = theCameraScale.dx
-//        camera!.yScale = theCameraScale.dy
         camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
@@ -150,6 +147,11 @@ class GameScene: SKScene {
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
         rankLabel = childNodeWithName("//rankLabel") as! SKLabelNode
+        // Position all the labels. Kinda like constraints
+        let allAroundPadding: CGFloat = 20
+        scoreLabel.position = CGPoint(x: -size.width/2 + allAroundPadding, y: size.height/2 - allAroundPadding) // Anchor point at upper left
+        sizeLabel.position = CGPoint(x: -size.width/2 + allAroundPadding, y: -size.height/2 + allAroundPadding) // Anchor point at lower left
+        rankLabel.position = CGPoint(x: -size.width/2 + allAroundPadding, y: size.height/2 - allAroundPadding - 30) // Anchor point at upper left
         
         directionArrow = SKSpriteNode(imageNamed: "arrow.png")
         directionArrow.zPosition = 100
@@ -202,7 +204,6 @@ class GameScene: SKScene {
         leaderBoard = LeaderBoard()
         leaderBoard.xScale = 0.3
         leaderBoard.yScale = 0.3
-        //leaderBoard.position = CGPoint(x: self.size.width/2 - leaderBoard.slotSize.width, y: self.size.height/2)
         let boardX = (size.width/2) - (leaderBoard.slotSize.width*leaderBoard.xScale)-10
         let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots)) - 10
         
@@ -223,10 +224,9 @@ class GameScene: SKScene {
         backToMenuButton.selectedHandler = goBackToMainScene
         
         loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
+        loadingImage.size = self.size
         loadingImage.position = CGPoint(x: 0, y: 0)
         
-        
-        //}
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
@@ -1015,7 +1015,7 @@ class GameScene: SKScene {
             let skView = self.view as SKView!
             let scene = GameScene(fileNamed:"GameScene") as GameScene!
             scene.theEnteredInPlayerName = self.theEnteredInPlayerName
-            scene.scaleMode = .AspectFill
+            scene.scaleMode =  SKSceneScaleMode.ResizeFill
             skView.presentScene(scene)
         }
     
@@ -1026,7 +1026,7 @@ class GameScene: SKScene {
         let skView = self.view as SKView!
         let scene = MainScene(fileNamed:"MainScene") as MainScene!
         scene.presetPlayerName = theEnteredInPlayerName
-        scene.scaleMode = .AspectFill
+        scene.scaleMode =  SKSceneScaleMode.ResizeFill
         //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
         skView.presentScene(scene)
     }

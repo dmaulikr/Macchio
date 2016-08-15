@@ -18,27 +18,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="newtitle" translatesAutoresizingMaskIntoConstraints="NO" id="ToF-Zf-DUX">
-                                <rect key="frame" x="51" y="180" width="499" height="308"/>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="newtitle" translatesAutoresizingMaskIntoConstraints="NO" id="VPY-xQ-wUz">
+                                <rect key="frame" x="-1" y="192" width="601" height="215"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="ToF-Zf-DUX" secondAttribute="trailing" constant="30" id="H0l-MI-Zcq"/>
-                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="ToF-Zf-DUX" secondAttribute="bottom" constant="112" id="dNT-hi-55D"/>
-                            <constraint firstItem="ToF-Zf-DUX" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="31" id="fqz-Hu-tce"/>
-                            <constraint firstItem="ToF-Zf-DUX" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="160" id="n62-Ts-mwX"/>
+                            <constraint firstItem="VPY-xQ-wUz" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="-21" id="8nb-HG-psZ"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="VPY-xQ-wUz" secondAttribute="bottom" constant="169" id="RjQ-JM-fmr"/>
+                            <constraint firstItem="VPY-xQ-wUz" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="148" id="cnU-Xg-CBH"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="VPY-xQ-wUz" secondAttribute="trailing" constant="-20" id="iE0-jp-uj1"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-275" y="-375"/>
+            <point key="canvasLocation" x="-544" y="-858"/>
         </scene>
     </scenes>
     <resources>
-        <image name="newtitle" width="400" height="290"/>
+        <image name="newtitle" width="400" height="145"/>
     </resources>
     <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="deviceRGB"/>
 </document>

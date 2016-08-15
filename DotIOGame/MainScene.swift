@@ -12,6 +12,7 @@ import UIKit
 
 class MainScene: SKScene, UITextFieldDelegate {
     
+    var origin: SKNode!
     var playButton: MSButtonNode!
     var presetPlayerName: String?
     var playerNameText: UITextField! = nil
@@ -20,17 +21,21 @@ class MainScene: SKScene, UITextFieldDelegate {
     var loadingImage: SKSpriteNode!
     
     override func didMoveToView(view: SKView) {
-        loadingImage = childNodeWithName("loadingImage") as! SKSpriteNode
+        origin = childNodeWithName("origin")
+        origin.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+        loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
         loadingImage.userInteractionEnabled = false
+        loadingImage.size = self.size
+        loadingImage.position = CGPoint(x: 0, y: self.size.height)
         
-        playButton = childNodeWithName("red orb") as! MSButtonNode
+        playButton = childNodeWithName("//red orb") as! MSButtonNode
         playButton.selectedHandler = {
-            self.loadingImage.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            self.loadingImage.position = CGPoint(x: 0, y: 0)
             
             let goToGameScene = SKAction.runBlock {
                 let skView = self.view as SKView!
                 let scene = GameScene(fileNamed: "GameScene") as GameScene!
-                scene.scaleMode = .AspectFill
+                scene.scaleMode =  SKSceneScaleMode.ResizeFill
                 scene.theEnteredInPlayerName = self.enteredPlayerName
                 skView.presentScene(scene)
             }
