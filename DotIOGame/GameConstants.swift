@@ -21,6 +21,7 @@ class C {
     
     //static let camera_scaleMinimum: CGFloat = 2.5
     static let maxPlayerRadiusToScreenWidthRatio: CGFloat = 0.14285
+    static let warningSign_minScale: CGFloat = 0.5, warningSign_maxScale: CGFloat = 3
     
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000
     
@@ -50,7 +51,7 @@ class C {
         return -r/6 + 160
     }
     
-    static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 500
+    static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 800
     
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [
         .Small : 154,

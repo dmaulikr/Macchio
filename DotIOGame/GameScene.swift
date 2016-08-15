@@ -786,11 +786,7 @@ class GameScene: SKScene {
                 }
     
                 
-                
-                // Make sure the boost button is greyed if the player can't boost
-//                if !player.canBoost {
-//                    boostButton.buttonIcon.texture = boostButton.unableToPressTexture
-//                } else
+                // The boost button changes based on if the player is boosting or not. Kinda a weird way to do things, but it works.
                 if player.isBoosting {
                     boostButton.buttonIcon.alpha = 0.6
                 } else {
@@ -823,14 +819,27 @@ class GameScene: SKScene {
                 }
 
                 
-                // update the positions of warning signs and despawn/hide them as necessary
+                // update the positions/scales of warning signs and despawn/hide them as necessary
                 var warningSignKillList: [WarningSign] = []
                 for warningSign in warningSigns {
                     if let correspondingCreature = warningSign.correspondingCreature {
+                        
+                        let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians 😁
+                        let closestX = correspondingCreature.position.x + cos(angleToCamera) * correspondingCreature.radius
+                        let closestY = correspondingCreature.position.y + sin(angleToCamera) * correspondingCreature.radius
+                        let creatureClosestPointToCameraCenter = CGPoint(x: closestX, y: closestY)
+                        
+                        let distanceAway = camera!.position.distanceTo(creatureClosestPointToCameraCenter)
+                        let scaleFluxuation = C.warningSign_maxScale - C.warningSign_minScale
+                        let theSignScale = C.warningSign_minScale + scaleFluxuation * ((C.alertPlayerAboutLargerCreaturesInRange - distanceAway) / C.alertPlayerAboutLargerCreaturesInRange)
+                        warningSign.xScale = theSignScale
+                        warningSign.yScale = theSignScale
+                        
                         let creaturePositionInRelationToCamera = camera!.convertPoint(correspondingCreature.position, fromNode: self)
                         warningSign.position = creaturePositionInRelationToCamera
                         warningSign.position.x.clamp(-size.width / 2 + warningSign.size.width/2, size.width / 2 - warningSign.size.width/2)
                         warningSign.position.y.clamp(-size.height / 2 + warningSign.size.height/2, size.height / 2 - warningSign.size.height/2)
+                        
                         
                         // Test for despawning based on distance ( how far away is the creature from the camera center? )
                         // 1) is the corresponding creature too far away?
@@ -842,10 +851,6 @@ class GameScene: SKScene {
                         }
                         
                         // 3) Hide if the corresponding creature inside the camera?
-                        let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians 😁
-                        let closestX = correspondingCreature.position.x + cos(angleToCamera) * correspondingCreature.radius
-                        let closestY = correspondingCreature.position.y + sin(angleToCamera) * correspondingCreature.radius
-                        let creatureClosestPointToCameraCenter = CGPoint(x: closestX, y: closestY)
                         if creatureClosestPointToCameraCenter.x > camera!.position.x - size.width/2 * camera!.xScale &&
                            creatureClosestPointToCameraCenter.x < camera!.position.x + size.width/2 * camera!.xScale &&
                            creatureClosestPointToCameraCenter.y > camera!.position.y - size.height/2 * camera!.yScale &&
