@@ -40,7 +40,9 @@ class GameScene: SKScene {
     
     var previousTime: CFTimeInterval? = nil
     
-    let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
+    var gameWorld: SKNode!
+    
+    let mapSize = CGSize(width: 6000, height: 6000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -70,6 +72,7 @@ class GameScene: SKScene {
     var rankLabel: SKLabelNode!
     
     var gameplayHUD: SKNode!
+    var gameOverHUD: SKNode!
     
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -122,15 +125,18 @@ class GameScene: SKScene {
     var loadingImage: SKSpriteNode!
     let loadingImageMoveTime = 0.2
     
+    var darkenNode: SKSpriteNode!
+    
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
+        gameWorld = childNodeWithName("gameWorld")
         player = PlayerCreature(name: theEnteredInPlayerName, playerID: randomID(), color: randomColor(), startRadius: 80)
         defer {
             spawnPlayerNameLabel(forCreature: player!)
         }
 
         player!.position = computeValidCreatureSpawnPoint(player!.radius)
-        self.addChild(player!)
+        gameWorld.addChild(player!)
         
         //camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         //camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
@@ -142,11 +148,13 @@ class GameScene: SKScene {
         //cameraScaleToPlayerRadiusRatio = camera!.xScale / player!.radius
         cameraTarget = player
         
-        bgGraphics = childNodeWithName("bgGraphics")
+        bgGraphics = childNodeWithName("//bgGraphics")
         bgGraphics.xScale = mapSize.width / 6000
         bgGraphics.yScale = mapSize.height / 6000
         
         gameplayHUD = childNodeWithName("//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
+        gameOverHUD = childNodeWithName("//gameOverHUD") // gameOverHUD will act as a container for ui elements when gamescene is in .GameOver state
+        gameOverHUD.alpha = 0
         
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
@@ -168,7 +176,7 @@ class GameScene: SKScene {
         directionArrowAnchor.position = player!.position
         directionArrowAnchor.zRotation = player!.targetAngle.degreesToRadians()
         directionArrowDragMultiplierToPlayerRadiusRatio = 1 / player!.radius
-        self.addChild(directionArrowAnchor)
+        gameWorld.addChild(directionArrowAnchor)
         
         camera!.zPosition = 100
         joyStickBox = childNodeWithName("//joyStickBox")
@@ -192,7 +200,7 @@ class GameScene: SKScene {
         leaveMineButton.onReleased = { return }
         
         orbLayer = SKNode()
-        self.addChild(orbLayer)
+        gameWorld.addChild(orbLayer)
         
         // Initialize orbChunks with empty arrays
         for col in 0..<numOfChunkColumns {
@@ -231,6 +239,12 @@ class GameScene: SKScene {
         loadingImage.size = self.size
         loadingImage.position = CGPoint(x: 0, y: 0)
         
+        darkenNode = SKSpriteNode(color: UIColor.blackColor(), size: mapSize)
+        darkenNode.anchorPoint = CGPoint(x: 0, y: 0)
+        darkenNode.position = CGPoint(x: 0, y: 0)
+        darkenNode.zPosition = 95
+        darkenNode.alpha = 0
+        gameWorld.addChild(darkenNode)
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
@@ -993,22 +1007,38 @@ class GameScene: SKScene {
 //            
 //        })
         let waitOneSecond = SKAction.waitForDuration(1)
-        let showTheButtons = SKAction.runBlock {
-            // Showing the buttons in itself is starting an additional SKAction that will cause them to fade in. And then another action to wait for them to fade in and after they are visible, change their state to active. Bear with me.
-            let btnFadeInTime = 0.5
-            //let fadeInAction = SKAction.fadeInWithDuration(btnFadeInTime)
-            let fadeInAction = SKAction.fadeAlphaTo(0.85, duration: btnFadeInTime)
-            self.restartButton.runAction(fadeInAction)
-            self.backToMenuButton.runAction(fadeInAction)
+//        let showTheButtons = SKAction.runBlock {
+//            // Showing the buttons in itself is starting an additional SKAction that will cause them to fade in. And then another action to wait for them to fade in and after they are visible, change their state to active. Bear with me.
+//            let btnFadeInTime = 0.5
+//            //let fadeInAction = SKAction.fadeInWithDuration(btnFadeInTime)
+//            let fadeInAction = SKAction.fadeAlphaTo(0.85, duration: btnFadeInTime)
+//            self.restartButton.runAction(fadeInAction)
+//            self.backToMenuButton.runAction(fadeInAction)
+//            
+//            let waitForButtonsToFadeIn = SKAction.waitForDuration(btnFadeInTime)
+//            let enableTheButtons = SKAction.runBlock {
+//                self.restartButton.state = .MSButtonNodeStateActive
+//                self.backToMenuButton.state = .MSButtonNodeStateActive
+//            }
+//            self.runAction(SKAction.sequence([waitForButtonsToFadeIn, enableTheButtons]))
+//        }
+        let showTheGameOverHUD = SKAction.runBlock {
+            let fadeInTime = 0.5
+            let fadeInAction = SKAction.fadeAlphaTo(0.85, duration: fadeInTime)
+            self.gameOverHUD.runAction(fadeInAction)
+            self.restartButton.state = .MSButtonNodeStateActive
+            self.backToMenuButton.state = .MSButtonNodeStateActive
             
-            let waitForButtonsToFadeIn = SKAction.waitForDuration(btnFadeInTime)
-            let enableTheButtons = SKAction.runBlock {
-                self.restartButton.state = .MSButtonNodeStateActive
-                self.backToMenuButton.state = .MSButtonNodeStateActive
-            }
-            self.runAction(SKAction.sequence([waitForButtonsToFadeIn, enableTheButtons]))
+            let rankX = self.gameOverHUD.childNodeWithName("rankX") as! SKLabelNode
+            let ofX = self.gameOverHUD.childNodeWithName("ofX") as! SKLabelNode
+            rankX.text = "Rank #\(self.leaderBoard.getRankOfCreature(withID: player.playerID)!)"
+            ofX.text = "of \(self.allCreatures.count + 1)"
         }
-        self.runAction(SKAction.sequence([waitOneSecond, showTheButtons]))
+        self.runAction(SKAction.sequence([waitOneSecond, showTheGameOverHUD]))
+        
+        // Finally, darken the game world
+        let fadeInABit = SKAction.fadeAlphaTo(0.6, duration: 1)
+        darkenNode.runAction(SKAction.sequence([waitOneSecond, fadeInABit]))
         
         
     }

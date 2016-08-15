@@ -145,7 +145,7 @@ extension GameScene {
         let mine = Mine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
         mine.zPosition = 1
-        addChild(mine)
+        gameWorld.addChild(mine)
         goopMines.append(mine)
         return mine
     }
@@ -160,7 +160,7 @@ extension GameScene {
         newCreature.score = Int(CGFloat.random(min: 0, max: 20000))
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
-        addChild(newCreature)
+        gameWorld.addChild(newCreature)
         newCreature.runAction(SKAction.fadeInWithDuration(0.5))
         spawnPlayerNameLabel(forCreature: newCreature)
     }
@@ -169,7 +169,7 @@ extension GameScene {
         let newLabel = masterPlayerNameLabel.copy() as! SKLabelNode
         newLabel.text = c.name!
         playerNameLabelsAndCorrespondingIDs.append((label: newLabel, playerID: c.playerID))
-        self.addChild(newLabel)
+        gameWorld.addChild(newLabel)
     }
     
     func computeValidPlayerName() -> String {
