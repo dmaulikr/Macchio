@@ -69,7 +69,7 @@ class GameScene: SKScene {
     var sizeLabel: SKLabelNode!
     var rankLabel: SKLabelNode!
     
-    var hud: SKNode!
+    var gameplayHUD: SKNode!
     
     var directionArrow: SKSpriteNode!
     var directionArrowTargetPosition: CGPoint!
@@ -146,8 +146,7 @@ class GameScene: SKScene {
         bgGraphics.xScale = mapSize.width / 6000
         bgGraphics.yScale = mapSize.height / 6000
         
-        hud = SKNode() // Hud will act as a container for ui elements
-        camera!.addChild(hud)
+        gameplayHUD = childNodeWithName("//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
         
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
@@ -164,7 +163,7 @@ class GameScene: SKScene {
         directionArrow.zRotation = player!.velocity.angle.degreesToRadians()
         directionArrow.hidden = true
         directionArrowTargetPosition = directionArrow.position
-        hud.addChild(directionArrow)
+        gameplayHUD.addChild(directionArrow)
         directionArrowAnchor = SKNode()
         directionArrowAnchor.position = player!.position
         directionArrowAnchor.zRotation = player!.targetAngle.degreesToRadians()
@@ -179,7 +178,7 @@ class GameScene: SKScene {
         boostButton = BoostButton()
         boostButton.position.x = size.width/2 - boostButton.size.width/2
         boostButton.position.y = -size.height/2 + boostButton.size.height/2
-        hud.addChild(boostButton)
+        gameplayHUD.addChild(boostButton)
         boostButton.addButtonIconToParent()
         boostButton.onPressed = player!.startBoost
         boostButton.onReleased = player!.stopBoost
@@ -187,7 +186,7 @@ class GameScene: SKScene {
         leaveMineButton = MineButton()
         leaveMineButton.position.x = size.width/2 - leaveMineButton.size.width / 2
         leaveMineButton.position.y = -size.height/2 + boostButton.size.height + leaveMineButton.size.height / 2
-        hud.addChild(leaveMineButton)
+        gameplayHUD.addChild(leaveMineButton)
         leaveMineButton.addButtonIconToParent()
         leaveMineButton.onPressed = player!.leaveMine
         leaveMineButton.onReleased = { return }
@@ -213,7 +212,7 @@ class GameScene: SKScene {
         let boardY = (size.height/2) - (leaderBoard.slotSize.height*leaderBoard.yScale*CGFloat(leaderBoard.numberOfSlots)) - 10
         
         leaderBoard.position = CGPoint(x: boardX, y: boardY)
-        hud.addChild(leaderBoard)
+        gameplayHUD.addChild(leaderBoard)
         
         masterPlayerNameLabel = childNodeWithName("playerNameLabelMaster") as! SKLabelNode
         let dummyPlayer = childNodeWithName("playerdummy") as! SKSpriteNode
@@ -804,7 +803,7 @@ class GameScene: SKScene {
                             
                             newWarningSign.zPosition = -6
                             warningSigns.append(newWarningSign)
-                            hud.addChild(newWarningSign)
+                            gameplayHUD.addChild(newWarningSign)
                         }
                     }
                 }
@@ -912,7 +911,7 @@ class GameScene: SKScene {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
             newLabelNode.text = "+\(points)"
             newLabelNode.position = convertPoint(convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player), toNode: camera!)
-            hud.addChild(newLabelNode)
+            gameplayHUD.addChild(newLabelNode)
             newLabelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.8))
             newLabelNode.runAction(SKAction.fadeOutWithDuration(0.8), completion: {
                 self.removeFromParent()
@@ -925,7 +924,7 @@ class GameScene: SKScene {
         let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
         newLabelNode.position = CGPoint(x: 0, y: size.height/4)
         newLabelNode.text = "+\(points)"
-        hud.addChild(newLabelNode)
+        gameplayHUD.addChild(newLabelNode)
         newLabelNode.xScale = 0.5
         newLabelNode.yScale = 0.5
         let scaleToNormalSizeAction = SKAction.scaleTo(1, duration: 0.15)
@@ -980,7 +979,7 @@ class GameScene: SKScene {
 //        for child in hud.children {
 //            child.runAction(hideAction)
 //        }
-        hud.runAction(hideAction)
+        gameplayHUD.runAction(hideAction)
         //Hide names
         for nameLabel in (playerNameLabelsAndCorrespondingIDs.map {$0.label}) {
             nameLabel.runAction(hideAction)
