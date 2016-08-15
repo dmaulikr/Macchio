@@ -923,7 +923,7 @@ class GameScene: SKScene {
     func spawnKillPoints(points: Int) {
         if points <= 0 { return }
         let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
-        newLabelNode.position = CGPoint(x: 0, y: 50)
+        newLabelNode.position = CGPoint(x: 0, y: size.height/4)
         newLabelNode.text = "+\(points)"
         hud.addChild(newLabelNode)
         newLabelNode.xScale = 0.5
