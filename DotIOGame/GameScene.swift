@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 0.35
+            zoomOutFactor: 1.3
     )
     let mixpanelTracker = RYNMixpanelTracker()
     
@@ -43,7 +43,8 @@ class GameScene: SKScene {
     let mapSize: (width: CGFloat, height: CGFloat) = (width: 6000, height: 6000)
     var bgGraphics: SKNode!
     
-    var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
+    //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
+    //var cameraScaleToPlayerRadiusRatio: CGFloat!
     var cameraTarget: SKNode!
     
     var player: Creature?
@@ -131,10 +132,14 @@ class GameScene: SKScene {
         player!.position = computeValidCreatureSpawnPoint(player!.radius)
         self.addChild(player!)
         
-        camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
-        camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
-        cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
-        cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player!.radius
+        //camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+        //camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+        let theCameraScale = calculateCameraScale(givenPlayerRadius: player!.radius, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
+        camera!.xScale = theCameraScale
+        camera!.yScale = theCameraScale
+        //cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
+        //cameraScaleToPlayerRadiusRatios.y = camera!.yScale / player!.radius
+        //cameraScaleToPlayerRadiusRatio = camera!.xScale / player!.radius
         cameraTarget = player
         
         bgGraphics = childNodeWithName("bgGraphics")
@@ -736,9 +741,10 @@ class GameScene: SKScene {
         if let player = player {
             if gameState != .GameOver {
     
-                let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
-                camera!.xScale = theCameraScale.dx
-                camera!.yScale = theCameraScale.dy
+                //let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
+                let theCameraScale = calculateCameraScale(givenPlayerRadius: player.radius, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
+                camera!.xScale = theCameraScale
+                camera!.yScale = theCameraScale
                 
                 camera!.position = cameraTarget.position //Follow player on the x axis and y axis
                 
@@ -780,7 +786,8 @@ class GameScene: SKScene {
                 
                 
                 // Warning Signs dealt with here! ⚠️
-                let testingRange = C.alertPlayerAboutLargerCreaturesInRange * cameraScaleToPlayerRadiusRatios.x * player.radius
+                //let testingRange = C.alertPlayerAboutLargerCreaturesInRange * size.width * camera!.xScale
+                let testingRange = C.alertPlayerAboutLargerCreaturesInRange
                 // spawn new warning signs if a large enough player is within range (range scales with camera)
                 for creature in otherCreatures {
                     if creature === player { continue }
@@ -1039,10 +1046,21 @@ class GameScene: SKScene {
         return nil
     }
     
-    func calculateCameraScale(forGivenPlayerRadius playerRadius: CGFloat) -> CGVector {
-        let theResultingXScale = (cameraScaleToPlayerRadiusRatios.x * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
-        let theResultingYScale = (cameraScaleToPlayerRadiusRatios.y * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
-        return CGVector(dx: theResultingXScale, dy: theResultingYScale)
+//    func calculateCameraScale(forGivenPlayerRadius playerRadius: CGFloat) -> CGFloat {
+//        let theResultingScale = (cameraScaleToPlayerRadiusRatio * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+////        let theResultingYScale = (cameraScaleToPlayerRadiusRatios.y * playerRadius * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
+//        //return CGVector(dx: theResultingXScale, dy: theResultingYScale)
+//        return theResultingScale
+//    }
+    
+    func calculateCameraScale(givenPlayerRadius radius: CGFloat, givenMaxPlayerRadiusToScreenWidthRatio maxRatio: CGFloat) -> CGFloat {
+        let returnScale: CGFloat
+        if radius / self.size.width > maxRatio {
+            returnScale = pow(maxRatio, -1) * radius / self.size.width
+        } else {
+            returnScale = 1
+        }
+        return returnScale * prefs.zoomOutFactor
     }
     
 }

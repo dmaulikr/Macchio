@@ -19,7 +19,8 @@ class C {
     static let creaturesToAreaRatio: CGFloat = 0.0000011
     static let orbsToAreaRatio: CGFloat = 0.00002
     
-    static let camera_scaleMinimum: CGFloat = 2.5
+    //static let camera_scaleMinimum: CGFloat = 2.5
+    static let maxPlayerRadiusToScreenWidthRatio: CGFloat = 0.14285
     
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000
     
