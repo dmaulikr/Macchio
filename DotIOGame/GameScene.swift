@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1.3
+            zoomOutFactor: 1.5
     )
     let mixpanelTracker = RYNMixpanelTracker()
     
