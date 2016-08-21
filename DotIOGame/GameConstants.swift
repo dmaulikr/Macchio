@@ -21,6 +21,7 @@ class C {
     
     //static let camera_scaleMinimum: CGFloat = 2.5
     static let maxPlayerRadiusToScreenWidthRatio: CGFloat = 0.14285
+    static let minPlayerRadiusToScreenWidthRatio: CGFloat = 0.06692
     static let warningSign_minScale: CGFloat = 0.5, warningSign_maxScale: CGFloat = 3
     
     static let orbBeacon_minimumValueRequirement: CGFloat = 20000

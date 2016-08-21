@@ -27,7 +27,7 @@ class GameScene: SKScene {
         zoomOutFactor: CGFloat) = (
             showJoyStick: true,
             showArrow: true,
-            zoomOutFactor: 1.5
+            zoomOutFactor: 1
     )
     let mixpanelTracker = RYNMixpanelTracker()
     
@@ -127,6 +127,8 @@ class GameScene: SKScene {
     
     var darkenNode: SKSpriteNode!
     
+    var largePointDisplay: LargePointDisplay!
+    
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         gameWorld = childNodeWithName("gameWorld")
@@ -140,7 +142,7 @@ class GameScene: SKScene {
         
         //camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         //camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
-        let theCameraScale = calculateCameraScale(givenPlayerRadius: player!.radius, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
+        let theCameraScale = calculateCameraScale(givenPlayerRadius: player!.radius, givenMinPlayerRadiusToScreenWidthRatio: C.minPlayerRadiusToScreenWidthRatio, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
         camera!.xScale = theCameraScale
         camera!.yScale = theCameraScale
         //cameraScaleToPlayerRadiusRatios.x = camera!.xScale / player!.radius
@@ -245,6 +247,10 @@ class GameScene: SKScene {
         darkenNode.zPosition = 95
         darkenNode.alpha = 0
         gameWorld.addChild(darkenNode)
+        
+        largePointDisplay = LargePointDisplay(size: CGSize(width: self.size.width, height: self.size.height/4))
+        largePointDisplay.position = CGPoint(x: 0, y: self.size.height/4)
+        gameplayHUD.addChild(largePointDisplay)
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
@@ -378,7 +384,7 @@ class GameScene: SKScene {
         handleOrbSpawningAndDecay()
         handleCreatureSpawning()
         
-        updateUI()
+        updateUI(CGFloat(deltaTime))
         
         
         if let player = player {
@@ -749,13 +755,13 @@ class GameScene: SKScene {
         }
     }
     
-    func updateUI() {
+    func updateUI(deltaTime: CGFloat) {
         //      ---- UI-ey things ----
         if let player = player {
             if gameState != .GameOver {
     
                 //let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
-                let theCameraScale = calculateCameraScale(givenPlayerRadius: player.radius, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
+                let theCameraScale = calculateCameraScale(givenPlayerRadius: player.radius, givenMinPlayerRadiusToScreenWidthRatio: C.minPlayerRadiusToScreenWidthRatio, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
                 camera!.xScale = theCameraScale
                 camera!.yScale = theCameraScale
                 
@@ -921,6 +927,9 @@ class GameScene: SKScene {
         //bgGraphics.position = camera!.position.distanceTo(centerOfMap) / CGFloat(20)
         bgGraphics.position = (camera!.position - centerOfMap) / CGPoint(x: 4, y: 4)
         
+        // Update largePointDisplay
+        largePointDisplay.update(deltaTime)
+        
         
     }
     
@@ -939,20 +948,22 @@ class GameScene: SKScene {
     }
     
     func spawnKillPoints(points: Int) {
+//        if points <= 0 { return }
+//        let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
+//        newLabelNode.position = CGPoint(x: 0, y: size.height/4)
+//        newLabelNode.text = "+\(points)"
+//        gameplayHUD.addChild(newLabelNode)
+//        newLabelNode.xScale = 0.5
+//        newLabelNode.yScale = 0.5
+//        let scaleToNormalSizeAction = SKAction.scaleTo(1, duration: 0.15)
+//        newLabelNode.runAction(scaleToNormalSizeAction)
+//        let waitAction = SKAction.waitForDuration(1)
+//        let fadeAction = SKAction.fadeOutWithDuration(0.5)
+//        newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
+//            newLabelNode.removeFromParent()
+//        })
         if points <= 0 { return }
-        let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
-        newLabelNode.position = CGPoint(x: 0, y: size.height/4)
-        newLabelNode.text = "+\(points)"
-        gameplayHUD.addChild(newLabelNode)
-        newLabelNode.xScale = 0.5
-        newLabelNode.yScale = 0.5
-        let scaleToNormalSizeAction = SKAction.scaleTo(1, duration: 0.15)
-        newLabelNode.runAction(scaleToNormalSizeAction)
-        let waitAction = SKAction.waitForDuration(1)
-        let fadeAction = SKAction.fadeOutWithDuration(0.5)
-        newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
-            newLabelNode.removeFromParent()
-        })
+        largePointDisplay.addPointLabel(withText: ("+\(points)"))
     }
     
     func randomID() -> Int {
@@ -1087,12 +1098,14 @@ class GameScene: SKScene {
 //        return theResultingScale
 //    }
     
-    func calculateCameraScale(givenPlayerRadius radius: CGFloat, givenMaxPlayerRadiusToScreenWidthRatio maxRatio: CGFloat) -> CGFloat {
+    func calculateCameraScale(givenPlayerRadius radius: CGFloat, givenMinPlayerRadiusToScreenWidthRatio minRatio: CGFloat, givenMaxPlayerRadiusToScreenWidthRatio maxRatio: CGFloat) -> CGFloat {
+        let myMinScale = pow(minRatio, -1) * C.creature_minRadius / self.size.width
+        
         let returnScale: CGFloat
-        if radius / self.size.width > maxRatio {
+        if radius / (self.size.width * myMinScale) > maxRatio {
             returnScale = pow(maxRatio, -1) * radius / self.size.width
         } else {
-            returnScale = 1
+            returnScale = myMinScale
         }
         return returnScale * prefs.zoomOutFactor
     }

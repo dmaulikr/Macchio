@@ -14,7 +14,7 @@ class LeaderBoard: SKNode {
     //The position of this node represents the lower left corner
     let numberOfSlots = 10
     let slotSize = CGSize(width: 560, height: 32)
-    let slotPadding: CGFloat = 20
+    let slotPadding: CGFloat = 30
     
     var slotSprites = [SKSpriteNode]() //Represents the actual rectangles that make up the slots
     var entryLabels = [(place: SKLabelNode, playerName: SKLabelNode, score: SKLabelNode)!]() // 0  is first place. 1 = 2nd, etc

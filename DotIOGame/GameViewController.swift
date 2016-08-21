@@ -1,6 +1,6 @@
 //
 //  GameViewController.swift
-//  DotIOGame
+//  Macchio
 //
 //  Created by Ryan Anderson on 7/10/16.
 //  Copyright (c) 2016 Ryan Anderson. All rights reserved.
@@ -46,7 +46,7 @@ class GameViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
-
+    
     override func prefersStatusBarHidden() -> Bool {
         return true
     }

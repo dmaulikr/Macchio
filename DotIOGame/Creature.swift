@@ -285,22 +285,13 @@ class Creature: SKSpriteNode, BoundByCircle {
             let assignRadius = self.targetRadius + (elapsedTime / CGFloat(expandTime))*growRadiusByAmount
             self.size = CGSize(width: assignRadius*2, height: assignRadius*2)
         })
-        //let unexpandAction = SKAction.scaleTo(1, duration: totalPulseTime/2)
-        self.runAction(SKAction.sequence([expandAction/*, unexpandAction*/]))
+        self.runAction(expandAction)
         
         let waitForExpandToEnd = SKAction.waitForDuration(expandTime)
-        //let setFlagAction = SKAction.runBlock {
-        //    self.spawnMineAtMyTail = true
-        //}
-        //runAction(SKAction.sequence([waitForExpandToEnd, setFlagAction]))
+        
         runAction(waitForExpandToEnd, completion:  {
             if let _ = self.parent { self.spawnMineAtMyTail = true }
         })
-//        runAction(waitAction, completion: {
-//        if self.canLeaveMine { self.spawnMineAtMyTail = true }
-//            // GameScene will see that this has turned true and spawn the mine for us
-//            // do the things the player does after leaving a mine
-//        })
     }
     var canLeaveMine: Bool {
 //        return targetRadius * (1-percentSizeSacrificeToLeaveMine) > Creature.minRadius &&

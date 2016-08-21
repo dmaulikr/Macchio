@@ -83,7 +83,7 @@ class AIActionComputerBasic: AIActionComputer {
             if let gameScene = myCreature.gameScene {
                 
                 // Before doing any cool ai stuff, lets update the radar distance to be like something the player would see
-                radarDistance = (gameScene.calculateCameraScale(givenPlayerRadius: myCreature.radius, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)) * gameScene.size.width
+                radarDistance = (gameScene.calculateCameraScale(givenPlayerRadius: myCreature.radius, givenMinPlayerRadiusToScreenWidthRatio: C.minPlayerRadiusToScreenWidthRatio, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)) * gameScene.size.width
                 
                 // First things first, figure out the ideal direction to turn.
                 // We do this by assigning numbers to each sector around mycreature and going toward the one with the highest number.

@@ -21,6 +21,13 @@ class MainScene: SKScene, UITextFieldDelegate {
     var loadingImage: SKSpriteNode!
     
     override func didMoveToView(view: SKView) {
+        
+        if ResourceLoader.isInitialized {
+            // Great! Resources are initialized!
+        } else {
+            ResourceLoader.initialize()
+        }
+        
         origin = childNodeWithName("origin")
         origin.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
         loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
