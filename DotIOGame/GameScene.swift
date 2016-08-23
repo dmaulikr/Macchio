@@ -157,6 +157,10 @@ class GameScene: SKScene {
         gameplayHUD = childNodeWithName("//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
         gameOverHUD = childNodeWithName("//gameOverHUD") // gameOverHUD will act as a container for ui elements when gamescene is in .GameOver state
         gameOverHUD.alpha = 0
+        let rankX = gameOverHUD.childNodeWithName("rankX")!
+        rankX.alpha = 0.8
+        let ofX = gameOverHUD.childNodeWithName("ofX")!
+        ofX.alpha = 0.8
         
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
@@ -948,22 +952,11 @@ class GameScene: SKScene {
     }
     
     func spawnKillPoints(points: Int) {
-//        if points <= 0 { return }
-//        let newLabelNode = killPointsLabelOriginal.copy() as! SKLabelNode
-//        newLabelNode.position = CGPoint(x: 0, y: size.height/4)
-//        newLabelNode.text = "+\(points)"
-//        gameplayHUD.addChild(newLabelNode)
-//        newLabelNode.xScale = 0.5
-//        newLabelNode.yScale = 0.5
-//        let scaleToNormalSizeAction = SKAction.scaleTo(1, duration: 0.15)
-//        newLabelNode.runAction(scaleToNormalSizeAction)
-//        let waitAction = SKAction.waitForDuration(1)
-//        let fadeAction = SKAction.fadeOutWithDuration(0.5)
-//        newLabelNode.runAction(SKAction.sequence([waitAction, fadeAction]), completion: {
-//            newLabelNode.removeFromParent()
-//        })
         if points <= 0 { return }
         largePointDisplay.addPointLabel(withText: ("+\(points)"))
+        // Bump camera
+        let bumpAction = SKAction(named: "Bump")!
+        camera!.runAction(bumpAction)
     }
     
     func randomID() -> Int {
