@@ -1,6 +1,6 @@
 //
 //  MineButton.swift
-//  DotIOGame
+//  Macchio
 //
 //  Created by Ryan Anderson on 7/14/16.
 //  Copyright © 2016 Ryan Anderson. All rights reserved.
@@ -10,7 +10,6 @@ import Foundation
 import SpriteKit
 
 class MineButton: SKSpriteNode {
-    // This is kinda a clone of boost button lol
     
     let greenTexture = SKTexture(imageNamed: "shuriken_button_green") //TODO change the textures
     let greyTexture = SKTexture(imageNamed: "shuriken_button_grey")
@@ -32,7 +31,7 @@ class MineButton: SKSpriteNode {
     var greenPart: SKSpriteNode!
     
     init() {
-        greenPart = SKSpriteNode(imageNamed: "green orb.png")
+        greenPart = SKSpriteNode(imageNamed: "green_circle_solid.png")
         super.init(texture: nil, color: SKColor.whiteColor(), size: CGSize(width: 100, height: 100))
         alpha = 0.001 //Basically u can't see it. this is the hitbox
         self.userInteractionEnabled = true

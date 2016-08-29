@@ -11,6 +11,7 @@ import SpriteKit
 
 class Creature: SKSpriteNode, BoundByCircle {
     // A generic creature class!
+    var isDead = false // A boolean flag that can be set externally
     var playerID: Int = 0
     var playerColor: Color = .Red
     static let textures: [Color: SKTexture] = [

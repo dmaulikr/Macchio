@@ -42,7 +42,7 @@ class GameScene: SKScene {
     
     var gameWorld: SKNode!
     
-    let mapSize = CGSize(width: 6000, height: 6000)
+    let mapSize = CGSize(width: 3000, height: 3000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -582,13 +582,14 @@ class GameScene: SKScene {
                     let theBigger = creature.radius > other.radius ? creature : other
                     let theSmaller = creature !== theBigger ? creature : other
                     if theBigger.radius > theSmaller.radius * C.percentLargerRadiusACreatureMustBeToEngulfAnother {
-                        if theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
+                        if !theSmaller.isDead && theBigger.position.distanceTo(theSmaller.position) < theBigger.radius {
                             // The bigger has successfully engulfed the smaller
                             theBigger.targetArea += theSmaller.growAmount * C.energyTransferPercent
                             theEaten.append(theSmaller)
                             let deltaScore = convertAreaToKillPoints(theSmaller.targetArea)
                             //theBigger.score += deltaScore
                             theBigger.awardPoints(deltaScore, fromSource: .KillsEat)
+                            theSmaller.isDead = true
                             if theBigger === player {
                                 // add a flying number
                                 //spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
@@ -781,9 +782,7 @@ class GameScene: SKScene {
                     directionArrow.position += CGVector(dx: deltaX / 2, dy: deltaY / 2)
                 }
                 
-                // Change mine buttons image to can leave or can't
-                //if player.canLeaveMine { leaveMineButton.buttonIcon.texture = leaveMineButton.canPressTexture }
-                //else { leaveMineButton.buttonIcon.texture = leaveMineButton.unableToPressTexture }
+                // Scale the leave mine button cropped green part to proportional to how close the the player's mine power is to being recharged
                 leaveMineButton.greenPart.xScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
                 leaveMineButton.greenPart.yScale = player.mineCoolDownCounter / C.creature_mineCooldownTime
                 if player.mineCoolDownCounter >= C.creature_mineCooldownTime &&
@@ -834,7 +833,7 @@ class GameScene: SKScene {
                 for warningSign in warningSigns {
                     if let correspondingCreature = warningSign.correspondingCreature {
                         
-                        let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians 😁
+                        let angleToCamera = (camera!.position - correspondingCreature.position).angle // in radians
                         let closestX = correspondingCreature.position.x + cos(angleToCamera) * correspondingCreature.radius
                         let closestY = correspondingCreature.position.y + sin(angleToCamera) * correspondingCreature.radius
                         let creatureClosestPointToCameraCenter = CGPoint(x: closestX, y: closestY)
