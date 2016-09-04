@@ -150,19 +150,21 @@ extension GameScene {
         return mine
     }
     
-    
-    func spawnAICreature() {
-        //print("new AI creature spawned")
-        //let newCreature = AICreature(theGameScene: self, name: "BS Player Name", playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: C.creature_minRadius + 60), rxnTime: CGFloat.random(min: 0.2, max: 0.4))
-        
-        let newCreature = AICreature(theGameScene: self, name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), startRadius: CGFloat.random(min: C.creature_minRadius, max: CGFloat(150)), rxnTime: CGFloat.random(min: 0.25, max: 0.4))
-        newCreature.position = computeValidCreatureSpawnPoint(newCreature.radius)
+    func spawnAICreature(atPosition pos: CGPoint = CGPoint(x: 0, y: 0), withRadius radius: CGFloat = C.creature_minRadius) -> Creature {
+        let newCreature = AICreature(theGameScene: self, name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), startRadius: radius, rxnTime: CGFloat.random(min: 0.25, max: 0.4))
+        newCreature.position = pos
         newCreature.score = Int(CGFloat.random(min: 0, max: 20000))
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         gameWorld.addChild(newCreature)
         newCreature.runAction(SKAction.fadeInWithDuration(0.5))
         spawnPlayerNameLabel(forCreature: newCreature)
+        return newCreature
+    }
+    
+    func spawnAICreatureAtRandomPosition() {
+        let radius = CGFloat.random(min: C.creature_minRadius, max: CGFloat(150))
+        spawnAICreature(atPosition: computeValidCreatureSpawnPoint(radius), withRadius: radius)
     }
     
     func spawnPlayerNameLabel(forCreature c: Creature) {

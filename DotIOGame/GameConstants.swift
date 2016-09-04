@@ -16,7 +16,7 @@ class C {
     // Not all game constants are here. Yet. My goal is for all of them to be here
     // Functions do count as constants.
     static let energyTransferPercent: CGFloat = 0.85 //energy transfer percent is the grow amount that is kept when energy changes state (e.g. creature ->X% mine ->X% orbs)
-    static let creaturesToAreaRatio: CGFloat = 0.0000011
+    static let creaturesToAreaRatio: CGFloat = 0.0000090
     static let orbsToAreaRatio: CGFloat = 0.00002
     
     //static let camera_scaleMinimum: CGFloat = 2.5

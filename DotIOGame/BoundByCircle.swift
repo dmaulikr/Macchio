@@ -21,6 +21,18 @@ extension BoundByCircle {
     func overlappingCircle(other: BoundByCircle) -> Bool {
         return position.distanceTo(other.position) < radius + other.radius
     }
+    
+    func pointOnCircleClosestToOtherPoint(otherPoint: CGPoint, circlePosition: CGPoint) -> CGPoint {
+        if circlePosition.distanceTo(otherPoint) <= radius {
+            return otherPoint
+        } else {
+            let angleToOtherPoint = (otherPoint - circlePosition).angle
+            let x = circlePosition.x + cos(angleToOtherPoint) * radius
+            let y = circlePosition.y + sin(angleToOtherPoint) * radius
+            return CGPoint(x: x, y: y)
+        }
+    }
+    
     var pointRight: CGPoint {
         return CGPoint(x: position.x + radius, y: position.y)
     }

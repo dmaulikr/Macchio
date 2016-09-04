@@ -42,7 +42,7 @@ class GameScene: SKScene {
     
     var gameWorld: SKNode!
     
-    let mapSize = CGSize(width: 3000, height: 3000)
+    let mapSize = CGSize(width: 6000, height: 6000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -50,10 +50,13 @@ class GameScene: SKScene {
     var cameraTarget: SKNode!
     
     var player: Creature?
-    let spawnPosition = CGPoint(x: 200, y: 200)
+    //let spawnPosition = CGPoint(x: 200, y: 200)
     var otherCreatures: [Creature] = []
     var allCreatures: [Creature] {
         return (player != nil ? [player!] : []) + otherCreatures
+    }
+    var creaturesExistWithinDistanceOfCamera: CGFloat {
+        return CGPoint(x: size.width/2, y: size.height/2).length() * 3.5
     }
     
     enum PointSource {
@@ -106,7 +109,15 @@ class GameScene: SKScene {
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(C.orbsToAreaRatio * mapSize.width * mapSize.height) }
     
-    var numOfCreaturesThatMustExist: Int { return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height) }
+    var numOfCreaturesThatMustExist: Int {
+        //return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height)
+        var areaToWorkWith = areaOfCircleWithRadius(creaturesExistWithinDistanceOfCamera)
+        // We could simply return the number of creatures that should be spawned in this circular area, but this would result in high creature densities at the map edges. To prevent that, we won't let creatures spawn when the radius contacts any walls
+        if camera!.position.x - creaturesExistWithinDistanceOfCamera < 0 || camera!.position.x + creaturesExistWithinDistanceOfCamera > mapSize.width || camera!.position.y - creaturesExistWithinDistanceOfCamera < 0 || camera!.position.y + creaturesExistWithinDistanceOfCamera > mapSize.height {
+            areaToWorkWith /= 2 //*Sigh... I'm to lazy to do the math for deducting area.
+        }
+        return Int(areaToWorkWith * C.creaturesToAreaRatio)
+    }
     
     var goopMines: [Mine] = []
     
@@ -386,7 +397,7 @@ class GameScene: SKScene {
         
         handleMineSpawningAndDecay()
         handleOrbSpawningAndDecay()
-        handleCreatureSpawning()
+        handleCreatureSpawningAndDecay()
         
         updateUI(CGFloat(deltaTime))
         
@@ -659,13 +670,13 @@ class GameScene: SKScene {
                 } else {
                     valueForMine = 0
                 }
-                //let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
-                //let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius / 2)
-                //let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius / 2)
-                //let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius/2, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
-                freshMine.name = "\(creature.name!) shuriken"
-                
+                let freshMineRadiusInRelationToCreature: CGFloat = 0.80
+                let freshMineSpawnAngle = (creature.velocity.angle + 180).degreesToRadians()
+                let freshMineX = creature.position.x + cos(freshMineSpawnAngle) * (creature.radius * freshMineRadiusInRelationToCreature)
+                let freshMineY = creature.position.y + sin(freshMineSpawnAngle) * (creature.radius * freshMineRadiusInRelationToCreature)
+                let freshMine = self.spawnMineAtPosition(CGPoint(x: freshMineX, y: freshMineY), mineRadius: creature.radius * freshMineRadiusInRelationToCreature, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                //let freshMine = self.spawnMineAtPosition(creature.position, mineRadius: creature.radius, growAmount: valueForMine, color: creature.playerColor, leftByPlayerID: creature.playerID)
+                //freshMine.name = "\(creature.name!) shuriken"
                 
                 creature.freshlySpawnedMines.append(freshMine)
                 
@@ -753,11 +764,33 @@ class GameScene: SKScene {
         }
     }
     
-    func handleCreatureSpawning() {
-        let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
-        for _ in 0..<numOfCreaturesThatNeedToBeSpawnedNow {
-            spawnAICreature()
+    func handleCreatureSpawningAndDecay() {
+        //let numOfCreaturesThatNeedToBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
+        let numOfCreaturesThatMustBeSpawnedNow = numOfCreaturesThatMustExist - otherCreatures.count
+        if numOfCreaturesThatMustBeSpawnedNow > 0 {
+            for _ in 0..<numOfCreaturesThatMustBeSpawnedNow {
+                //compute a valid spawn point for the new AI Creature
+                let newCreature = spawnAICreature()
+                let newRadius = CGFloat.random(min: C.creature_minRadius, max: 200)
+                newCreature.radius = newRadius
+                newCreature.targetRadius = newRadius
+                
+                
+                let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
+                let randDistance = creaturesExistWithinDistanceOfCamera * CGFloat.random(min: 0.75, max: 1)
+                newCreature.position = CGPoint(x: camera!.position.x + randDistance*cos(randAngle), y: camera!.position.y + randDistance*sin(randAngle))
+            }
         }
+        
+        for creature in otherCreatures {
+            let closestPointOnCreature = creature.pointOnCircleClosestToOtherPoint(camera!.position, circlePosition: creature.position)
+            if camera!.position.distanceTo(closestPointOnCreature) > creaturesExistWithinDistanceOfCamera {
+                creature.isDead = true
+                creature.removeFromParent()
+            }
+        }
+        otherCreatures = otherCreatures.filter { !$0.isDead }
+        
     }
     
     func updateUI(deltaTime: CGFloat) {
