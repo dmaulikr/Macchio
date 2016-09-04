@@ -174,10 +174,10 @@ extension GameScene {
         gameWorld.addChild(newLabel)
     }
     
-    func computeValidPlayerName() -> String {
+    func computeValidPlayerName(attemptNumber: Int = 0) -> String {
         let randName = C.randomPlayerNames.randomItem()
         for c in allCreatures {
-            if c.name == randName && c.name != "" { return computeValidPlayerName() }
+            if c.name == randName && c.name != "" && attemptNumber < 10 { return computeValidPlayerName(attemptNumber + 1) }
         }
         return randName
     }

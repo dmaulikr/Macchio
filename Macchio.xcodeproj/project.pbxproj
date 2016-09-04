@@ -214,8 +214,8 @@
 			children = (
 				833102921D495B9700B8844A /* AICreatureOld.swift */,
 				836713241D3AC7A10062D8C0 /* AICreature.swift */,
-				833102901D48238100B8844A /* AIActionComputer.swift */,
 				83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */,
+				833102901D48238100B8844A /* AIActionComputer.swift */,
 			);
 			name = AI;
 			sourceTree = "<group>";

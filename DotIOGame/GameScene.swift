@@ -42,7 +42,7 @@ class GameScene: SKScene {
     
     var gameWorld: SKNode!
     
-    let mapSize = CGSize(width: 6000, height: 6000)
+    let mapSize = CGSize(width: 7000, height: 7000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -59,6 +59,28 @@ class GameScene: SKScene {
         return CGPoint(x: size.width/2, y: size.height/2).length() * 3.5
     }
     
+    // Since it requires too much computing power to keep track of a lot of players real time ( and I mean 300 ish players as a lot), there are some "fake players." Basically just names and numbers that are changed at random.
+    struct FakePlayerDataBundle {
+        let name: String
+        let playerID: Int
+        let color: Color
+        var score: Int
+        var radius: CGFloat
+    }
+    var fakePlayerDataBundles = [FakePlayerDataBundle]()
+    
+    // The fake data needs to change seemingly spontaneously to seem realistic. It would look funny if they all changed at once, so I've decided to have a small, aribtrary number of timers. If there a 4, the 1st timer would only apply to the 1st fourth of the fake data bundles, 2nd to second fourth, etc.
+    var changeFakeDataTimers: [Double] = [0, 0, 0, 0]
+    
+    // New players need to join, seemingly gradually, so there we have the join timer
+    var fakeDataJoinTimer: Double = 0
+    
+    // To represent the chaos happening in fake, imaginary land, fake datas might randomly get destroyed
+    var fakeDataDestroyTimer: Double = 0
+    
+    var creatureLimit = 330
+    
+    // Enum constants representing the different ways players can obtain points in the game
     enum PointSource {
         case Orbs, KillsEat, KillsMine, Size
     }
@@ -112,7 +134,7 @@ class GameScene: SKScene {
     var numOfCreaturesThatMustExist: Int {
         //return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height)
         var areaToWorkWith = areaOfCircleWithRadius(creaturesExistWithinDistanceOfCamera)
-        // We could simply return the number of creatures that should be spawned in this circular area, but this would result in high creature densities at the map edges. To prevent that, we won't let creatures spawn when the radius contacts any walls
+        // We could simply return the number of creatures that should be spawned in this circular area, but this would result in high creature densities at the map edges. To prevent that, we'll allow less to spawn if the radius is contacting the walls.
         if camera!.position.x - creaturesExistWithinDistanceOfCamera < 0 || camera!.position.x + creaturesExistWithinDistanceOfCamera > mapSize.width || camera!.position.y - creaturesExistWithinDistanceOfCamera < 0 || camera!.position.y + creaturesExistWithinDistanceOfCamera > mapSize.height {
             areaToWorkWith /= 2 //*Sigh... I'm to lazy to do the math for deducting area.
         }
@@ -151,6 +173,13 @@ class GameScene: SKScene {
         player!.position = computeValidCreatureSpawnPoint(player!.radius)
         gameWorld.addChild(player!)
         
+        // Initialize the fake data with lots of fake data :D
+        let numOfFakePlayersToStartWith = 300 + Int(CGFloat.random(min: -20, max: 5))
+        for _ in 0..<numOfFakePlayersToStartWith {
+            let newFakeData = FakePlayerDataBundle(name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), score: Int(CGFloat.random(min: 0, max: 20_000)), radius: CGFloat.random(min: C.creature_minRadius, max: C.creature_maxRadius))
+            fakePlayerDataBundles.append(newFakeData)
+        }
+        
         //camera!.xScale = (camera!.xScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         //camera!.yScale = (camera!.yScale * prefs.zoomOutFactor).clamped(C.camera_scaleMinimum, 100)
         let theCameraScale = calculateCameraScale(givenPlayerRadius: player!.radius, givenMinPlayerRadiusToScreenWidthRatio: C.minPlayerRadiusToScreenWidthRatio, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
@@ -164,6 +193,9 @@ class GameScene: SKScene {
         bgGraphics = childNodeWithName("//bgGraphics")
         bgGraphics.xScale = mapSize.width / 6000
         bgGraphics.yScale = mapSize.height / 6000
+        let stageBounds = childNodeWithName("//stageBounds")!
+        stageBounds.xScale = bgGraphics.xScale
+        stageBounds.yScale = bgGraphics.yScale
         
         gameplayHUD = childNodeWithName("//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
         gameOverHUD = childNodeWithName("//gameOverHUD") // gameOverHUD will act as a container for ui elements when gamescene is in .GameOver state
@@ -269,6 +301,7 @@ class GameScene: SKScene {
     }
     
     func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
+        //THIS function computes a spawn point ANYWHEERE on the entire map. I don't use this function much anymore.
         // This function assumes the creature has not been spawned yet
         let randX = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.width - creatureStartRadius )
         let randY = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.height - creatureStartRadius)
@@ -378,13 +411,37 @@ class GameScene: SKScene {
             c.position.x.clamp(0 + c.targetRadius, mapSize.width-c.targetRadius)
             c.position.y.clamp(0 + c.targetRadius, mapSize.height-c.targetRadius)
         }
-        for orbChunkCol in orbChunks {
-            for orbChunk in orbChunkCol {
-                for orb in orbChunk {
+        
+        
+        // For updating orbs, I could call the update method of each node individually, but with a huge map, this isn't worth it. So I'll only update the ones in notable chunks
+        
+//        for orbChunkCol in orbChunks {
+//            for orbChunk in orbChunkCol {
+//                for orb in orbChunk {
+//                    orb.update(deltaTime)
+//                }
+//            }
+//        }
+        let notablePointsOnCamera = [
+            CGPoint(x: 0, y: 0),
+            CGPoint(x: size.width/2, y: 0),
+            CGPoint(x: size.width/2, y: size.height/2),
+            CGPoint(x: 0, y: size.height/2),
+            CGPoint(x: -size.width/2, y: size.height/2),
+            CGPoint(x: -size.width/2, y: 0),
+            CGPoint(x: -size.width/2, y: -size.height/2),
+            CGPoint(x: 0, y: -size.height/2),
+            CGPoint(x: size.width/2, y: -size.height/2),
+        ]
+        for point in notablePointsOnCamera {
+            let pointInWorld = self.convertPoint(point, fromNode: camera!)
+            if let chunkCoords = convertWorldPointToOrbChunkLocation(pointInWorld) {
+                for orb in orbChunks[chunkCoords.x][chunkCoords.y] {
                     orb.update(deltaTime)
                 }
             }
         }
+        
         for mine in goopMines {
             mine.update(deltaTime)
         }
@@ -398,6 +455,7 @@ class GameScene: SKScene {
         handleMineSpawningAndDecay()
         handleOrbSpawningAndDecay()
         handleCreatureSpawningAndDecay()
+        handleFakePlayerData(deltaTime)
         
         updateUI(CGFloat(deltaTime))
         
@@ -405,7 +463,7 @@ class GameScene: SKScene {
         if let player = player {
             playerSize = convertAreaToSizeNumber(player.targetArea)
             playerScore = player.score
-            rankLabel.text = "Rank \(leaderBoard.getRankOfCreature(withID: player.playerID)!) of \(allCreatures.count)"
+            rankLabel.text = "Rank \(leaderBoard.getRankOfCreature(withID: player.playerID)!) of \(allCreatures.count + fakePlayerDataBundles.count)"
         }
         if let playerMovingTouch = playerMovingTouch {
             //print(frozenTouchCounter)
@@ -652,10 +710,6 @@ class GameScene: SKScene {
                 mine.removeFromParent()
             })
         }
-//        let minesInScene = self.children.filter { $0 is Mine }
-//        if minesInScene.count > 0 {
-//            print(goopMines.count / minesInScene.count)
-//        }
         
         // SPAWNING of mines (behind players with their flags on) 👹 💣
         // Here I believe all creatures will be treated equally
@@ -775,10 +829,11 @@ class GameScene: SKScene {
                 newCreature.radius = newRadius
                 newCreature.targetRadius = newRadius
                 
-                
-                let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-                let randDistance = creaturesExistWithinDistanceOfCamera * CGFloat.random(min: 0.75, max: 1)
-                newCreature.position = CGPoint(x: camera!.position.x + randDistance*cos(randAngle), y: camera!.position.y + randDistance*sin(randAngle))
+                repeat {
+                    let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
+                    let randDistance = creaturesExistWithinDistanceOfCamera * CGFloat.random(min: 0.75, max: 1)
+                    newCreature.position = CGPoint(x: camera!.position.x + randDistance*cos(randAngle), y: camera!.position.y + randDistance*sin(randAngle))
+                } while (newCreature.position.x - newCreature.radius < 0 || newCreature.position.x + newCreature.radius > mapSize.width || newCreature.position.y - newCreature.radius < 0 || newCreature.position.y + newCreature.radius > mapSize.height)
             }
         }
         
@@ -790,6 +845,39 @@ class GameScene: SKScene {
             }
         }
         otherCreatures = otherCreatures.filter { !$0.isDead }
+        
+    }
+    
+    func handleFakePlayerData(deltaTime: Double) {
+        // Firstly, make the data change in interesting ways
+        for i in 0..<changeFakeDataTimers.count {
+            changeFakeDataTimers[i] -= deltaTime
+            if changeFakeDataTimers[i] <= 0 {
+                changeFakeDataTimers[i] = Double(CGFloat.random(min: 1, max: 6))
+                // Update only a portion of the datas based on the index
+                let startIndex = (fakePlayerDataBundles.count/changeFakeDataTimers.count) * i
+                let endIndex = startIndex + (fakePlayerDataBundles.count/changeFakeDataTimers.count) - 1
+                for dataIndex in startIndex...endIndex {
+                    fakePlayerDataBundles[dataIndex].score += Int(CGFloat.random(min: -200, max: 200))
+                }
+            }
+        }
+        
+        // If "someone wants to join" the match, then let them join
+        fakeDataJoinTimer -= deltaTime
+        if fakeDataJoinTimer <= 0 && allCreatures.count + fakePlayerDataBundles.count < creatureLimit {
+            fakeDataJoinTimer = Double(CGFloat.random(min: 7, max: 15))
+            let newFakeData = FakePlayerDataBundle(name: computeValidPlayerName(), playerID: randomID(), color: randomColor(), score: Int(CGFloat.random(min: 0, max: 20_000)), radius: CGFloat.random(min: C.creature_minRadius, max: C.creature_maxRadius))
+            fakePlayerDataBundles.append(newFakeData)
+        }
+        
+        // Randomly kill off a fake data sometimes
+        fakeDataDestroyTimer -= deltaTime
+        if fakeDataDestroyTimer <= 0 {
+            fakeDataDestroyTimer = Double(CGFloat.random(min: 7, max: 15))
+            let randArrayIndex = Int(arc4random_uniform(UInt32(fakePlayerDataBundles.count)))
+            fakePlayerDataBundles.removeAtIndex(randArrayIndex)
+        }
         
     }
     
@@ -922,7 +1010,8 @@ class GameScene: SKScene {
                 
                 // Update the leaderboard with data from all the creatures that exist
                 let creatureData = allCreatures.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name!, playerID: $0.playerID, score: $0.score, color: $0.playerColor) }
-                leaderBoard.update(creatureData)
+                let fakeData = fakePlayerDataBundles.map { LeaderBoard.CreatureDataSnapshot(playerName: $0.name, playerID: $0.playerID, score: $0.score, color: $0.color) }
+                leaderBoard.update(creatureData + fakeData)
                 
                 // Update the player name labels!
                 var keepNameLabelsAndIDs: [(label: SKLabelNode, playerID: Int)] = []
@@ -993,7 +1082,7 @@ class GameScene: SKScene {
     
     func randomID() -> Int {
         // Generates a random id number, authenticates it, then returns it
-        let randNum = Int(CGFloat.random(min: 10, max: 5000))
+        let randNum = Int(CGFloat.random(min: 10, max: 999999999))
         let takenIDs: [Int] = allCreatures.map { $0.playerID }
         for id in takenIDs {
             if id == randNum { return randomID() }
@@ -1073,7 +1162,7 @@ class GameScene: SKScene {
             let rankX = self.gameOverHUD.childNodeWithName("rankX") as! SKLabelNode
             let ofX = self.gameOverHUD.childNodeWithName("ofX") as! SKLabelNode
             rankX.text = "Rank #\(self.leaderBoard.getRankOfCreature(withID: player.playerID)!)"
-            ofX.text = "of \(self.allCreatures.count + 1)"
+            ofX.text = "of \(self.allCreatures.count + 1 + self.fakePlayerDataBundles.count)"
         }
         self.runAction(SKAction.sequence([waitOneSecond, showTheGameOverHUD]))
         
