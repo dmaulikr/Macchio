@@ -42,7 +42,7 @@ class GameScene: SKScene {
     
     var gameWorld: SKNode!
     
-    let mapSize = CGSize(width: 7000, height: 7000)
+    let mapSize = CGSize(width: 3000, height: 3000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -56,7 +56,7 @@ class GameScene: SKScene {
         return (player != nil ? [player!] : []) + otherCreatures
     }
     var creaturesExistWithinDistanceOfCamera: CGFloat {
-        return CGPoint(x: size.width/2, y: size.height/2).length() * 3.5
+        return CGPoint(x: size.width/2, y: size.height/2).length() * 2.5
     }
     
     // Since it requires too much computing power to keep track of a lot of players real time ( and I mean 300 ish players as a lot), there are some "fake players." Basically just names and numbers that are changed at random.
@@ -400,8 +400,9 @@ class GameScene: SKScene {
         }
     }
     
+    var currentTimestamp: CFTimeInterval = 0
     override func update(currentTime: CFTimeInterval) {
-        
+        currentTimestamp = currentTime
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
         
@@ -433,13 +434,28 @@ class GameScene: SKScene {
             CGPoint(x: 0, y: -size.height/2),
             CGPoint(x: size.width/2, y: -size.height/2),
         ]
+        var updateChunkCoords: [(x: Int, y: Int)] = []
         for point in notablePointsOnCamera {
             let pointInWorld = self.convertPoint(point, fromNode: camera!)
             if let chunkCoords = convertWorldPointToOrbChunkLocation(pointInWorld) {
-                for orb in orbChunks[chunkCoords.x][chunkCoords.y] {
-                    orb.update(deltaTime)
+                // Only add these chunk coords to the updating array if is isn't already there
+                var alreadyThere = false
+                for otherCoord in updateChunkCoords {
+                    if otherCoord.x == chunkCoords.x && otherCoord.y == chunkCoords.y {
+                        alreadyThere = true
+                        break
+                    }
+                }
+                if alreadyThere {
+                    // Don't add to the update array
+                } else {
+                    updateChunkCoords.append(chunkCoords)
                 }
             }
+        }
+        //Finally, actually update all the chunk coords
+        for coord in updateChunkCoords {
+            for orb in orbChunks[coord.x][coord.y] { orb.update(deltaTime) }
         }
         
         for mine in goopMines {
@@ -831,8 +847,9 @@ class GameScene: SKScene {
                 
                 repeat {
                     let randAngle = CGFloat.random(min: 0, max: 360).degreesToRadians()
-                    let randDistance = creaturesExistWithinDistanceOfCamera * CGFloat.random(min: 0.75, max: 1)
+                    let randDistance = (creaturesExistWithinDistanceOfCamera * CGFloat.random(min: 0.75, max: 1)) - newCreature.radius
                     newCreature.position = CGPoint(x: camera!.position.x + randDistance*cos(randAngle), y: camera!.position.y + randDistance*sin(randAngle))
+                    //print("AI spawnpoint computed at timestamp \(currentTimestamp)")
                 } while (newCreature.position.x - newCreature.radius < 0 || newCreature.position.x + newCreature.radius > mapSize.width || newCreature.position.y - newCreature.radius < 0 || newCreature.position.y + newCreature.radius > mapSize.height)
             }
         }
