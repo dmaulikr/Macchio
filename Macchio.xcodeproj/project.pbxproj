@@ -22,6 +22,7 @@
 		836713211D3972900062D8C0 /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713201D3972900062D8C0 /* MainScene.swift */; };
 		836713231D3984410062D8C0 /* Creature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713221D3984410062D8C0 /* Creature.swift */; };
 		836713251D3AC7A10062D8C0 /* AICreature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836713241D3AC7A10062D8C0 /* AICreature.swift */; };
+		83799E4D1D7E2D5400F20BE6 /* assets2.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 83799E4C1D7E2D5400F20BE6 /* assets2.atlas */; };
 		83900A0F1D6A459B0038F586 /* CameraActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 83900A0E1D6A459B0038F586 /* CameraActions.sks */; };
 		839388811D4670BE002AD481 /* TouchPoint.sks in Resources */ = {isa = PBXBuildFile; fileRef = 839388801D4670BE002AD481 /* TouchPoint.sks */; };
 		83957B901D32FDDE00BF4450 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83957B8F1D32FDDE00BF4450 /* AppDelegate.swift */; };
@@ -52,6 +53,7 @@
 		83B49F601D63E21900560BDD /* ResourceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B49F5F1D63E21900560BDD /* ResourceLoader.swift */; };
 		83B49F621D63E42D00560BDD /* MasterLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B49F611D63E42D00560BDD /* MasterLabels.swift */; };
 		83D3D0211D513E9200C87AEC /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D3D0201D513E9200C87AEC /* ArrayExtension.swift */; };
+		83D675F71D7D150E004330BB /* assets.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 83D675F61D7D150E004330BB /* assets.atlas */; };
 		83D8A4A41D529B7D00A7C653 /* LeaderBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D8A4A31D529B7D00A7C653 /* LeaderBoard.swift */; };
 		83E1B9761D4B054700B4EEFB /* AIActionComputerBasic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */; };
 /* End PBXBuildFile section */
@@ -73,6 +75,7 @@
 		836713201D3972900062D8C0 /* MainScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
 		836713221D3984410062D8C0 /* Creature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Creature.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		836713241D3AC7A10062D8C0 /* AICreature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AICreature.swift; sourceTree = "<group>"; };
+		83799E4C1D7E2D5400F20BE6 /* assets2.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = assets2.atlas; sourceTree = "<group>"; };
 		83900A0E1D6A459B0038F586 /* CameraActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CameraActions.sks; sourceTree = "<group>"; };
 		839388801D4670BE002AD481 /* TouchPoint.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TouchPoint.sks; sourceTree = "<group>"; };
 		83957B8C1D32FDDE00BF4450 /* Macchio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macchio.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +108,7 @@
 		83B49F5F1D63E21900560BDD /* ResourceLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceLoader.swift; sourceTree = "<group>"; };
 		83B49F611D63E42D00560BDD /* MasterLabels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterLabels.swift; sourceTree = "<group>"; };
 		83D3D0201D513E9200C87AEC /* ArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
+		83D675F61D7D150E004330BB /* assets.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = assets.atlas; sourceTree = "<group>"; };
 		83D8A4A31D529B7D00A7C653 /* LeaderBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeaderBoard.swift; sourceTree = "<group>"; };
 		83E1B9751D4B054700B4EEFB /* AIActionComputerBasic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIActionComputerBasic.swift; sourceTree = "<group>"; };
 		F35BDB5988B8511E3884CB70 /* Pods-Macchio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Macchio.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Macchio/Pods-Macchio.debug.xcconfig"; sourceTree = "<group>"; };
@@ -167,6 +171,8 @@
 				83957B8D1D32FDDE00BF4450 /* Products */,
 				83957B971D32FDDE00BF4450 /* Main.storyboard */,
 				83957B9A1D32FDDE00BF4450 /* Assets.xcassets */,
+				83799E4C1D7E2D5400F20BE6 /* assets2.atlas */,
+				83D675F61D7D150E004330BB /* assets.atlas */,
 				83957B9C1D32FDDE00BF4450 /* LaunchScreen.storyboard */,
 				83957B9F1D32FDDE00BF4450 /* Info.plist */,
 				8367131E1D39700E0062D8C0 /* MainScene.sks */,
@@ -313,7 +319,9 @@
 				83957B9B1D32FDDE00BF4450 /* Assets.xcassets in Resources */,
 				8367131F1D39700E0062D8C0 /* MainScene.sks in Resources */,
 				83B49F5C1D63DD2000560BDD /* MasterLabels.sks in Resources */,
+				83799E4D1D7E2D5400F20BE6 /* assets2.atlas in Resources */,
 				83957B991D32FDDE00BF4450 /* Main.storyboard in Resources */,
+				83D675F71D7D150E004330BB /* assets.atlas in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

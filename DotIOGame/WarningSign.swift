@@ -17,7 +17,8 @@ class WarningSign: SKSpriteNode {
     
     init(creature: Creature) {
         self.correspondingCreature = creature
-        let texture = SKTexture(imageNamed: "warning sign.png")
+        //let texture = SKTexture(imageNamed: "warning sign.png")
+        let texture = SKTexture(imageNamed: "warning_sign.png")
         let size = CGSize(width: 50, height: 50)
         super.init(texture: texture, color: SKColor.whiteColor(), size: size)
         

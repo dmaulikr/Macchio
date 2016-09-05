@@ -11,7 +11,7 @@ import SpriteKit
 
 class MineButton: SKSpriteNode {
     
-    let greenTexture = SKTexture(imageNamed: "shuriken_button_green") //TODO change the textures
+    //let greenTexture = SKTexture(imageNamed: "shuriken_button_green") //TODO change the textures
     let greyTexture = SKTexture(imageNamed: "shuriken_button_grey")
     var onPressed: () -> Void = { print("No mine pressed action set") }
     var onReleased: () -> Void = { print("No mine realeased action set.") }
