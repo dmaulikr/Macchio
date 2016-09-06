@@ -43,7 +43,7 @@ class LargePointDisplay: SKNode {
         // Uses SKActions to move around all the label nodes to look good and appear in chronological order.
         let allLabelNodes = pointLabels.map { $0.labelNode }
         for (index, labelNode) in allLabelNodes.enumerate() {
-            let moveToProperPosition = SKAction.moveTo(CGPoint(x: 0, y: index * 35), duration: 0.25)
+            let moveToProperPosition = SKAction.moveTo(CGPoint(x: 0, y: index * 40), duration: 0.25)
             labelNode.runAction(moveToProperPosition)
         }
     }
