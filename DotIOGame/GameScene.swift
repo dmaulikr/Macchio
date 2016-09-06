@@ -56,7 +56,7 @@ class GameScene: SKScene {
         return (player != nil ? [player!] : []) + otherCreatures
     }
     var creaturesExistWithinDistanceOfCamera: CGFloat {
-        return CGPoint(x: size.width/2, y: size.height/2).length() * 2.5
+        return CGPoint(x: (size.width*camera!.xScale)/2, y: (size.height*camera!.yScale)/2).length() * 2.5
     }
     
     // Since it requires too much computing power to keep track of a lot of players real time ( and I mean 300 ish players as a lot), there are some "fake players." Basically just names and numbers that are changed at random.
