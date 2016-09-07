@@ -421,7 +421,7 @@ class GameScene: SKScene {
         var orbCount = 0
         for orbCol in orbChunks {
             for orbChunk in orbCol {
-                for orb in orbChunk {
+                for _ in orbChunk {
                     orbCount += 1
                 }
             }

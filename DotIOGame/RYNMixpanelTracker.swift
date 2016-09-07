@@ -16,15 +16,14 @@ class RYNMixpanelTracker {
     }
     
     func trackGameFinished(playTime: Double, finalScore: Int, percentScoreFromSize: Double, percentScoreFromOrbs: Double, percentScoreFromKills: Double, finalRank: Int) {
-        // TODO re-enable
-//        mixpanel.track("Game Finished",
-//                       properties: ["Play Time": playTime,
-//                        "Final Score": finalScore,
-//                        "Percent Score From Size": percentScoreFromSize,
-//                        "Percent Score From Orbs": percentScoreFromOrbs,
-//                        "Percent Score From Kills": percentScoreFromKills,
-//                        "Final Rank": finalRank
-//        ])
+        mixpanel.track("Game Finished",
+                       properties: ["Play Time": playTime,
+                        "Final Score": finalScore,
+                        "Percent Score From Size": percentScoreFromSize,
+                        "Percent Score From Orbs": percentScoreFromOrbs,
+                        "Percent Score From Kills": percentScoreFromKills,
+                        "Final Rank": finalRank
+        ])
         //print("Size: \(percentScoreFromSize) \nOrbs: \(percentScoreFromOrbs) \nKills: \(percentScoreFromKills)")
         
     }
