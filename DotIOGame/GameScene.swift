@@ -1,6 +1,6 @@
 //
 //  GameScene.swift
-//  DotIOGame
+//  Macchio
 //
 //  Created by Ryan Anderson on 7/10/16.
 //  Copyright (c) 2016 Ryan Anderson. All rights reserved.
@@ -42,7 +42,21 @@ class GameScene: SKScene {
     
     var gameWorld: SKNode!
     
-    let mapSize = CGSize(width: 3000, height: 3000)
+    var notablePointsOnCamera: [CGPoint] {
+        return [
+        CGPoint(x: 0, y: 0),
+        CGPoint(x: size.width/2, y: 0),
+        CGPoint(x: size.width/2, y: size.height/2),
+        CGPoint(x: 0, y: size.height/2),
+        CGPoint(x: -size.width/2, y: size.height/2),
+        CGPoint(x: -size.width/2, y: 0),
+        CGPoint(x: -size.width/2, y: -size.height/2),
+        CGPoint(x: 0, y: -size.height/2),
+        CGPoint(x: size.width/2, y: -size.height/2),
+        ]
+    }
+    
+    let mapSize = CGSize(width: 6000, height: 6000)
     var bgGraphics: SKNode!
     
     //var cameraScaleToPlayerRadiusRatios: (x: CGFloat!, y: CGFloat!) = (x: nil, y: nil)
@@ -130,6 +144,7 @@ class GameScene: SKScene {
     var numOfChunkColumns: Int { return Int(mapSize.width / orbChunkWidth) }
     var numOfChunkRows: Int { return Int(mapSize.height / orbChunkHeight) }
     var numOfOrbsThatNeedToBeInTheWorld: Int { return Int(C.orbsToAreaRatio * mapSize.width * mapSize.height) }
+    var numOfOrbsPerChunk: Int { return Int(C.orbsToAreaRatio * orbChunkWidth * orbChunkHeight) }
     
     var numOfCreaturesThatMustExist: Int {
         //return Int(C.creaturesToAreaRatio * mapSize.width * mapSize.height)
@@ -402,6 +417,18 @@ class GameScene: SKScene {
     
     var currentTimestamp: CFTimeInterval = 0
     override func update(currentTime: CFTimeInterval) {
+        
+        var orbCount = 0
+        for orbCol in orbChunks {
+            for orbChunk in orbCol {
+                for orb in orbChunk {
+                    orbCount += 1
+                }
+            }
+        }
+        print("orb count \(orbCount)")
+        print("AI Count \(otherCreatures.count)")
+        
         currentTimestamp = currentTime
         let deltaTime = currentTime - (previousTime ?? currentTime)
         previousTime = currentTime
@@ -423,17 +450,7 @@ class GameScene: SKScene {
 //                }
 //            }
 //        }
-        let notablePointsOnCamera = [
-            CGPoint(x: 0, y: 0),
-            CGPoint(x: size.width/2, y: 0),
-            CGPoint(x: size.width/2, y: size.height/2),
-            CGPoint(x: 0, y: size.height/2),
-            CGPoint(x: -size.width/2, y: size.height/2),
-            CGPoint(x: -size.width/2, y: 0),
-            CGPoint(x: -size.width/2, y: -size.height/2),
-            CGPoint(x: 0, y: -size.height/2),
-            CGPoint(x: size.width/2, y: -size.height/2),
-        ]
+        
         var updateChunkCoords: [(x: Int, y: Int)] = []
         for point in notablePointsOnCamera {
             let pointInWorld = self.convertPoint(point, fromNode: camera!)
@@ -798,40 +815,82 @@ class GameScene: SKScene {
         }
     }
     
+    let orbFadeAction = SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds))
     func handleOrbSpawningAndDecay() {
-        var currrentOrbCount = 0
-        for (colIndex ,chunkCol) in orbChunks.enumerate() {
-            for (rowIndex, chunk) in chunkCol.enumerate() {
-                //var decayedOrbs: [EnergyOrb] = []
-                for orb in chunk {
-                    if orb.artificiallySpawned == false { currrentOrbCount += 1 }
+        
+        
+        // Spawn new orbs where they are needed
+        // Remove expired orbs (with fade effect)
+        
+        let chunkCoords = notablePointsOnCamera.map {
+            convertWorldPointToOrbChunkLocation(self.convertPoint($0, fromNode: camera!))
+        }
+        for chunkCoord in chunkCoords {
+            if let coord = chunkCoord {
+                // Within each chunk, new natural orbs will be spawned and artificial orbs that are expired will be removed.
+                
+                // Calculate number of orbs that should be spawned in this chunk right here right now. Then actually spawn them.
+                let naturalOrbs = orbChunks[coord.x][coord.y].filter { $0.artificiallySpawned == false }
+                let numToSpawn = numOfOrbsPerChunk - naturalOrbs.count
+                if numToSpawn > 0 {
+                    for _ in 0..<numToSpawn {
+                        let randX = CGFloat(coord.x) * orbChunkWidth + CGFloat.random(min: 0, max: orbChunkWidth)
+                        let randY = CGFloat(coord.y) * orbChunkHeight + CGFloat.random(min: 0, max: orbChunkHeight)
+                        let orbPosition = CGPoint(x: randX, y: randY)
+                        let randType: OrbType = CGFloat.random() > 0.9 ? .Rich : .Small
+                        seedOrbWithSpecifiedType(randType, atPosition: orbPosition)
+                    }
                 }
                 
-                // Basically take out all the dead orbs. That means removing them from the array and calling removeFromParent()
-                orbChunks[colIndex][rowIndex] = orbChunks[colIndex][rowIndex].filter { $0.isAlive }
-                let deadOrbs = orbChunks[colIndex][rowIndex].filter { !$0.isAlive }
-                for deadOrb in deadOrbs {
-                    deadOrb.removeFromParent()
+                // Find the orbs that are close to decay and begin the fading process
+                let orbsToFade = (orbChunks[coord.x][coord.y]).filter { $0.isNearDecay && !$0.isAlreadyFading }
+                for orb in orbsToFade {
+                    orb.runAction(orbFadeAction)
                 }
                 
-                // And for the ones that are near decay, start a fade effect.
-                let orbsInNeedOfAFadeEffect = orbChunks[colIndex][rowIndex].filter { $0.isNearDecay && !$0.isAlreadyFading }
-                for nearDecayOrb in orbsInNeedOfAFadeEffect {
-                    nearDecayOrb.isAlreadyFading = true
-                    nearDecayOrb.runAction(SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds)))
+                // Find the expired orbs and destroy them
+                let expiredOrbs = (orbChunks[coord.x][coord.y]).filter { !$0.isAlive }
+                for orb in expiredOrbs {
+                    orb.removeFromParent()
                 }
+                orbChunks[coord.x][coord.y] = (orbChunks[coord.x][coord.y]).filter { !expiredOrbs.contains($0) }
             }
         }
-                
-        let numOfOrbsToSpawnNow = numOfOrbsThatNeedToBeInTheWorld - currrentOrbCount
-        if numOfOrbsToSpawnNow > 0 {
-            for _ in 0..<numOfOrbsToSpawnNow {
-                // x times, spawn an orb at a random world positon
-                let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
-                let randType: OrbType = CGFloat.random() > 0.9 ? .Rich : .Small
-                seedOrbWithSpecifiedType(randType, atPosition: newPosition)
-            }
-        }
+        
+        
+//        var currrentOrbCount = 0
+//        for (colIndex ,chunkCol) in orbChunks.enumerate() {
+//            for (rowIndex, chunk) in chunkCol.enumerate() {
+//                //var decayedOrbs: [EnergyOrb] = []
+//                for orb in chunk {
+//                    if orb.artificiallySpawned == false { currrentOrbCount += 1 }
+//                }
+//                
+//                // Basically take out all the dead orbs. That means removing them from the array and calling removeFromParent()
+//                orbChunks[colIndex][rowIndex] = orbChunks[colIndex][rowIndex].filter { $0.isAlive }
+//                let deadOrbs = orbChunks[colIndex][rowIndex].filter { !$0.isAlive }
+//                for deadOrb in deadOrbs {
+//                    deadOrb.removeFromParent()
+//                }
+//                
+//                // And for the ones that are near decay, start a fade effect.
+//                let orbsInNeedOfAFadeEffect = orbChunks[colIndex][rowIndex].filter { $0.isNearDecay && !$0.isAlreadyFading }
+//                for nearDecayOrb in orbsInNeedOfAFadeEffect {
+//                    nearDecayOrb.isAlreadyFading = true
+//                    nearDecayOrb.runAction(SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds)))
+//                }
+//            }
+//        }
+//                
+//        let numOfOrbsToSpawnNow = numOfOrbsThatNeedToBeInTheWorld - currrentOrbCount
+//        if numOfOrbsToSpawnNow > 0 {
+//            for _ in 0..<numOfOrbsToSpawnNow {
+//                // x times, spawn an orb at a random world positon
+//                let newPosition = CGPoint(x: CGFloat.random(min: 0, max: mapSize.width), y: CGFloat.random(min: 0, max: mapSize.height) )
+//                let randType: OrbType = CGFloat.random() > 0.9 ? .Rich : .Small
+//                seedOrbWithSpecifiedType(randType, atPosition: newPosition)
+//            }
+//        }
     }
     
     func handleCreatureSpawningAndDecay() {

@@ -20,7 +20,7 @@ class Mine: SKSpriteNode, BoundByCircle {
     
     var radius: CGFloat = 100 //BS default values
     var growAmount: CGFloat = 100
-    let lifeSpan: CGFloat = 2.2 //Constant to be tweaked
+    let lifeSpan: CGFloat = 2.0 //Constant to be tweaked
     var lifeCounter: CGFloat = 0
     var rps: CGFloat = 1 // Rotations per second
     var deltaRPSPerSecond: CGFloat = -1
