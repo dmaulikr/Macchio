@@ -426,8 +426,8 @@ class GameScene: SKScene {
                 }
             }
         }
-        print("orb count \(orbCount)")
-        print("AI Count \(otherCreatures.count)")
+        //print("orb count \(orbCount)")
+        //print("AI Count \(otherCreatures.count)")
         
         currentTimestamp = currentTime
         let deltaTime = currentTime - (previousTime ?? currentTime)
