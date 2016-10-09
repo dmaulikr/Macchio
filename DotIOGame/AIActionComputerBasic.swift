@@ -87,7 +87,7 @@ class AIActionComputerBasic: AIActionComputer {
                 
                 // First things first, figure out the ideal direction to turn.
                 // We do this by assigning numbers to each sector around mycreature and going toward the one with the highest number.
-                let minesNearMe = gameScene.goopMines.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
+                let minesNearMe = gameScene.mines.filter { $0.position.distanceTo(myCreature.position) < radarDistance }
                 
                 let orbsNearMe = myCreature.myOrbChunk
                 

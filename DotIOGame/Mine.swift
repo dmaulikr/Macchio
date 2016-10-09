@@ -42,7 +42,7 @@ class Mine: SKSpriteNode, BoundByCircle {
         self.zRotation = CGFloat.random(min: 0, max: 360).degreesToRadians()
     }
     
-    func belongsToCreature(creature: PlayerCreature) -> Bool {
+    func belongsToCreature(creature: Creature) -> Bool {
         return creature.playerID == self.leftByPlayerID
     }
     

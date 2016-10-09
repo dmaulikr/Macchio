@@ -146,7 +146,7 @@ extension GameScene {
         mine.position = atPosition
         mine.zPosition = 1
         gameWorld.addChild(mine)
-        goopMines.append(mine)
+        mines.append(mine)
         return mine
     }
     

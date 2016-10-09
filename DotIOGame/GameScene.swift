@@ -156,7 +156,7 @@ class GameScene: SKScene {
         return Int(areaToWorkWith * C.creaturesToAreaRatio)
     }
     
-    var goopMines: [Mine] = []
+    var mines: [Mine] = []
     
     var warningSigns: [WarningSign] = []
     var killPointsLabelOriginal: SKLabelNode!
@@ -475,7 +475,7 @@ class GameScene: SKScene {
             for orb in orbChunks[coord.x][coord.y] { orb.update(deltaTime) }
         }
         
-        for mine in goopMines {
+        for mine in mines {
             mine.update(deltaTime)
         }
         for warningSign in warningSigns { warningSign.update(CGFloat(deltaTime)) }
@@ -601,7 +601,7 @@ class GameScene: SKScene {
         // Mine collisions with creatures including player
         var creatureKillList: [Creature] = []
         for creature in allCreatures {
-            for mine in goopMines {
+            for mine in mines {
                 if mine.overlappingCircle(creature) && !creature.freshlySpawnedMines.contains(mine) {
                     
                     if creature.targetRadius >= C.creature_minimumRadiusToApplyMineSizeReductionInsteadOfInstantDeath {
@@ -641,7 +641,8 @@ class GameScene: SKScene {
                         // creature just died
                         creatureKillList.append(creature)
                         seedOrbCluster(ofType: .Glorious, withBudget: creature.growAmount * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: creature.targetRadius * C.creature_orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
-
+                        destroyMines(ofCreature: creature)
+                        
                         let deltaScore = convertAreaToKillPoints(creature.targetArea)
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
@@ -692,6 +693,7 @@ class GameScene: SKScene {
                             //theBigger.score += deltaScore
                             theBigger.awardPoints(deltaScore, fromSource: .KillsEat)
                             theSmaller.isDead = true
+                            destroyMines(ofCreature: theSmaller)
                             if theBigger === player {
                                 // add a flying number
                                 //spawnFlyingNumberOnPlayerMouth(convertAreaToScore(theSmaller.targetArea))
@@ -728,16 +730,39 @@ class GameScene: SKScene {
 
     }
     
+    func destroyMines(ofCreature creature: Creature, spawnOrbCluster: Bool = true) {
+        var removeMines = [Mine]()
+        for mine in mines {
+            if mine.belongsToCreature(creature) {
+                removeMines.append(mine)
+            }
+        }
+        mines = mines.filter { !removeMines.contains($0) }
+        let shrinkAction = SKAction.scaleTo(0, duration: 1)
+        let fadeAction = SKAction.fadeOutWithDuration(0.5)
+        for mine in removeMines {
+            mine.runAction(shrinkAction)
+            mine.runAction(fadeAction, completion: {
+                mine.removeFromParent()
+            })
+            if spawnOrbCluster {
+                seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
+            }
+        }
+    }
+    
     func handleMineSpawningAndDecay() {
         // DESPAWNING of decayed mines
         // get rid of the decayed mines and seed orbs in their place
-        let mineKillList = goopMines.filter { $0.lifeCounter > $0.lifeSpan }
-        goopMines = goopMines.filter { !mineKillList.contains($0) }
+        let mineKillList = mines.filter { $0.lifeCounter > $0.lifeSpan }
+        mines = mines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
             // when the orb cluster is seeded, mine.growAmount is not multiplied by C.energyTransferPercent, because this was already applied when the creature left the mine. (Remember: energy transfer percent is the grow amount that is kept when it changes state (e.g. creature ->X% mine ->X% orbs)
             seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
             let shrinkAction = SKAction.scaleTo(0, duration: 1)
             mine.runAction(shrinkAction)
+            let fadeAction = SKAction.fadeOutWithDuration(0.5)
+            mine.runAction(fadeAction)
             let waitForShrink = SKAction.waitForDuration(1)
             runAction(waitForShrink, completion: {
                 mine.removeFromParent()
@@ -801,7 +826,7 @@ class GameScene: SKScene {
         }
         
         
-        for mine in (goopMines.filter { $0.zPosition != 90 }) {
+        for mine in (mines.filter { $0.zPosition != 90 }) {
             var isFreshToSomebody = false
             for creature in (allCreatures.filter { $0.freshlySpawnedMines.count > 0 }) {
                 if creature.freshlySpawnedMines.contains(mine) {
