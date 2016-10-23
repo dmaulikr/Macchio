@@ -1201,7 +1201,7 @@ class GameScene: SKScene {
         }
         
         // Let the camera zoom out over so slowly
-        let zoomOutAction = SKAction.scaleBy(3, duration: 30)
+        let zoomOutAction = SKAction.scaleBy(2, duration: 30)
         camera!.runAction(zoomOutAction)
         
         // nillfiying player will remove it from allCreatures; it won't move anymore
