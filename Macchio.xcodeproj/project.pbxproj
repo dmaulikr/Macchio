@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0BA2E2BEC507ED8A7FF528F1 /* Pods_Macchio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F9A468A9E075E3FBCCCDC6E /* Pods_Macchio.framework */; };
+		8304CF8F1DBD55A600A99243 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8304CF8E1DBD55A600A99243 /* UserState.swift */; };
 		831D6EBA1D42CD7000F5491F /* GameConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831D6EB91D42CD7000F5491F /* GameConstants.swift */; };
 		832B23B61D619EAE0078F32D /* LargePointDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832B23B51D619EAE0078F32D /* LargePointDisplay.swift */; };
 		833102691D46A27200B8844A /* WarningSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833102681D46A27200B8844A /* WarningSign.swift */; };
@@ -61,6 +62,7 @@
 /* Begin PBXFileReference section */
 		1D6F892D9806B8E2A8094646 /* Pods-Macchio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Macchio.release.xcconfig"; path = "Pods/Target Support Files/Pods-Macchio/Pods-Macchio.release.xcconfig"; sourceTree = "<group>"; };
 		4F9A468A9E075E3FBCCCDC6E /* Pods_Macchio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Macchio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8304CF8E1DBD55A600A99243 /* UserState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
 		831D6EB91D42CD7000F5491F /* GameConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConstants.swift; sourceTree = "<group>"; };
 		832B23B51D619EAE0078F32D /* LargePointDisplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LargePointDisplay.swift; sourceTree = "<group>"; };
 		833102681D46A27200B8844A /* WarningSign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarningSign.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				839F9BD91D5A5331003C7B47 /* RYNMixpanelTracker.swift */,
 				83B49F5F1D63E21900560BDD /* ResourceLoader.swift */,
 				83900A0E1D6A459B0038F586 /* CameraActions.sks */,
+				8304CF8E1DBD55A600A99243 /* UserState.swift */,
 			);
 			path = DotIOGame;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				83957BB91D33FBEC00BF4450 /* CGFloat+Extensions.swift in Sources */,
 				83957B961D32FDDE00BF4450 /* GameViewController.swift in Sources */,
 				836713151D358D3D0062D8C0 /* BoundByCircle.swift in Sources */,
+				8304CF8F1DBD55A600A99243 /* UserState.swift in Sources */,
 				83B49F621D63E42D00560BDD /* MasterLabels.swift in Sources */,
 				8367131D1D3856AA0062D8C0 /* MineButton.swift in Sources */,
 				83957BC11D33FBEC00BF4450 /* SKTAudio.swift in Sources */,

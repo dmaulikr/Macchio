@@ -20,7 +20,7 @@ class C {
     static let orbsToAreaRatio: CGFloat = 0.00002
     
     //static let camera_scaleMinimum: CGFloat = 2.5
-    static let maxPlayerRadiusToScreenWidthRatio: CGFloat = 0.11285
+    static let maxPlayerRadiusToScreenWidthRatio: CGFloat = 0.1
     static let minPlayerRadiusToScreenWidthRatio: CGFloat = 0.06692
     static let warningSign_minScale: CGFloat = 0.5, warningSign_maxScale: CGFloat = 3
     
@@ -62,17 +62,17 @@ class C {
     static let orb_minRadii: [GameScene.OrbType: CGFloat] = [
         .Small: 7,
         .Rich: 22,
-        .Glorious: 15
+        .Glorious: 10
     ]
     static let orb_maxRadii: [GameScene.OrbType: CGFloat] = [
         .Small: 9,
         .Rich: 26,
-        .Glorious: 20
+        .Glorious: 15
     ]
     static let orb_pointValues: [GameScene.OrbType: Int] = [
         .Small: 1,
         .Rich: 5,
-        .Glorious: 5
+        .Glorious: 2
     ]
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
     static let orb_fadeOutForXSeconds: CGFloat = 5

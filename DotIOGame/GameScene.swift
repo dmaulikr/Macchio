@@ -219,6 +219,10 @@ class GameScene: SKScene {
         rankX.alpha = 0.8
         let ofX = gameOverHUD.childNodeWithName("ofX")!
         ofX.alpha = 0.8
+        let finalScore = gameOverHUD.childNodeWithName("finalScore")!
+        finalScore.alpha = 0.8
+        let highScoreText = gameOverHUD.childNodeWithName("highScore")!
+        highScoreText.alpha = 0.6
         
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
@@ -1211,6 +1215,13 @@ class GameScene: SKScene {
         // Track the players final state into mixpanel
         mixpanelTracker.trackGameFinished(Double(player.timePlayed), finalScore: Int(player.score), percentScoreFromSize: player.percentScoreFromSize, percentScoreFromOrbs: player.percentScoreFromOrbs, percentScoreFromKills: player.percentScoreFromKills, finalRank: leaderBoard.getRankOfCreature(withID: player.playerID)!)
         
+        // Save HighScore if there is one
+        let beatHighScore = playerScore > UserState.highScore
+        if beatHighScore {
+            UserState.highScore = playerScore
+        }
+        
+        
         // The rest are visual effects
         let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
         player.runAction(fadeOutAction)
@@ -1262,8 +1273,19 @@ class GameScene: SKScene {
             
             let rankX = self.gameOverHUD.childNodeWithName("rankX") as! SKLabelNode
             let ofX = self.gameOverHUD.childNodeWithName("ofX") as! SKLabelNode
+            let finalScore = self.gameOverHUD.childNodeWithName("finalScore") as! SKLabelNode
+            let highScore = self.gameOverHUD.childNodeWithName("highScore") as! SKLabelNode
             rankX.text = "Rank #\(self.leaderBoard.getRankOfCreature(withID: player.playerID)!)"
             ofX.text = "of \(self.allCreatures.count + 1 + self.fakePlayerDataBundles.count)"
+            finalScore.text = "Score: \(self.playerScore)"
+            if beatHighScore {
+                highScore.text = "" // Why show the high score text when the regualr score is the same thing?
+                // Add a visual effect that makes highscore seem super satisfying
+                finalScore.text = finalScore.text! + " (High Score!)"
+            } else {
+                // Boring old high score showing
+                highScore.text = "Highscore: \(UserState.highScore)"
+            }
         }
         self.runAction(SKAction.sequence([waitOneSecond, showTheGameOverHUD]))
         
