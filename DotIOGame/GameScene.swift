@@ -1179,7 +1179,8 @@ class GameScene: SKScene {
     
     func spawnKillPoints(points: Int) {
         if points <= 0 { return }
-        largePointDisplay.addPointLabel(withText: ("+\(points)"))
+        //largePointDisplay.addPointLabel(withText: ("+\(points)"))
+        largePointDisplay.showPoints(withValue: points)
         // Bump camera
         let bumpAction = SKAction(named: "Bump")!
         camera!.runAction(bumpAction)

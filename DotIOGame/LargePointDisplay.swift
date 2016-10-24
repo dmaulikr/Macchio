@@ -18,6 +18,8 @@ class LargePointDisplay: SKNode {
     var size: CGSize!
     var pointLabels = [PointLabel]()
     let labelLifespan: CGFloat = 2
+    var currentTimestamp: CGFloat = 0
+    var pointCoupler: PointCoupler = PointCoupler()
     
     init(size: CGSize) {
         masterLabels = MasterLabels()
@@ -48,7 +50,23 @@ class LargePointDisplay: SKNode {
         }
     }
     
+    func showPoints(withValue value: Int) {
+        // Allows coupling of points
+        let ptInf = PointCoupler.PointInformation(value: value, timeStamp: currentTimestamp)
+        pointCoupler.addPointInfo(ptInf)
+    }
+    
     func update(deltaTime: CGFloat) {
+        currentTimestamp += deltaTime
+        
+        // Before managing all the label nodes that are currently floating around, let's see if the point coupler has anything for us to add.
+        let couplerPoints = pointCoupler.reapCoupledPoints(currentTimestamp)
+        if !couplerPoints.isEmpty {
+            for pointValue in couplerPoints {
+                addPointLabel(withText: "+\(pointValue)")
+            }
+        }
+        
         for i in 0..<pointLabels.count {
             pointLabels[i].lifeCounter += deltaTime
             
@@ -83,3 +101,46 @@ class LargePointDisplay: SKNode {
     
     
 }
+
+class PointCoupler {
+    // There are some cases in the game in which the player scores points in quick succession, such as hitting
+    // a big creature head-on with a mine, basically instantly killing them even though they technically shrink
+    // first, then hit the mine again. All the smaller point fractions can't fit inside the screen, so points that have very close time stamps should be coupled together in the display. PointCoupler is a seperate object to aid in doing that.
+    struct PointInformation {
+        var value: Int
+        let timeStamp: CGFloat
+    }
+    let coupleWorthyTimeDifference: CGFloat = 0.2
+    var ptInfs = [PointInformation]()
+    func addPointInfo(ptInf: PointInformation) {
+        //Before adding to the array, see if there are any points it can be coupled with.
+        var foundCouple = false
+        if ptInfs.count > 0 {
+            for i in 0..<ptInfs.count {
+                if fabs(ptInfs[i].timeStamp - ptInf.timeStamp) <= coupleWorthyTimeDifference {
+                    ptInfs[i].value += ptInf.value
+                    foundCouple = true
+                    break
+                }
+            }
+        }
+        
+        if !foundCouple {
+            ptInfs.append(ptInf)
+        }
+    }
+    func reapCoupledPoints(currentTimestamp: CGFloat) -> [Int] {
+        // remove all the point infos that are beyond coupling (expired timestamp) and return them in an array
+        var returnVals = [Int]()
+        if !ptInfs.isEmpty {
+            for i in (ptInfs.count - 1)...0 {
+                if currentTimestamp - ptInfs[i].timeStamp > coupleWorthyTimeDifference {
+                    returnVals.append(ptInfs[i].value)
+                    ptInfs.removeAtIndex(i)
+                }
+            }
+        }
+        return returnVals
+    }
+}
+
