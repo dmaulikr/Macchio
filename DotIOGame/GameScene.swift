@@ -997,6 +997,8 @@ class GameScene: SKScene {
                 camera!.yScale = theCameraScale
                 
                 camera!.position = cameraTarget.position //Follow player on the x axis and y axis
+                // To add cool effect, allow camera to displace a little bit depending on how far out the direction arrow is
+                //camera!.position += directionArrow.position / 6 //<--this look funny i do later
                 
                 //Update the directionArrow's position with directionArrowTargetPosition. The SMOOTH way. I also first update directionArrowAnchor as needed.
                 if prefs.showArrow {

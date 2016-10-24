@@ -31,11 +31,12 @@ class LargePointDisplay: SKNode {
         super.init(coder: aDecoder)
     }
     
-    func addPointLabel(withText labelText: String) {
+    func addPointLabel(withText labelText: String, scale: CGFloat = 1) {
         let newLabel = masterLabels.largePointLabel.copy() as! SKLabelNode
         newLabel.text = labelText
         newLabel.position = CGPoint(x: 0, y: 0)
         newLabel.name = "pointLabel"
+        newLabel.xScale = scale; newLabel.yScale = scale
         pointLabels.insert(PointLabel(labelNode: newLabel, lifeCounter: 0), atIndex: 0) // The newest label is always inserted at the start
         self.addChild(newLabel)
         refreshLayout()
@@ -63,7 +64,8 @@ class LargePointDisplay: SKNode {
         let couplerPoints = pointCoupler.reapCoupledPoints(currentTimestamp)
         if !couplerPoints.isEmpty {
             for pointValue in couplerPoints {
-                addPointLabel(withText: "+\(pointValue)")
+                let newLabelScale = CGFloat(pointValue) / CGFloat(100)
+                addPointLabel(withText: "+\(pointValue)", scale: newLabelScale)
             }
         }
         
