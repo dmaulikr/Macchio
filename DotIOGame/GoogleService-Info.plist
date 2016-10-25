@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>952373335098-enqvr63om7563hi4rot0qi64qe8em88q.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.952373335098-enqvr63om7563hi4rot0qi64qe8em88q</string>
+	<key>API_KEY</key>
+	<string>AIzaSyACHc_D8l4tc6L41hkq7YngV0LR-r4utmg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>952373335098</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ryankanderson.macchio</string>
+	<key>PROJECT_ID</key>
+	<string>macchio-9cb37</string>
+	<key>STORAGE_BUCKET</key>
+	<string>macchio-9cb37.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:952373335098:ios:d31e38879c066a53</string>
+	<key>DATABASE_URL</key>
+	<string>https://macchio-9cb37.firebaseio.com</string>
+</dict>
+</plist>

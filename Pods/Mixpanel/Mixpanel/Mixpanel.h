@@ -1,12 +1,21 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <Mixpanel/MixpanelPeople.h>
+
+#import "MixpanelPeople.h"
 
 #if TARGET_OS_TV
     #define MIXPANEL_TVOS_EXTENSION 1
 #endif
 
-#define MIXPANEL_LIMITED_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION))
+#if TARGET_OS_WATCH
+    #define MIXPANEL_WATCH_EXTENSION 1
+#endif
+
+#define MIXPANEL_NO_EXCEPTION_HANDLING (defined(MIXPANEL_APP_EXTENSION))
+#define MIXPANEL_FLUSH_IMMEDIATELY (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_REACHABILITY_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_AUTOMATIC_EVENTS_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
+#define MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT (defined(MIXPANEL_APP_EXTENSION) || defined(MIXPANEL_TVOS_EXTENSION) || defined(MIXPANEL_WATCH_EXTENSION))
 
 @class    MixpanelPeople, MPSurvey;
 @protocol MixpanelDelegate;
@@ -64,19 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
 
  @discussion
  A distinct ID is a string that uniquely identifies one of your users.
- Typically, this is the user ID from your database. By default, we'll use a
- hash of the MAC address of the device. To change the current distinct ID,
- use the <code>identify:</code> method.
+ Typically, this is the user ID from your database. By default, we'll use
+ the device's advertisingIdentifier UUIDString, if that is not available
+ we'll use the device's identifierForVendor UUIDString, and finally if that
+ is not available we will generate a new random UUIDString. To change the
+ current distinct ID, use the <code>identify:</code> method.
  */
 @property (atomic, readonly, copy) NSString *distinctId;
-
-/*!
- @property
-
- @abstract
- Current user's name in Mixpanel Streams.
- */
-@property (nullable, atomic, copy) NSString *nameTag;
 
 /*!
  @property
@@ -124,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion
  Defaults to YES.
  */
-@property (atomic) BOOL showNetworkActivityIndicator;
+@property (atomic) BOOL shouldManageNetworkActivityIndicator;
 
 /*!
  @property
@@ -238,14 +241,34 @@ NS_ASSUME_NONNULL_BEGIN
  @property
  
  @abstract
- Controls whether to enable the visual A/B test designer on mixpanel.com, you will 
- be unable to edit A/B tests with this disabled, however previously created A/B 
- tests and their variants will still be delivered.
+ Controls whether to enable the visual test designer for A/B testing and codeless on mixpanel.com. 
+ You will be unable to edit A/B tests and codeless events with this disabled, however *previously*
+ created A/B tests and codeless events will still be delivered.
  
  @discussion
  Defaults to YES.
  */
-@property (atomic) BOOL enableABTestDesigner;
+@property (atomic) BOOL enableVisualABTestAndCodeless;
+
+/*!
+ @property
+ 
+ @abstract
+ Controls whether to enable the run time debug logging at all levels. Note that the
+ Mixpanel SDK uses Apple System Logging to forward log messages to `STDERR`, this also
+ means that mixpanel logs are segmented by log level. Settings this to `YES` will enable 
+ Mixpanel logging at the following levels:
+ 
+   * Error - Something has failed 
+   * Warning - Something is amiss and might fail if not corrected
+   * Info - The lowest priority that is normally logged, purely informational in nature
+   * Debug - Information useful only to developers, and normally not logged.
+ 
+ 
+ @discussion
+ Defaults to NO.
+ */
+@property (atomic) BOOL enableLogging;
 
 /*!
  @property
@@ -681,7 +704,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)libVersion;
 
 
-#if !MIXPANEL_LIMITED_SUPPORT
+#if !MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
 #pragma mark - Mixpanel Surveys
 
 /*!
@@ -777,7 +800,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)joinExperimentsWithCallback:(nullable void (^)())experimentsLoadedCallback;
 
-#endif
+#endif // MIXPANEL_NO_SURVEY_NOTIFICATION_AB_TEST_SUPPORT
+
+#pragma mark - Deprecated
+/*!
+ @property
+ 
+ @abstract
+ Current user's name in Mixpanel Streams.
+ */
+@property (nullable, atomic, copy) NSString *nameTag __deprecated; // Deprecated in v3.0.1
 
 @end
 

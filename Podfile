@@ -7,6 +7,15 @@ target 'Macchio' do
 
   # Pods for Macchio
   pod 'Mixpanel'
-  pod 'IQKeyboardManagerSwift'
+  
+  pod 'IQKeyboardManagerSwift', '~> 4.0.4'
+  
+  pod 'Firebase/Core'
+  pod 'Firebase/Database'
+  
+  pod 'FBSDKCoreKit'
+  pod 'FBSDKShareKit'
+  pod 'FBSDKLoginKit'
+
 
 end

@@ -31,7 +31,7 @@ class GameScene: SKScene {
     )
     let mixpanelTracker = RYNMixpanelTracker()
     
-    var theEnteredInPlayerName = ""
+    //var theEnteredInPlayerName = ""
     
     enum State {
         case Playing, GameOver
@@ -180,7 +180,7 @@ class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
         gameWorld = childNodeWithName("gameWorld")
-        player = PlayerCreature(name: theEnteredInPlayerName, playerID: randomID(), color: randomColor(), startRadius: 80)
+        player = PlayerCreature(name: UserState.name, playerID: randomID(), color: randomColor(), startRadius: 80)
         defer {
             spawnPlayerNameLabel(forCreature: player!)
         }
@@ -1306,7 +1306,7 @@ class GameScene: SKScene {
         let presentNewGameScene = SKAction.runBlock {
             let skView = self.view as SKView!
             let scene = GameScene(fileNamed:"GameScene") as GameScene!
-            scene.theEnteredInPlayerName = self.theEnteredInPlayerName
+            //scene.theEnteredInPlayerName = self.theEnteredInPlayerName
             scene.scaleMode =  SKSceneScaleMode.ResizeFill
             skView.presentScene(scene)
         }
@@ -1317,7 +1317,7 @@ class GameScene: SKScene {
     func goBackToMainScene() {
         let skView = self.view as SKView!
         let scene = MainScene(fileNamed:"MainScene") as MainScene!
-        scene.presetPlayerName = theEnteredInPlayerName
+        //scene.presetPlayerName = theEnteredInPlayerName
         scene.scaleMode =  SKSceneScaleMode.ResizeFill
         //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
         skView.presentScene(scene)

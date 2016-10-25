@@ -14,7 +14,8 @@ class MainScene: SKScene, UITextFieldDelegate {
     
     var origin: SKNode!
     var playButton: MSButtonNode!
-    var presetPlayerName: String?
+    var facebookButton: MSButtonNode!
+    //var presetPlayerName: String?
     var playerNameText: UITextField! = nil
     var enteredPlayerName: String = ""
     
@@ -43,14 +44,18 @@ class MainScene: SKScene, UITextFieldDelegate {
                 let skView = self.view as SKView!
                 let scene = GameScene(fileNamed: "GameScene") as GameScene!
                 scene.scaleMode =  SKSceneScaleMode.ResizeFill
-                scene.theEnteredInPlayerName = self.enteredPlayerName
+                //scene.theEnteredInPlayerName = self.enteredPlayerName
                 skView.presentScene(scene)
             }
             let waitATinyBit = SKAction.waitForDuration(0.01)
             let sequence = SKAction.sequence([waitATinyBit, goToGameScene])
             self.playerNameText.removeFromSuperview()
             self.runAction(sequence)
+            UserState.name = enteredPlayerName
         }
+        
+        facebookButton = childNodeWithName("//facebookButton") as! MSButtonNode
+        facebookButton.selectedHandler = facebookButtonSelected
         
         // create the UITextField instance with positions... half of the screen width minus half of the textfield width.
         // Same for the height.
@@ -68,16 +73,22 @@ class MainScene: SKScene, UITextFieldDelegate {
         playerNameText.placeholder = "Nickname"
         playerNameText.backgroundColor = SKColor.whiteColor()
         playerNameText.autocorrectionType = UITextAutocorrectionType.No
-        if let presetPlayerName = presetPlayerName {
-            playerNameText.text = presetPlayerName
-            enteredPlayerName = presetPlayerName
-        }
+//        if let presetPlayerName = presetPlayerName {
+//            playerNameText.text = presetPlayerName
+//            enteredPlayerName = presetPlayerName
+//        }
+        playerNameText.text = UserState.name
+        enteredPlayerName = UserState.name
         
         playerNameText.clearButtonMode = UITextFieldViewMode.WhileEditing
         playerNameText.autocapitalizationType = UITextAutocapitalizationType.None
         self.view!.addSubview(playerNameText)
         
         
+    }
+    
+    func facebookButtonSelected() {
+        print("fb pressed")
     }
     
     // Called by tapping return on the keyboard.

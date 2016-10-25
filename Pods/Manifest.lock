@@ -1,17 +1,70 @@
 PODS:
-  - IQKeyboardManagerSwift (4.0.4)
-  - Mixpanel (3.0.0):
-    - Mixpanel/Mixpanel (= 3.0.0)
-  - Mixpanel/Mixpanel (3.0.0)
+  - Bolts (1.8.4):
+    - Bolts/AppLinks (= 1.8.4)
+    - Bolts/Tasks (= 1.8.4)
+  - Bolts/AppLinks (1.8.4):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.8.4)
+  - FBSDKCoreKit (4.16.1):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.16.1):
+    - FBSDKCoreKit
+  - FBSDKShareKit (4.16.1):
+    - FBSDKCoreKit
+  - Firebase/Core (3.8.0):
+    - FirebaseAnalytics (= 3.5.1)
+    - FirebaseCore (= 3.4.4)
+  - Firebase/Database (3.8.0):
+    - Firebase/Core
+    - FirebaseDatabase (= 3.1.0)
+  - FirebaseAnalytics (3.5.1):
+    - FirebaseCore (~> 3.4)
+    - FirebaseInstanceID (~> 1.0)
+    - GoogleInterchangeUtilities (~> 1.2)
+    - GoogleSymbolUtilities (~> 1.1)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseCore (3.4.4):
+    - GoogleInterchangeUtilities (~> 1.2)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseDatabase (3.1.0):
+    - FirebaseAnalytics (~> 3.4)
+  - FirebaseInstanceID (1.0.8)
+  - GoogleInterchangeUtilities (1.2.2):
+    - GoogleSymbolUtilities (~> 1.1)
+  - GoogleSymbolUtilities (1.1.2)
+  - GoogleToolboxForMac/Defines (2.1.0)
+  - GoogleToolboxForMac/NSData+zlib (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+  - IQKeyboardManagerSwift (4.0.7)
+  - Mixpanel (3.0.5):
+    - Mixpanel/Mixpanel (= 3.0.5)
+  - Mixpanel/Mixpanel (3.0.5)
 
 DEPENDENCIES:
-  - IQKeyboardManagerSwift
+  - FBSDKCoreKit
+  - FBSDKLoginKit
+  - FBSDKShareKit
+  - Firebase/Core
+  - Firebase/Database
+  - IQKeyboardManagerSwift (~> 4.0.6)
   - Mixpanel
 
 SPEC CHECKSUMS:
-  IQKeyboardManagerSwift: e0964d04d6a29b71016fd346dca13ecb80a2823a
-  Mixpanel: ac92056ee35a961362513ba11049e67cffcaa1f1
+  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  FBSDKCoreKit: 6feac4e8921ccd7afa83fb1df6291dc6eec42c7c
+  FBSDKLoginKit: 469a56cebe2e1ed62b1621d0b155970fd6aac2d8
+  FBSDKShareKit: 53af0239b5bd2ebf191f32f75991245a208cc982
+  Firebase: fdbecadb7b5cbef2774852d4fa659b9daf11f2af
+  FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
+  FirebaseCore: d0ed25f27b6f9158eccc439f1be6f92e81207e28
+  FirebaseDatabase: 3ebb2edb6007c3f0f87b248f3fa212bde56a1468
+  FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
+  GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
+  GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
+  GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
+  IQKeyboardManagerSwift: 58bbcf46b5cf9fd4ed625d28a60cb2fbae4ab0f4
+  Mixpanel: ad5ec38855baa42af0de52052466ab36ee240b87
 
-PODFILE CHECKSUM: b9b8b1332de556ac336708dfb4309b98d6769f3d
+PODFILE CHECKSUM: 021d52dec1cef6d22d0f7487e7363ce0d9466a0c
 
 COCOAPODS: 1.0.1
