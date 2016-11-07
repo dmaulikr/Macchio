@@ -35,7 +35,7 @@ class C {
         creature_minRadius: CGFloat = 50,
         creature_maxRadius: CGFloat = 350,
         creature_orbSpawnUponDeathRadiusMultiplier: CGFloat = 1.7,
-    creature_deathFadeOutDuration: NSTimeInterval = 0.25
+    creature_deathFadeOutDuration: TimeInterval = 0.25
     static let percentLargerRadiusACreatureMustBeToEngulfAnother: CGFloat = 1.11
     
     static func creature_passiveScoreIncreasePerSecond(givenRadius r: CGFloat) -> CGFloat {
@@ -55,24 +55,24 @@ class C {
     static let alertPlayerAboutLargerCreaturesInRange: CGFloat = 800
     
     static let orb_growAmounts: [GameScene.OrbType: CGFloat] = [
-        .Small : 154,
-        .Rich : 1500,
-        .Glorious: 707
+        .small : 154,
+        .rich : 1500,
+        .glorious: 707
     ]
     static let orb_minRadii: [GameScene.OrbType: CGFloat] = [
-        .Small: 7,
-        .Rich: 22,
-        .Glorious: 10
+        .small: 7,
+        .rich: 22,
+        .glorious: 10
     ]
     static let orb_maxRadii: [GameScene.OrbType: CGFloat] = [
-        .Small: 9,
-        .Rich: 26,
-        .Glorious: 15
+        .small: 9,
+        .rich: 26,
+        .glorious: 15
     ]
     static let orb_pointValues: [GameScene.OrbType: Int] = [
-        .Small: 1,
-        .Rich: 5,
-        .Glorious: 2
+        .small: 1,
+        .rich: 5,
+        .glorious: 2
     ]
     static let orb_artificialLifespan: CGFloat = 20 // The reason I have this constant is because if there is a big pile of orbs somewhere that's not being touched by the player or thte ai, it shouldn't clog up the cpu. This applies for the single player version at least.
     static let orb_fadeOutForXSeconds: CGFloat = 5

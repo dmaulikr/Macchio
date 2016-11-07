@@ -46,7 +46,7 @@ DEPENDENCIES:
   - FBSDKShareKit
   - Firebase/Core
   - Firebase/Database
-  - IQKeyboardManagerSwift (~> 4.0.6)
+  - IQKeyboardManagerSwift (~> 4.0.4)
   - Mixpanel
 
 SPEC CHECKSUMS:
@@ -65,6 +65,6 @@ SPEC CHECKSUMS:
   IQKeyboardManagerSwift: 58bbcf46b5cf9fd4ed625d28a60cb2fbae4ab0f4
   Mixpanel: ad5ec38855baa42af0de52052466ab36ee240b87
 
-PODFILE CHECKSUM: 021d52dec1cef6d22d0f7487e7363ce0d9466a0c
+PODFILE CHECKSUM: 64f39aed20625192b99be90ee0cf91c60e880d19
 
 COCOAPODS: 1.0.1

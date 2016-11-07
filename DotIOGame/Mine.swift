@@ -12,10 +12,10 @@ import SpriteKit
 class Mine: SKSpriteNode, BoundByCircle {
     
     static let shurikenTextures: [Color: SKTexture] = [
-        .Red : SKTexture(imageNamed: "shuriken_red"),
-        .Green : SKTexture(imageNamed: "shuriken_green"),
-        .Blue : SKTexture(imageNamed: "shuriken_blue"),
-        .Yellow : SKTexture(imageNamed: "shuriken_yellow")
+        .red : SKTexture(imageNamed: "shuriken_red"),
+        .green : SKTexture(imageNamed: "shuriken_green"),
+        .blue : SKTexture(imageNamed: "shuriken_blue"),
+        .yellow : SKTexture(imageNamed: "shuriken_yellow")
     ]
     
     var radius: CGFloat = 100 //BS default values
@@ -25,7 +25,7 @@ class Mine: SKSpriteNode, BoundByCircle {
     var rps: CGFloat = 1 // Rotations per second
     var deltaRPSPerSecond: CGFloat = -1
     var leftByPlayerID: Int = 0
-    var leftByPlayerColor: Color = .Red
+    var leftByPlayerColor: Color = .red
 
     init(radius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerWithID: Int, initialRPS: CGFloat = 1) {
         self.radius = radius
@@ -38,11 +38,11 @@ class Mine: SKSpriteNode, BoundByCircle {
         
         let myTexture = Mine.shurikenTextures[color]
         self.leftByPlayerID = leftByPlayerWithID
-        super.init(texture: myTexture, color: SKColor.whiteColor(), size: CGSize(width: 2*radius * C.mine_sizeExaggeration , height: 2*radius * C.mine_sizeExaggeration))
+        super.init(texture: myTexture, color: SKColor.white, size: CGSize(width: 2*radius * C.mine_sizeExaggeration , height: 2*radius * C.mine_sizeExaggeration))
         self.zRotation = CGFloat.random(min: 0, max: 360).degreesToRadians()
     }
     
-    func belongsToCreature(creature: Creature) -> Bool {
+    func belongsToCreature(_ creature: Creature) -> Bool {
         return creature.playerID == self.leftByPlayerID
     }
     
@@ -50,7 +50,7 @@ class Mine: SKSpriteNode, BoundByCircle {
         super.init(coder: aDecoder)
     }
     
-    func update(deltaTime: CFTimeInterval) {
+    func update(_ deltaTime: CFTimeInterval) {
         rps += deltaRPSPerSecond * CGFloat(deltaTime)
         
         lifeCounter += CGFloat(deltaTime)

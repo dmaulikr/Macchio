@@ -21,7 +21,7 @@ class MainScene: SKScene, UITextFieldDelegate {
     
     var loadingImage: SKSpriteNode!
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
         if ResourceLoader.isInitialized {
             // Great! Resources are initialized!
@@ -29,37 +29,37 @@ class MainScene: SKScene, UITextFieldDelegate {
             ResourceLoader.initialize()
         }
         
-        origin = childNodeWithName("origin")
+        origin = childNode(withName: "origin")
         origin.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
-        loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
-        loadingImage.userInteractionEnabled = false
+        loadingImage = childNode(withName: "//loadingImage") as! SKSpriteNode
+        loadingImage.isUserInteractionEnabled = false
         loadingImage.size = self.size
         loadingImage.position = CGPoint(x: 0, y: self.size.height)
         
-        playButton = childNodeWithName("//red orb") as! MSButtonNode
+        playButton = childNode(withName: "//red orb") as! MSButtonNode
         playButton.selectedHandler = {
             self.loadingImage.position = CGPoint(x: 0, y: 0)
             
-            let goToGameScene = SKAction.runBlock {
+            let goToGameScene = SKAction.run {
                 let skView = self.view as SKView!
                 let scene = GameScene(fileNamed: "GameScene") as GameScene!
-                scene.scaleMode =  SKSceneScaleMode.ResizeFill
+                scene?.scaleMode =  SKSceneScaleMode.resizeFill
                 //scene.theEnteredInPlayerName = self.enteredPlayerName
-                skView.presentScene(scene)
+                skView?.presentScene(scene)
             }
-            let waitATinyBit = SKAction.waitForDuration(0.01)
+            let waitATinyBit = SKAction.wait(forDuration: 0.01)
             let sequence = SKAction.sequence([waitATinyBit, goToGameScene])
             self.playerNameText.removeFromSuperview()
-            self.runAction(sequence)
-            UserState.name = enteredPlayerName
+            self.run(sequence)
+            UserState.name = self.enteredPlayerName
         }
         
-        facebookButton = childNodeWithName("//facebookButton") as! MSButtonNode
+        facebookButton = childNode(withName: "//facebookButton") as! MSButtonNode
         facebookButton.selectedHandler = facebookButtonSelected
         
         // create the UITextField instance with positions... half of the screen width minus half of the textfield width.
         // Same for the height.
-        playerNameText = UITextField(frame: CGRectMake(view.bounds.width / 2 - 125, view.bounds.height / 2 - 20 - 20, 250, 40))
+        playerNameText = UITextField(frame: CGRect(x: view.bounds.width / 2 - 125, y: view.bounds.height / 2 - 20 - 20, width: 250, height: 40))
         
         // add the UITextField to the GameScene's view
         view.addSubview(playerNameText)
@@ -68,11 +68,11 @@ class MainScene: SKScene, UITextFieldDelegate {
         // delegate funtion called is textFieldShouldReturn:
         playerNameText.delegate = self
         
-        playerNameText.borderStyle = UITextBorderStyle.RoundedRect
-        playerNameText.textColor = SKColor.blackColor()
+        playerNameText.borderStyle = UITextBorderStyle.roundedRect
+        playerNameText.textColor = SKColor.black
         playerNameText.placeholder = "Nickname"
-        playerNameText.backgroundColor = SKColor.whiteColor()
-        playerNameText.autocorrectionType = UITextAutocorrectionType.No
+        playerNameText.backgroundColor = SKColor.white
+        playerNameText.autocorrectionType = UITextAutocorrectionType.no
 //        if let presetPlayerName = presetPlayerName {
 //            playerNameText.text = presetPlayerName
 //            enteredPlayerName = presetPlayerName
@@ -80,8 +80,8 @@ class MainScene: SKScene, UITextFieldDelegate {
         playerNameText.text = UserState.name
         enteredPlayerName = UserState.name
         
-        playerNameText.clearButtonMode = UITextFieldViewMode.WhileEditing
-        playerNameText.autocapitalizationType = UITextAutocapitalizationType.None
+        playerNameText.clearButtonMode = UITextFieldViewMode.whileEditing
+        playerNameText.autocapitalizationType = UITextAutocapitalizationType.none
         self.view!.addSubview(playerNameText)
         
         
@@ -92,7 +92,7 @@ class MainScene: SKScene, UITextFieldDelegate {
     }
     
     // Called by tapping return on the keyboard.
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // Populates the SKLabelNode
         enteredPlayerName = textField.text!
         
@@ -101,7 +101,7 @@ class MainScene: SKScene, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text {
             enteredPlayerName = text
         }

@@ -36,7 +36,7 @@ class AICreature: Creature {
         self.actionComputer = AIActionComputerBasic(gameScene: gameScene!, controlCreature: self)
     }
     
-    override func thinkAndAct(deltaTime: CGFloat) {
+    override func thinkAndAct(_ deltaTime: CGFloat) {
         // This method gets called every frame. It's pretty much an update() method
         
         if let actionComputer = actionComputer {
@@ -62,7 +62,7 @@ class AICreature: Creature {
     }
     
     enum ActionType {
-        case TurnToAngle, StartBoost, StopBoost, LeaveMine
+        case turnToAngle, startBoost, stopBoost, leaveMine
     }
     
     class Action: NSObject {
@@ -75,27 +75,27 @@ class AICreature: Creature {
         }
     }
     
-    func executeAction(action: Action) {
+    func executeAction(_ action: Action) {
         switch action.type {
-        case .TurnToAngle:
+        case .turnToAngle:
             if let toAngle = action.toAngle {
                 self.targetAngle = toAngle
             }
-        case .StartBoost:
+        case .startBoost:
             startBoost()
-        case .StopBoost:
+        case .stopBoost:
             stopBoost()
-        case .LeaveMine:
+        case .leaveMine:
             leaveMine()
         }
     }
     
     // To be called by the action computer
-    func requestAction(action: Action) {
+    func requestAction(_ action: Action) {
         pendingActions.append(action)
     }
     
-    func computeUltimateState(pendingActions: [Action]) -> (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, mineCooldownCounter: CGFloat, minePropulsionCounter: CGFloat, speedDebuffCounter: CGFloat) {
+    func computeUltimateState(_ pendingActions: [Action]) -> (angle: CGFloat, speed: CGFloat, position: CGPoint, isBoosting: Bool, mineCooldownCounter: CGFloat, minePropulsionCounter: CGFloat, speedDebuffCounter: CGFloat) {
         
         // Initialize a set of variables representing the current conditions
         var sim_angle: CGFloat = self.velocity.angle
@@ -109,7 +109,7 @@ class AICreature: Creature {
         
         
         if pendingActions.count > 0 {
-            let sim_actionsInOrder = pendingActions.sort ({ $0.effectiveTimer > $1.effectiveTimer }).map{ $0.copy() } as! [Action]
+            let sim_actionsInOrder = pendingActions.sorted (by: { $0.effectiveTimer > $1.effectiveTimer }).map{ $0.copy() } as! [Action]
             // * since sim_actions in order is just a copy of the actual pending actions, anything can be done with these actions. It won't screw up the actual ones.
             
             var sim_timeElapsed: CGFloat = 0
@@ -137,17 +137,17 @@ class AICreature: Creature {
                 
                 // Now update the simulated variables based on the action that just happened
                 switch action.type {
-                case .LeaveMine:
+                case .leaveMine:
                     if sim_mineCooldownCounter >= C.creature_mineCooldownTime {
                         sim_mineCooldownCounter = 0
                         sim_minePropulsionCounter = 0
                         sim_speedDebuffCounter = 0
                     }
-                case .StartBoost:
+                case .startBoost:
                     sim_isBoosting = true
-                case .StopBoost:
+                case .stopBoost:
                     sim_isBoosting = false
-                case .TurnToAngle:
+                case .turnToAngle:
                     sim_targetAngle = action.toAngle != nil ? action.toAngle! : sim_targetAngle
                 }
                 
@@ -178,7 +178,7 @@ class AICreature: Creature {
         return (angle: sim_angle, speed: sim_speed, position: sim_position, isBoosting: sim_isBoosting, mineCooldownCounter: sim_mineCooldownCounter, minePropulsionCounter: sim_minePropulsionCounter, speedDebuffCounter: sim_speedDebuffCounter)
     }
     
-    func simulateCreatureTurningMovement(startPosition startPosition: CGPoint, startAngle: CGFloat, targetAngle: CGFloat, atSpeed creatureSpeed: CGFloat, forDuration timeDuration: CGFloat) -> (finalPosition: CGPoint, finalAngle: CGFloat) {
+    func simulateCreatureTurningMovement(startPosition: CGPoint, startAngle: CGFloat, targetAngle: CGFloat, atSpeed creatureSpeed: CGFloat, forDuration timeDuration: CGFloat) -> (finalPosition: CGPoint, finalAngle: CGFloat) {
         
         // Calculate the total delta angle that the simulated creature will take over its journey. Note that all angles here should be degree measures ranging from 0 to 360
         var posDist: CGFloat, negDist: CGFloat
@@ -214,7 +214,7 @@ class AICreature: Creature {
         
     }
     
-    func simulateCreatureStraightMovement(startPosition startPosition: CGPoint, startAngle: CGFloat, atSpeed speed: CGFloat, forDuration timeDuration: CGFloat) -> CGPoint {
+    func simulateCreatureStraightMovement(startPosition: CGPoint, startAngle: CGFloat, atSpeed speed: CGFloat, forDuration timeDuration: CGFloat) -> CGPoint {
         // A more efficient function to calculate the creature's final position if they are moving straight
         let travelDistance = speed * timeDuration
         let newX = startPosition.x + cos(startAngle.degreesToRadians()) * travelDistance
@@ -223,7 +223,7 @@ class AICreature: Creature {
         return CGPoint(x: newX, y: newY)
     }
     
-    func computeUltimateStateAsGhost(pendingActions: [Action]) -> Ghost {
+    func computeUltimateStateAsGhost(_ pendingActions: [Action]) -> Ghost {
         let result = computeUltimateState(pendingActions)
         return Ghost(position: result.position, angle: result.angle, speed: result.speed, isBoosting: result.isBoosting, mineCooldownCounter: result.mineCooldownCounter, minePropulsionCounter: result.minePropulsionCounter, speedDebuffCounter: result.speedDebuffCounter, radius: self.targetRadius)
     }

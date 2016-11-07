@@ -31,9 +31,9 @@ class BoostButton: SKSpriteNode {
     }
     
     init() {
-        super.init(texture: nil, color: SKColor.whiteColor(), size: CGSize(width: 100, height: 100))
+        super.init(texture: nil, color: SKColor.white, size: CGSize(width: 100, height: 100))
         alpha = 0.001 //Basically u can't see it
-        self.userInteractionEnabled = true
+        self.isUserInteractionEnabled = true
     }
     
     func addButtonIconToParent() {
@@ -43,9 +43,9 @@ class BoostButton: SKSpriteNode {
         buttonIcon.position = self.position
         parent!.addChild(buttonIcon)
         
-        let path = NSBundle.mainBundle().pathForResource("TouchPoint", ofType: "sks")
-        touchPointGraphic = SKReferenceNode (URL: NSURL (fileURLWithPath: path!))
-        touchPointGraphic.userInteractionEnabled = false
+        let path = Bundle.main.path(forResource: "TouchPoint", ofType: "sks")
+        touchPointGraphic = SKReferenceNode (url: URL (fileURLWithPath: path!))
+        touchPointGraphic.isUserInteractionEnabled = false
         touchPointGraphic.zPosition += 0.01
         buttonIcon.addChild(touchPointGraphic)
 
@@ -56,12 +56,12 @@ class BoostButton: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         onPressed()
-        touchPointGraphic.runAction(SKAction.fadeOutWithDuration(0.3))
+        touchPointGraphic.run(SKAction.fadeOut(withDuration: 0.3))
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         onReleased()
     }
     

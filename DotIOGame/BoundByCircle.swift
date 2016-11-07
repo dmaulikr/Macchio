@@ -14,15 +14,15 @@ let sqrt2: CGFloat = 1.4142135623730950488
 protocol BoundByCircle {
     var radius: CGFloat { get }
     var position: CGPoint { get }
-    func overlappingCircle(other: BoundByCircle) -> Bool
+    func overlappingCircle(_ other: BoundByCircle) -> Bool
 }
 
 extension BoundByCircle {
-    func overlappingCircle(other: BoundByCircle) -> Bool {
+    func overlappingCircle(_ other: BoundByCircle) -> Bool {
         return position.distanceTo(other.position) < radius + other.radius
     }
     
-    func pointOnCircleClosestToOtherPoint(otherPoint: CGPoint, circlePosition: CGPoint) -> CGPoint {
+    func pointOnCircleClosestToOtherPoint(_ otherPoint: CGPoint, circlePosition: CGPoint) -> CGPoint {
         if circlePosition.distanceTo(otherPoint) <= radius {
             return otherPoint
         } else {

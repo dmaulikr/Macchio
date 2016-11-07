@@ -13,10 +13,10 @@ extension GameScene {
     
     
     enum OrbType {
-        case Small, Rich, Glorious
+        case small, rich, glorious
     }
     
-    func seedOrbAtPosition(position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color, asType type: OrbType, growFromNothing: Bool = true) -> EnergyOrb? {
+    func seedOrbAtPosition(_ position: CGPoint, growAmount: CGFloat, minRadius: CGFloat, maxRadius: CGFloat, artificiallySpawned: Bool, inColor: Color, asType type: OrbType, growFromNothing: Bool = true) -> EnergyOrb? {
         if let location = convertWorldPointToOrbChunkLocation(position) {
             let newOrb = EnergyOrb(orbColor: inColor, type: type, growFromNothing: growFromNothing)
             newOrb.position = position
@@ -34,7 +34,7 @@ extension GameScene {
 
     
     
-    func seedOrbWithSpecifiedType(type: OrbType, atPosition position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil, growFromNothing: Bool = true) -> EnergyOrb? {
+    func seedOrbWithSpecifiedType(_ type: OrbType, atPosition position: CGPoint, artificiallySpawned: Bool = false, inColor: Color? = nil, growFromNothing: Bool = true) -> EnergyOrb? {
         let orbColor: Color
         if let _ = inColor { orbColor = inColor! }
         else { orbColor = randomColor() }
@@ -75,7 +75,7 @@ extension GameScene {
         let numberOfOrbShells = Int(round( (radius - minRadius) / orbMaxRadius ))
         var totalNumOfOrbs: Int = 0 // Represents the total number of orbs I will need to spawn in this entire orb cluster
         
-        func numberOfOrbsAtRadius(r: CGFloat) -> Int {
+        func numberOfOrbsAtRadius(_ r: CGFloat) -> Int {
             return Int( (2*pi*r) / ( 2 * orbMaxRadius ) / 2 ) // The / x at the end allows me to tamper w/ number of orbs at level
         }
         var placeOrbsAtPositions: [CGPoint] = []
@@ -120,9 +120,9 @@ extension GameScene {
         }
     }
     
-    func seedAutoOrbClusterWithBudget(growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
+    func seedAutoOrbClusterWithBudget(_ growAmount: CGFloat, aboutPoint: CGPoint, withinRadius radius: CGFloat, minRadius: CGFloat = 0, exclusivelyInColor: Color? = nil) {
         let maxNumberOfSmallOrbs = 30
-        let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * C.orb_growAmounts[.Small]!
+        let costToMaxOutSmallOrbs = CGFloat(maxNumberOfSmallOrbs) * C.orb_growAmounts[.small]!
         let orbColor: Color?
         if let exclusivelyInColor = exclusivelyInColor {
             orbColor = exclusivelyInColor
@@ -130,18 +130,18 @@ extension GameScene {
             orbColor = nil
         }
         if growAmount < costToMaxOutSmallOrbs {
-            seedOrbCluster(ofType: .Small, withBudget: growAmount, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
+            seedOrbCluster(ofType: .small, withBudget: growAmount, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
         } else {
-            seedOrbCluster(ofType: .Small, withBudget: costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
+            seedOrbCluster(ofType: .small, withBudget: costToMaxOutSmallOrbs, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
             let richOrbBudget = growAmount - costToMaxOutSmallOrbs
-            seedOrbCluster(ofType: .Rich, withBudget: richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
+            seedOrbCluster(ofType: .rich, withBudget: richOrbBudget, aboutPoint: aboutPoint, withinRadius: radius, minRadius: minRadius, exclusivelyInColor: orbColor)
         }
         
         orbBeacons.append(OrbBeacon(totalValue: growAmount, radius: radius, position: aboutPoint))
     }
     
     
-    func spawnMineAtPosition(atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> Mine {
+    func spawnMineAtPosition(_ atPosition: CGPoint, mineRadius: CGFloat, growAmount: CGFloat, color: Color, leftByPlayerID: Int) -> Mine {
         let mine = Mine(radius: mineRadius, growAmount: growAmount, color: color, leftByPlayerWithID: leftByPlayerID)
         mine.position = atPosition
         mine.zPosition = 1
@@ -157,7 +157,7 @@ extension GameScene {
         //newCreature.velocity.angle = CGFloat.random(min: 0, max: 360) //Don't forget that velocity.angle for creatures operates in degrees
         otherCreatures.append(newCreature)
         gameWorld.addChild(newCreature)
-        newCreature.runAction(SKAction.fadeInWithDuration(0.5))
+        newCreature.run(SKAction.fadeIn(withDuration: 0.5))
         spawnPlayerNameLabel(forCreature: newCreature)
         return newCreature
     }
@@ -174,7 +174,7 @@ extension GameScene {
         gameWorld.addChild(newLabel)
     }
     
-    func computeValidPlayerName(attemptNumber: Int = 0) -> String {
+    func computeValidPlayerName(_ attemptNumber: Int = 0) -> String {
         let randName = C.randomPlayerNames.randomItem()
         for c in allCreatures {
             if c.name == randName && c.name != "" && attemptNumber < 10 { return computeValidPlayerName(attemptNumber + 1) }

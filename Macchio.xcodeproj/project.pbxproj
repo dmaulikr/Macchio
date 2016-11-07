@@ -292,7 +292,7 @@
 					83957B8B1D32FDDE00BF4450 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = KL2Z4DVRAU;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -557,7 +557,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryankanderson.macchio;
 				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -575,7 +575,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryankanderson.macchio;
 				PRODUCT_NAME = Macchio;
 				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

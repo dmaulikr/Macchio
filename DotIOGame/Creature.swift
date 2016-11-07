@@ -8,17 +8,41 @@
 
 import Foundation
 import SpriteKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class Creature: SKSpriteNode, BoundByCircle {
     // A generic creature class!
     var isDead = false // A boolean flag that can be set externally
     var playerID: Int = 0
-    var playerColor: Color = .Red
+    var playerColor: Color = .red
     static let textures: [Color: SKTexture] = [
-        .Red : SKTexture(imageNamed: "player_red_lit"),
+        .red : SKTexture(imageNamed: "player_red_lit"),
         //.Green: SKTexture(imageNamed: "player_green"),
-        .Blue: SKTexture(imageNamed: "player_blue_lit"),
-        .Yellow: SKTexture(imageNamed: "player_yellow_lit")
+        .blue: SKTexture(imageNamed: "player_blue_lit"),
+        .yellow: SKTexture(imageNamed: "player_yellow_lit")
     ]
     var timePlayed: CGFloat = 0
     
@@ -56,7 +80,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         didSet {
             //I want velocity.angle to operate in degrees from 0 to 360
             if velocity.angle > 360 {
-                velocity.angle = velocity.angle % 360
+                velocity.angle = (velocity.angle).truncatingRemainder(dividingBy: 360)
             } else if velocity.angle < 0 {
                 velocity.angle += 360
             }
@@ -126,7 +150,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         self.playerID = playerID
         playerColor = color
         let texture = Creature.textures[color]
-        let color = SKColor.whiteColor()
+        let color = SKColor.white
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
         self.alpha = 0.9
@@ -147,7 +171,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         currentSpeed = self.normalSpeed
     }
     
-    func update(deltaTime: CFTimeInterval) {
+    func update(_ deltaTime: CFTimeInterval) {
         position.x += positionDeltas.dx * CGFloat(deltaTime)
         position.y += positionDeltas.dy * CGFloat(deltaTime)
         self.timePlayed += CGFloat(deltaTime)
@@ -209,10 +233,10 @@ class Creature: SKSpriteNode, BoundByCircle {
         } else if minePropulsionSpeedActiveTimeCounter >= C.creature_minePropulsionSpeedActiveTime && minePropulsionSpeedActiveTimeCounterPreviousValue < C.creature_minePropulsionSpeedActiveTime &&
             speedDebuffTimeCounter < C.creature_speedDebuffTime {
             if (speedDebuffTimeCounterPreviousValue == 0) {
-                let lookSick = SKAction.colorizeWithColor(SKColor.greenColor(), colorBlendFactor: 0.3, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
-                let goBackToNormal = SKAction.colorizeWithColor(UIColor(white: 0, alpha: 0), colorBlendFactor: 0, duration: NSTimeInterval(C.creature_speedDebuffTime/4))
-                let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.waitForDuration(NSTimeInterval(C.creature_speedDebuffTime / 4 * 3)), goBackToNormal])
-                self.runAction(speedDebuffVisualIndication)
+                let lookSick = SKAction.colorize(with: SKColor.green, colorBlendFactor: 0.3, duration: TimeInterval(C.creature_speedDebuffTime/4))
+                let goBackToNormal = SKAction.colorize(with: UIColor(white: 0, alpha: 0), colorBlendFactor: 0, duration: TimeInterval(C.creature_speedDebuffTime/4))
+                let speedDebuffVisualIndication = SKAction.sequence([lookSick, SKAction.wait(forDuration: TimeInterval(C.creature_speedDebuffTime / 4 * 3)), goBackToNormal])
+                self.run(speedDebuffVisualIndication)
             }
             speedDebuffTimeCounterPreviousValue = speedDebuffTimeCounter
             speedDebuffTimeCounter += CGFloat(deltaTime)
@@ -238,7 +262,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         let scoreGain = C.creature_passiveScoreIncreasePerSecond(givenRadius: self.targetRadius) * timeSinceLastPassiveScoreGain
         if scoreGain >= 1 {
             //self.score += UInt32(scoreGain)
-            self.awardPoints(Int(scoreGain), fromSource: .Size)
+            self.awardPoints(Int(scoreGain), fromSource: .size)
             timeSinceLastPassiveScoreGain = 0
         }
         
@@ -246,7 +270,7 @@ class Creature: SKSpriteNode, BoundByCircle {
         
     }
     
-    func thinkAndAct(deltaTime: CGFloat) {
+    func thinkAndAct(_ deltaTime: CGFloat) {
         // Classes that extend creature can override thinkAndAct() and can change targetAngle
         // boost, and leaveMine()
     }
@@ -264,12 +288,12 @@ class Creature: SKSpriteNode, BoundByCircle {
     func startBoost() {
         if !canBoost { return }
         isBoosting = true
-        blendMode = SKBlendMode.Add
+        blendMode = SKBlendMode.add
     }
     
     func stopBoost() {
         isBoosting = false
-        blendMode = SKBlendMode.Alpha
+        blendMode = SKBlendMode.alpha
     }
     let totalPulseTime = 0.2
     func leaveMine() {
@@ -278,19 +302,19 @@ class Creature: SKSpriteNode, BoundByCircle {
         ///canLeaveMine = false
         mineCoolDownCounter = 0
         // Make the creature pulse
-        let expandTime: NSTimeInterval = 0.20
+        let expandTime: TimeInterval = 0.20
         let theObjectiveRadius = self.targetRadius * 1.2
         let growRadiusByAmount = theObjectiveRadius - self.targetRadius
-        let expandAction = SKAction.customActionWithDuration(expandTime, actionBlock: {
+        let expandAction = SKAction.customAction(withDuration: expandTime, actionBlock: {
             (node: SKNode, elapsedTime: CGFloat) -> Void in
             let assignRadius = self.targetRadius + (elapsedTime / CGFloat(expandTime))*growRadiusByAmount
             self.size = CGSize(width: assignRadius*2, height: assignRadius*2)
         })
-        self.runAction(expandAction)
+        self.run(expandAction)
         
-        let waitForExpandToEnd = SKAction.waitForDuration(expandTime)
+        let waitForExpandToEnd = SKAction.wait(forDuration: expandTime)
         
-        runAction(waitForExpandToEnd, completion:  {
+        run(waitForExpandToEnd, completion:  {
             if let _ = self.parent { self.spawnMineAtMyTail = true }
         })
     }
@@ -311,15 +335,15 @@ class Creature: SKSpriteNode, BoundByCircle {
         speedDebuffTimeCounterPreviousValue = 0
     }
     
-    func awardPoints(deltaScore: Int, fromSource: GameScene.PointSource) {
+    func awardPoints(_ deltaScore: Int, fromSource: GameScene.PointSource) {
         //Score should be modified from here only
         score += deltaScore
         switch fromSource {
-        case .Size:
+        case .size:
             scoreFromSize += Int(deltaScore)
-        case .KillsEat, .KillsMine:
+        case .killsEat, .killsMine:
             scoreFromKills += Int(deltaScore)
-        case .Orbs:
+        case .orbs:
             scoreFromOrbs += Int(deltaScore)
         }
         

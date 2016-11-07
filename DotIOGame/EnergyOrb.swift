@@ -12,10 +12,10 @@ import SpriteKit
 class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     static let orbTextures: [Color : SKTexture] = [
-        .Blue: SKTexture.init(imageNamed: "blue_orb.png"),
-        .Red: SKTexture.init(imageNamed: "red_orb.png"),
-        .Green: SKTexture.init(imageNamed: "green_orb.png"),
-        .Yellow: SKTexture.init(imageNamed: "yellow_orb.png")
+        .blue: SKTexture.init(imageNamed: "blue_orb.png"),
+        .red: SKTexture.init(imageNamed: "red_orb.png"),
+        .green: SKTexture.init(imageNamed: "green_orb.png"),
+        .yellow: SKTexture.init(imageNamed: "yellow_orb.png")
     ]
     
     var radius: CGFloat = 15 {
@@ -37,7 +37,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     var growing = true
     var artificiallySpawned = false // An artificially spawned orb will not be considered when the game tries to maintain a constant concentration of natural orbs (spawned from nothing)
     //var isEaten = false
-    var type: GameScene.OrbType = GameScene.OrbType.Small
+    var type: GameScene.OrbType = GameScene.OrbType.small
 //    @objc override class func initialize() {
 //        
 //    }
@@ -46,21 +46,21 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     init(orbColor: Color, type: GameScene.OrbType, growFromNothing: Bool = true) {
         self.type = type
         let texture = EnergyOrb.orbTextures[orbColor]
-        let color = SKColor.whiteColor()
+        let color = SKColor.white
         defer { radius = 0 }
         let size = CGSize(width: 2*radius, height: 2*radius)
         super.init(texture: texture, color: color, size: size)
         zPosition = 0
-        blendMode = .Add
+        blendMode = .add
         
 //        if true {
             // run a grow action, then pulse forever
-            let growTime: NSTimeInterval = 0.5
-            let growFromNothingAction = SKAction.customActionWithDuration(0.5, actionBlock: {
+            let growTime: TimeInterval = 0.5
+            let growFromNothingAction = SKAction.customAction(withDuration: 0.5, actionBlock: {
                 (node: SKNode, timeElapsed: CGFloat) -> Void in
                 self.radius = C.orb_minRadii[type]! * (timeElapsed / CGFloat(growTime))
             })
-            self.runAction(growFromNothingAction, completion: pulseForever)
+            self.run(growFromNothingAction, completion: pulseForever)
 //        } else {
 //            // fade in instead
 //            self.alpha = 0
@@ -77,20 +77,20 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
     
     func pulseForever() {
 
-        let growDuration: NSTimeInterval = 0.5
-        let growToMaxRadiusActionFromMinRadius = SKAction.customActionWithDuration(0.5, actionBlock: {
+        let growDuration: TimeInterval = 0.5
+        let growToMaxRadiusActionFromMinRadius = SKAction.customAction(withDuration: 0.5, actionBlock: {
             (node: SKNode, timeElapsed: CGFloat) -> Void in
             let amountToUltimatelyGrow = C.orb_maxRadii[self.type]! - C.orb_minRadii[self.type]!
             self.radius = C.orb_minRadii[self.type]! + amountToUltimatelyGrow * (timeElapsed/CGFloat(growDuration))
         })
         
-        let growToMinRadiusFromMaxRadius = SKAction.customActionWithDuration(growDuration, actionBlock: {
+        let growToMinRadiusFromMaxRadius = SKAction.customAction(withDuration: growDuration, actionBlock: {
             (node: SKNode, timeElapsed: CGFloat) -> Void in
             let amountToUltimatelyShrink = C.orb_maxRadii[self.type]! - C.orb_minRadii[self.type]!
             self.radius = C.orb_maxRadii[self.type]! - amountToUltimatelyShrink * (timeElapsed/CGFloat(growDuration))
         })
         let sequence = SKAction.sequence([growToMaxRadiusActionFromMinRadius, growToMinRadiusFromMaxRadius])
-        self.runAction(SKAction.repeatActionForever(sequence))
+        self.run(SKAction.repeatForever(sequence))
     }
     
     
@@ -99,7 +99,7 @@ class EnergyOrb: SKSpriteNode, BoundByCircle {
         super.init(coder: aDecoder)
     }
     
-    func update(deltaTime: CFTimeInterval) {
+    func update(_ deltaTime: CFTimeInterval) {
         if self.artificiallySpawned { lifespanCounter += CGFloat(deltaTime) }
 //        if growing {
 //            radius += 20 * CGFloat(deltaTime)

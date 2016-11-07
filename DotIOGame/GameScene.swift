@@ -10,10 +10,10 @@ import Foundation
 import SpriteKit
 
 enum Color {
-    case Red, Green, Blue, Yellow
+    case red, green, blue, yellow
 }
 func randomColor() -> Color {
-    let allTheColors: [Color] = [.Red, .Blue, .Yellow]
+    let allTheColors: [Color] = [.red, .blue, .yellow]
     let randIndex = Int(CGFloat.random(min: 0, max: CGFloat(allTheColors.count)))
     return allTheColors[randIndex]
 }
@@ -34,9 +34,9 @@ class GameScene: SKScene {
     //var theEnteredInPlayerName = ""
     
     enum State {
-        case Playing, GameOver
+        case playing, gameOver
     }
-    var gameState: State = .Playing
+    var gameState: State = .playing
     
     var previousTime: CFTimeInterval? = nil
     
@@ -96,7 +96,7 @@ class GameScene: SKScene {
     
     // Enum constants representing the different ways players can obtain points in the game
     enum PointSource {
-        case Orbs, KillsEat, KillsMine, Size
+        case orbs, killsEat, killsMine, size
     }
     
     var playerScore: Int = 0 {
@@ -133,7 +133,7 @@ class GameScene: SKScene {
     var orbLayer: SKNode!
     var orbChunks: [[[EnergyOrb]]] = [] // A creature, when checking for orb collisions, will use for orb in orbChunks[x][y] where x and y are the positions of the corresponding orb chunks
     var orbBeacons: [OrbBeacon] = []
-    func convertWorldPointToOrbChunkLocation(point: CGPoint) -> (x: Int, y: Int)? {
+    func convertWorldPointToOrbChunkLocation(_ point: CGPoint) -> (x: Int, y: Int)? {
         if point.x < 0 || point.x > mapSize.width || point.y < 0 || point.y > mapSize.height { return nil }
         var x = Int(point.x / orbChunkWidth); var y = Int(point.y / orbChunkHeight)
         if x < 0 { x = 0 }; if x >= numOfChunkColumns { x = numOfChunkColumns - 1 }
@@ -177,9 +177,9 @@ class GameScene: SKScene {
     
     var largePointDisplay: LargePointDisplay!
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
 //        player = AICreature(name: "Yoloz Boy 123", playerID: 1, color: .Red, startRadius: 80, gameScene: self, rxnTime: 0)
-        gameWorld = childNodeWithName("gameWorld")
+        gameWorld = childNode(withName: "gameWorld")
         player = PlayerCreature(name: UserState.name, playerID: randomID(), color: randomColor(), startRadius: 80)
         defer {
             spawnPlayerNameLabel(forCreature: player!)
@@ -205,28 +205,28 @@ class GameScene: SKScene {
         //cameraScaleToPlayerRadiusRatio = camera!.xScale / player!.radius
         cameraTarget = player
         
-        bgGraphics = childNodeWithName("//bgGraphics")
+        bgGraphics = childNode(withName: "//bgGraphics")
         bgGraphics.xScale = mapSize.width / 6000
         bgGraphics.yScale = mapSize.height / 6000
-        let stageBounds = childNodeWithName("//stageBounds")!
+        let stageBounds = childNode(withName: "//stageBounds")!
         stageBounds.xScale = bgGraphics.xScale
         stageBounds.yScale = bgGraphics.yScale
         
-        gameplayHUD = childNodeWithName("//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
-        gameOverHUD = childNodeWithName("//gameOverHUD") // gameOverHUD will act as a container for ui elements when gamescene is in .GameOver state
+        gameplayHUD = childNode(withName: "//gameplayHUD") // gameplayHUD will act as a container for ui elements for when the gameScene is in the .Playing state
+        gameOverHUD = childNode(withName: "//gameOverHUD") // gameOverHUD will act as a container for ui elements when gamescene is in .GameOver state
         gameOverHUD.alpha = 0
-        let rankX = gameOverHUD.childNodeWithName("rankX")!
+        let rankX = gameOverHUD.childNode(withName: "rankX")!
         rankX.alpha = 0.8
-        let ofX = gameOverHUD.childNodeWithName("ofX")!
+        let ofX = gameOverHUD.childNode(withName: "ofX")!
         ofX.alpha = 0.8
-        let finalScore = gameOverHUD.childNodeWithName("finalScore")!
+        let finalScore = gameOverHUD.childNode(withName: "finalScore")!
         finalScore.alpha = 0.8
-        let highScoreText = gameOverHUD.childNodeWithName("highScore")!
+        let highScoreText = gameOverHUD.childNode(withName: "highScore")!
         highScoreText.alpha = 0.6
         
-        scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
-        sizeLabel = childNodeWithName("//sizeLabel") as! SKLabelNode
-        rankLabel = childNodeWithName("//rankLabel") as! SKLabelNode
+        scoreLabel = childNode(withName: "//scoreLabel") as! SKLabelNode
+        sizeLabel = childNode(withName: "//sizeLabel") as! SKLabelNode
+        rankLabel = childNode(withName: "//rankLabel") as! SKLabelNode
         // Position all the labels. Kinda like constraints
         let allAroundPadding: CGFloat = 20
         scoreLabel.position = CGPoint(x: -size.width/2 + allAroundPadding, y: size.height/2 - allAroundPadding) // Anchor point at upper left
@@ -237,7 +237,7 @@ class GameScene: SKScene {
         directionArrow.zPosition = 100
         directionArrow.size = CGSize(width: player!.size.width/5, height: player!.size.height/5)
         directionArrow.zRotation = player!.velocity.angle.degreesToRadians()
-        directionArrow.hidden = true
+        directionArrow.isHidden = true
         directionArrowTargetPosition = directionArrow.position
         gameplayHUD.addChild(directionArrow)
         directionArrowAnchor = SKNode()
@@ -247,9 +247,9 @@ class GameScene: SKScene {
         gameWorld.addChild(directionArrowAnchor)
         
         camera!.zPosition = 100
-        joyStickBox = childNodeWithName("//joyStickBox")
-        controlStick = childNodeWithName("//controlStick")
-        joyStickBox.hidden = true
+        joyStickBox = childNode(withName: "//joyStickBox")
+        controlStick = childNode(withName: "//controlStick")
+        joyStickBox.isHidden = true
         
         boostButton = BoostButton()
         boostButton.position.x = size.width/2 - boostButton.size.width/2
@@ -278,8 +278,8 @@ class GameScene: SKScene {
             }
         }
         
-        killPointsLabelOriginal = childNodeWithName("killPointsLabel") as! SKLabelNode
-        smallScoreLabelOriginal = childNodeWithName("smallScoreLabel") as! SKLabelNode
+        killPointsLabelOriginal = childNode(withName: "killPointsLabel") as! SKLabelNode
+        smallScoreLabelOriginal = childNode(withName: "smallScoreLabel") as! SKLabelNode
         
         leaderBoard = LeaderBoard()
         leaderBoard.xScale = 0.3
@@ -290,24 +290,24 @@ class GameScene: SKScene {
         leaderBoard.position = CGPoint(x: boardX, y: boardY)
         gameplayHUD.addChild(leaderBoard)
         
-        masterPlayerNameLabel = childNodeWithName("playerNameLabelMaster") as! SKLabelNode
-        let dummyPlayer = childNodeWithName("playerdummy") as! SKSpriteNode
+        masterPlayerNameLabel = childNode(withName: "playerNameLabelMaster") as! SKLabelNode
+        let dummyPlayer = childNode(withName: "playerdummy") as! SKSpriteNode
         let dummyRadius = dummyPlayer.size.width / 2
         playerNameLabelNodeXScaleToPlayerRadiusRatio = masterPlayerNameLabel.xScale / dummyRadius
         playerNameLabelNodeYScaleToPlayerRadiusRatio = masterPlayerNameLabel.yScale / dummyRadius
             
-        restartButton = childNodeWithName("//restartButton") as! MSButtonNode
-        backToMenuButton = childNodeWithName("//backToMenuButton") as! MSButtonNode
-        restartButton.state = .MSButtonNodeStateHidden
-        backToMenuButton.state = .MSButtonNodeStateHidden
+        restartButton = childNode(withName: "//restartButton") as! MSButtonNode
+        backToMenuButton = childNode(withName: "//backToMenuButton") as! MSButtonNode
+        restartButton.state = .msButtonNodeStateHidden
+        backToMenuButton.state = .msButtonNodeStateHidden
         restartButton.selectedHandler = restartGameScene
         backToMenuButton.selectedHandler = goBackToMainScene
         
-        loadingImage = childNodeWithName("//loadingImage") as! SKSpriteNode
+        loadingImage = childNode(withName: "//loadingImage") as! SKSpriteNode
         loadingImage.size = self.size
         loadingImage.position = CGPoint(x: 0, y: 0)
         
-        darkenNode = SKSpriteNode(color: UIColor.blackColor(), size: mapSize)
+        darkenNode = SKSpriteNode(color: UIColor.black, size: mapSize)
         darkenNode.anchorPoint = CGPoint(x: 0, y: 0)
         darkenNode.position = CGPoint(x: 0, y: 0)
         darkenNode.zPosition = 95
@@ -319,7 +319,7 @@ class GameScene: SKScene {
         gameplayHUD.addChild(largePointDisplay)
     }
     
-    func computeValidCreatureSpawnPoint(creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
+    func computeValidCreatureSpawnPoint(_ creatureStartRadius: CGFloat = C.creature_minRadius) -> CGPoint {
         //THIS function computes a spawn point ANYWHEERE on the entire map. I don't use this function much anymore.
         // This function assumes the creature has not been spawned yet
         let randX = CGFloat.random(min: 0 + creatureStartRadius, max: mapSize.width - creatureStartRadius )
@@ -333,26 +333,26 @@ class GameScene: SKScene {
         return randPoint
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if gameState == .GameOver { return }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameState == .gameOver { return }
         if let player = player {
             for touch in touches {
                 if playerMovingTouch == nil {
                     playerMovingTouch = touch
-                    let location = touch.locationInNode(camera!)
+                    let location = touch.location(in: camera!)
                     originalPlayerMovingTouchPositionInCamera = location
                     
                     if prefs.showArrow {
-                        directionArrow.hidden = false
+                        directionArrow.isHidden = false
                         directionArrow.removeAllActions()
-                        directionArrow.runAction(SKAction.fadeInWithDuration(0.4))
-                        directionArrowTargetPosition = convertPoint(convertPoint(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), fromNode: directionArrowAnchor), toNode: camera!)
+                        directionArrow.run(SKAction.fadeIn(withDuration: 0.4))
+                        directionArrowTargetPosition = convert(convert(CGPoint(x: player.size.width/2 + minDirectionArrowDistanceFromPlayer + 30, y: 0), from: directionArrowAnchor), to: camera!)
                         directionArrow.zRotation = player.targetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                         
                     }
                     
                     if prefs.showJoyStick {
-                        joyStickBox.hidden = false
+                        joyStickBox.isHidden = false
                         joyStickBox.position = originalPlayerMovingTouchPositionInCamera!
                     }
                     frozenTouchCounter = 0
@@ -361,12 +361,12 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if gameState == .GameOver { return }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameState == .gameOver { return }
         if let player = player {
             for touch in touches {
                 if touch == playerMovingTouch {
-                    let location = touch.locationInNode(camera!)
+                    let location = touch.location(in: camera!)
                     player.targetAngle = mapRadiansToDegrees0to360((location - originalPlayerMovingTouchPositionInCamera!).angle)
                     //player.velocity.angle = playerTargetAngle
                     
@@ -375,7 +375,7 @@ class GameScene: SKScene {
                         // the arrow will be straight ahead of the player's eyeball. How far it is is the distance the current touch location is from its orignal position. I have a value clamp too.
                         var pointInRelationToPlayer = CGPoint(x: player.size.width/2 + (location.distanceTo(originalPlayerMovingTouchPositionInCamera!))*directionArrowDragMultiplierToPlayerRadiusRatio * player.radius, y: 0)
                         pointInRelationToPlayer.x.clamp(player.size.width/2 + minDirectionArrowDistanceFromPlayer, size.width * camera!.xScale + size.height * camera!.yScale)
-                        directionArrowTargetPosition = convertPoint(convertPoint(pointInRelationToPlayer, fromNode: directionArrowAnchor), toNode: camera!)
+                        directionArrowTargetPosition = convert(convert(pointInRelationToPlayer, from: directionArrowAnchor), to: camera!)
                         directionArrow.zRotation = player.targetAngle.degreesToRadians() - CGFloat(90).degreesToRadians()
                         
                         directionArrowTargetPosition.x.clamp(-frame.width/2, frame.width/2)
@@ -399,20 +399,20 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             if touch == playerMovingTouch {
                 playerMovingTouch = nil
                 originalPlayerMovingTouchPositionInCamera = nil
                 if prefs.showArrow {
                     directionArrow.removeAllActions()
-                    directionArrow.runAction(SKAction.sequence([SKAction.fadeOutWithDuration(0.7), SKAction.runBlock {
-                        self.directionArrow.hidden = true
+                    directionArrow.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.7), SKAction.run {
+                        self.directionArrow.isHidden = true
                         }]))
                     
                 }
                 if prefs.showJoyStick {
-                    joyStickBox.hidden = true
+                    joyStickBox.isHidden = true
                     controlStick.position = CGPoint(x: 0, y: 0)
                 }
             }
@@ -420,7 +420,7 @@ class GameScene: SKScene {
     }
     
     var currentTimestamp: CFTimeInterval = 0
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         
         var orbCount = 0
         for orbCol in orbChunks {
@@ -457,7 +457,7 @@ class GameScene: SKScene {
         
         var updateChunkCoords: [(x: Int, y: Int)] = []
         for point in notablePointsOnCamera {
-            let pointInWorld = self.convertPoint(point, fromNode: camera!)
+            let pointInWorld = self.convert(point, from: camera!)
             if let chunkCoords = convertWorldPointToOrbChunkLocation(pointInWorld) {
                 // Only add these chunk coords to the updating array if is isn't already there
                 var alreadyThere = false
@@ -508,17 +508,17 @@ class GameScene: SKScene {
             if frozenTouchCounter >= frozenTouchDetectionTime {
                 frozenTouchCounter = 0
                 var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
-                touchesEnded(fakeTouches, withEvent: nil)
+                touchesEnded(fakeTouches, with: nil)
             }
         }
         
     }
     
-    func convertAreaToSizeNumber(area: CGFloat) -> Int {
+    func convertAreaToSizeNumber(_ area: CGFloat) -> Int {
         return Int(radiusOfCircleWithArea(area))
     }
     
-    func convertAreaToKillPoints(area: CGFloat) -> Int {
+    func convertAreaToKillPoints(_ area: CGFloat) -> Int {
         //return Int(radiusOfCircleWithArea(area) * 100) / 100
         let radius = radiusOfCircleWithArea(area)
         switch radius {
@@ -567,26 +567,26 @@ class GameScene: SKScene {
         
     }
     
-    func handleOrbChunkCollision(orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
+    func handleOrbChunkCollision(_ orbChunk: [EnergyOrb], withCreature c: Creature) -> [EnergyOrb] {
         // handles the collisons between a given creature and all the orbs in the given chunk
         // returns a new list of orbs for the chunk without the removed ones.
         let orbKillList: [EnergyOrb] = orbChunk.filter { $0.overlappingCircle(c) }
         
         for orb in orbKillList {
-            let fadeAction = SKAction.fadeOutWithDuration(0.3)
+            let fadeAction = SKAction.fadeOut(withDuration: 0.3)
             //let remove = SKAction.runBlock { self.removeFromParent() }
             orb.removeAllActions()
-            orb.runAction(SKAction.sequence([fadeAction]))
-            let waitAction = SKAction.waitForDuration(0.3)
-            let removeOrbAction = SKAction.runBlock {
+            orb.run(SKAction.sequence([fadeAction]))
+            let waitAction = SKAction.wait(forDuration: 0.3)
+            let removeOrbAction = SKAction.run {
                 orb.removeFromParent()
             }
-            self.runAction(SKAction.sequence([waitAction, removeOrbAction]))
+            self.run(SKAction.sequence([waitAction, removeOrbAction]))
             c.targetArea += orb.growAmount
             
             // Award Points
             let deltaScore: Int = C.orb_pointValues[orb.type]!
-            c.awardPoints(deltaScore, fromSource: .Orbs)
+            c.awardPoints(deltaScore, fromSource: .orbs)
             //c.score += deltaScore
             //c.scoreFromOrbs += deltaScore
 
@@ -623,7 +623,7 @@ class GameScene: SKScene {
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
                                 //creature.score += deltaScore
-                                creature.awardPoints(deltaScore, fromSource: .KillsMine)
+                                creature.awardPoints(deltaScore, fromSource: .killsMine)
                                 break
                             }
                         }
@@ -633,25 +633,25 @@ class GameScene: SKScene {
                         }
                         
                         
-                        let waitAction = SKAction.waitForDuration(0.3)
-                        let spawnOrbClusterAction = SKAction.runBlock {
+                        let waitAction = SKAction.wait(forDuration: 0.3)
+                        let spawnOrbClusterAction = SKAction.run {
                             let budgetOfNewCluster = (areaOfCircleWithRadius(orgRadius) - areaOfCircleWithRadius(newRadius)) * C.energyTransferPercent
-                            self.seedOrbCluster(ofType: .Glorious, withBudget: budgetOfNewCluster, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: newRadius, exclusivelyInColor: creature.playerColor)
+                            self.seedOrbCluster(ofType: .glorious, withBudget: budgetOfNewCluster, aboutPoint: creature.position, withinRadius: orgRadius, minRadius: newRadius, exclusivelyInColor: creature.playerColor)
                         }
-                        runAction(SKAction.sequence([waitAction, spawnOrbClusterAction]))
+                        run(SKAction.sequence([waitAction, spawnOrbClusterAction]))
                         
                         
                     } else {
                         // creature just died
                         creatureKillList.append(creature)
-                        seedOrbCluster(ofType: .Glorious, withBudget: creature.growAmount * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: creature.targetRadius * C.creature_orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
+                        seedOrbCluster(ofType: .glorious, withBudget: creature.growAmount * C.energyTransferPercent, aboutPoint: creature.position, withinRadius: creature.targetRadius * C.creature_orbSpawnUponDeathRadiusMultiplier, exclusivelyInColor: creature.playerColor)
                         destroyMines(ofCreature: creature)
                         
                         let deltaScore = convertAreaToKillPoints(creature.targetArea)
                         for creature in allCreatures {
                             if creature.playerID == mine.leftByPlayerID {
                                 //creature.score += deltaScore
-                                creature.awardPoints(deltaScore, fromSource: .KillsMine)
+                                creature.awardPoints(deltaScore, fromSource: .killsMine)
                                 break
                             }
                         }
@@ -666,13 +666,13 @@ class GameScene: SKScene {
         
         otherCreatures = otherCreatures.filter { !creatureKillList.contains($0) }
         for x in creatureKillList {
-            if x === player && gameState != .GameOver {
+            if x === player && gameState != .gameOver {
                 gameOver()
             } else {
-                let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
-                x.runAction(fadeOutAction)
-                let waitForFadeOut = SKAction.waitForDuration(C.creature_deathFadeOutDuration)
-                runAction(waitForFadeOut, completion: { x.removeFromParent() } )
+                let fadeOutAction = SKAction.fadeOut(withDuration: C.creature_deathFadeOutDuration)
+                x.run(fadeOutAction)
+                let waitForFadeOut = SKAction.wait(forDuration: C.creature_deathFadeOutDuration)
+                run(waitForFadeOut, completion: { x.removeFromParent() } )
             }
         }
 
@@ -695,7 +695,7 @@ class GameScene: SKScene {
                             theEaten.append(theSmaller)
                             let deltaScore = convertAreaToKillPoints(theSmaller.targetArea)
                             //theBigger.score += deltaScore
-                            theBigger.awardPoints(deltaScore, fromSource: .KillsEat)
+                            theBigger.awardPoints(deltaScore, fromSource: .killsEat)
                             theSmaller.isDead = true
                             destroyMines(ofCreature: theSmaller)
                             if theBigger === player {
@@ -725,7 +725,7 @@ class GameScene: SKScene {
         }
         otherCreatures = otherCreatures.filter() { !theEaten.contains($0) }
         for x in theEaten {
-            if x === player && gameState != .GameOver {
+            if x === player && gameState != .gameOver {
                 gameOver()
             } else {
                 x.removeFromParent()
@@ -742,15 +742,15 @@ class GameScene: SKScene {
             }
         }
         mines = mines.filter { !removeMines.contains($0) }
-        let shrinkAction = SKAction.scaleTo(0, duration: 1)
-        let fadeAction = SKAction.fadeOutWithDuration(0.5)
+        let shrinkAction = SKAction.scale(to: 0, duration: 1)
+        let fadeAction = SKAction.fadeOut(withDuration: 0.5)
         for mine in removeMines {
-            mine.runAction(shrinkAction)
-            mine.runAction(fadeAction, completion: {
+            mine.run(shrinkAction)
+            mine.run(fadeAction, completion: {
                 mine.removeFromParent()
             })
             if spawnOrbCluster {
-                seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
+                seedOrbCluster(ofType: .glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
             }
         }
     }
@@ -762,13 +762,13 @@ class GameScene: SKScene {
         mines = mines.filter { !mineKillList.contains($0) }
         for mine in mineKillList {
             // when the orb cluster is seeded, mine.growAmount is not multiplied by C.energyTransferPercent, because this was already applied when the creature left the mine. (Remember: energy transfer percent is the grow amount that is kept when it changes state (e.g. creature ->X% mine ->X% orbs)
-            seedOrbCluster(ofType: .Glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
-            let shrinkAction = SKAction.scaleTo(0, duration: 1)
-            mine.runAction(shrinkAction)
-            let fadeAction = SKAction.fadeOutWithDuration(0.5)
-            mine.runAction(fadeAction)
-            let waitForShrink = SKAction.waitForDuration(1)
-            runAction(waitForShrink, completion: {
+            seedOrbCluster(ofType: .glorious, withBudget: mine.growAmount, aboutPoint: mine.position, withinRadius: mine.radius, exclusivelyInColor: mine.leftByPlayerColor)
+            let shrinkAction = SKAction.scale(to: 0, duration: 1)
+            mine.run(shrinkAction)
+            let fadeAction = SKAction.fadeOut(withDuration: 0.5)
+            mine.run(fadeAction)
+            let waitForShrink = SKAction.wait(forDuration: 1)
+            run(waitForShrink, completion: {
                 mine.removeFromParent()
             })
         }
@@ -844,7 +844,7 @@ class GameScene: SKScene {
         }
     }
     
-    let orbFadeAction = SKAction.fadeOutWithDuration(NSTimeInterval(C.orb_fadeOutForXSeconds))
+    let orbFadeAction = SKAction.fadeOut(withDuration: TimeInterval(C.orb_fadeOutForXSeconds))
     func handleOrbSpawningAndDecay() {
         
         
@@ -852,7 +852,7 @@ class GameScene: SKScene {
         // Remove expired orbs (with fade effect)
         
         let chunkCoords = notablePointsOnCamera.map {
-            convertWorldPointToOrbChunkLocation(self.convertPoint($0, fromNode: camera!))
+            convertWorldPointToOrbChunkLocation(self.convert($0, from: camera!))
         }
         for chunkCoord in chunkCoords {
             if let coord = chunkCoord {
@@ -866,7 +866,7 @@ class GameScene: SKScene {
                         let randX = CGFloat(coord.x) * orbChunkWidth + CGFloat.random(min: 0, max: orbChunkWidth)
                         let randY = CGFloat(coord.y) * orbChunkHeight + CGFloat.random(min: 0, max: orbChunkHeight)
                         let orbPosition = CGPoint(x: randX, y: randY)
-                        let randType: OrbType = CGFloat.random() > 0.9 ? .Rich : .Small
+                        let randType: OrbType = CGFloat.random() > 0.9 ? .rich : .small
                         seedOrbWithSpecifiedType(randType, atPosition: orbPosition)
                     }
                 }
@@ -874,7 +874,7 @@ class GameScene: SKScene {
                 // Find the orbs that are close to decay and begin the fading process
                 let orbsToFade = (orbChunks[coord.x][coord.y]).filter { $0.isNearDecay && !$0.isAlreadyFading }
                 for orb in orbsToFade {
-                    orb.runAction(orbFadeAction)
+                    orb.run(orbFadeAction)
                 }
                 
                 // Find the expired orbs and destroy them
@@ -953,7 +953,7 @@ class GameScene: SKScene {
         
     }
     
-    func handleFakePlayerData(deltaTime: Double) {
+    func handleFakePlayerData(_ deltaTime: Double) {
         // Firstly, make the data change in interesting ways
         for i in 0..<changeFakeDataTimers.count {
             changeFakeDataTimers[i] -= deltaTime
@@ -981,15 +981,15 @@ class GameScene: SKScene {
         if fakeDataDestroyTimer <= 0 {
             fakeDataDestroyTimer = Double(CGFloat.random(min: 7, max: 15))
             let randArrayIndex = Int(arc4random_uniform(UInt32(fakePlayerDataBundles.count)))
-            fakePlayerDataBundles.removeAtIndex(randArrayIndex)
+            fakePlayerDataBundles.remove(at: randArrayIndex)
         }
         
     }
     
-    func updateUI(deltaTime: CGFloat) {
+    func updateUI(_ deltaTime: CGFloat) {
         //      ---- UI-ey things ----
         if let player = player {
-            if gameState != .GameOver {
+            if gameState != .gameOver {
     
                 //let theCameraScale = calculateCameraScale(forGivenPlayerRadius: player.radius)
                 let theCameraScale = calculateCameraScale(givenPlayerRadius: player.radius, givenMinPlayerRadiusToScreenWidthRatio: C.minPlayerRadiusToScreenWidthRatio, givenMaxPlayerRadiusToScreenWidthRatio: C.maxPlayerRadiusToScreenWidthRatio)
@@ -1016,10 +1016,10 @@ class GameScene: SKScene {
                 if player.mineCoolDownCounter >= C.creature_mineCooldownTime &&
                     player.mineCoolDownCounterPreviousValue < C.creature_mineCooldownTime {
                     // The player has their mine ready for the first time this frame
-                    let rotate = SKAction.rotateByAngle(CGFloat(180).degreesToRadians(), duration: 0.7)
-                    leaveMineButton.buttonIcon.runAction(rotate)
+                    let rotate = SKAction.rotate(byAngle: CGFloat(180).degreesToRadians(), duration: 0.7)
+                    leaveMineButton.buttonIcon.run(rotate)
                     let cropNode = leaveMineButton.greenPart.parent as! SKCropNode
-                    cropNode.maskNode?.runAction(rotate)
+                    cropNode.maskNode?.run(rotate)
                 }
     
                 
@@ -1044,7 +1044,7 @@ class GameScene: SKScene {
                         }
                         if !warningSignAlreadyExists {
                             let newWarningSign = WarningSign(creature: creature)
-                            newWarningSign.position = camera!.convertPoint(creature.position, fromNode: self)
+                            newWarningSign.position = camera!.convert(creature.position, from: self)
                             newWarningSign.position.x.clamp(-size.width / 2 + newWarningSign.size.width/2, size.width / 2 - newWarningSign.size.width/2)
                             newWarningSign.position.y.clamp(-size.height / 2 + newWarningSign.size.height/2, size.height / 2 - newWarningSign.size.height/2)
                             
@@ -1072,7 +1072,7 @@ class GameScene: SKScene {
                         warningSign.xScale = theSignScale
                         warningSign.yScale = theSignScale
                         
-                        let creaturePositionInRelationToCamera = camera!.convertPoint(correspondingCreature.position, fromNode: self)
+                        let creaturePositionInRelationToCamera = camera!.convert(correspondingCreature.position, from: self)
                         warningSign.position = creaturePositionInRelationToCamera
                         warningSign.position.x.clamp(-size.width / 2 + warningSign.size.width/2, size.width / 2 - warningSign.size.width/2)
                         warningSign.position.y.clamp(-size.height / 2 + warningSign.size.height/2, size.height / 2 - warningSign.size.height/2)
@@ -1092,9 +1092,9 @@ class GameScene: SKScene {
                            creatureClosestPointToCameraCenter.x < camera!.position.x + size.width/2 * camera!.xScale &&
                            creatureClosestPointToCameraCenter.y > camera!.position.y - size.height/2 * camera!.yScale &&
                            creatureClosestPointToCameraCenter.y < camera!.position.y + size.height/2 * camera!.yScale {
-                            warningSign.hidden = true
+                            warningSign.isHidden = true
                         } else {
-                            warningSign.hidden = false
+                            warningSign.isHidden = false
                         }
                         
                         // Change the flash rate to be the inverse of the distance between the center of the camera and the corresponding creature
@@ -1146,8 +1146,8 @@ class GameScene: SKScene {
                 
                 // If the loading image is still in the center, then get it off the screen (the game state is not game over in this block
                 if loadingImage.position.x == 0 && loadingImage.position.y == 0 && !loadingImage.hasActions() {
-                    let moveJustOutOfTheScreen = SKAction.moveTo(CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
-                    loadingImage.runAction(moveJustOutOfTheScreen)
+                    let moveJustOutOfTheScreen = SKAction.move(to: CGPoint(x: 0, y: self.size.height/2 + self.loadingImage.size.height/2), duration: loadingImageMoveTime)
+                    loadingImage.run(moveJustOutOfTheScreen)
                 }
                 
             }
@@ -1165,27 +1165,27 @@ class GameScene: SKScene {
         
     }
     
-    func spawnSmallScoreTextOnPlayerMouth(points: Int) {
+    func spawnSmallScoreTextOnPlayerMouth(_ points: Int) {
         if points == 0 { return }
         if let player = player {
             let newLabelNode = smallScoreLabelOriginal.copy() as! SKLabelNode
             newLabelNode.text = "+\(points)"
-            newLabelNode.position = convertPoint(convertPoint(CGPoint(x: player.radius, y: 0), fromNode: player), toNode: camera!)
+            newLabelNode.position = convert(convert(CGPoint(x: player.radius, y: 0), from: player), to: camera!)
             gameplayHUD.addChild(newLabelNode)
-            newLabelNode.runAction(SKAction.moveBy(CGVector(dx: 0, dy: 60), duration: 0.8))
-            newLabelNode.runAction(SKAction.fadeOutWithDuration(0.8), completion: {
+            newLabelNode.run(SKAction.move(by: CGVector(dx: 0, dy: 60), duration: 0.8))
+            newLabelNode.run(SKAction.fadeOut(withDuration: 0.8), completion: {
                 self.removeFromParent()
             })
         }
     }
     
-    func spawnKillPoints(points: Int) {
+    func spawnKillPoints(_ points: Int) {
         if points <= 0 { return }
         //largePointDisplay.addPointLabel(withText: ("+\(points)"))
         largePointDisplay.showPoints(withValue: points)
         // Bump camera
         let bumpAction = SKAction(named: "Bump")!
-        camera!.runAction(bumpAction)
+        camera!.run(bumpAction)
     }
     
     func randomID() -> Int {
@@ -1199,17 +1199,17 @@ class GameScene: SKScene {
     }
     
     func gameOver() {
-        gameState = .GameOver
+        gameState = .gameOver
         
         // If the player is still touching the UI, then nullify the touch, getting rid of the arrow
         if let playerMovingTouch = playerMovingTouch {
             var fakeTouches = Set<UITouch>(); fakeTouches.insert(playerMovingTouch)
-            touchesEnded(fakeTouches, withEvent: nil)
+            touchesEnded(fakeTouches, with: nil)
         }
         
         // Let the camera zoom out over so slowly
-        let zoomOutAction = SKAction.scaleBy(2, duration: 30)
-        camera!.runAction(zoomOutAction)
+        let zoomOutAction = SKAction.scale(by: 2, duration: 30)
+        camera!.run(zoomOutAction)
         
         // nillfiying player will remove it from allCreatures; it won't move anymore
         let player = self.player!
@@ -1226,22 +1226,22 @@ class GameScene: SKScene {
         
         
         // The rest are visual effects
-        let fadeOutAction = SKAction.fadeOutWithDuration(C.creature_deathFadeOutDuration)
-        player.runAction(fadeOutAction)
-        let waitForFade = SKAction.waitForDuration(C.creature_deathFadeOutDuration)
-        runAction(waitForFade, completion: {
+        let fadeOutAction = SKAction.fadeOut(withDuration: C.creature_deathFadeOutDuration)
+        player.run(fadeOutAction)
+        let waitForFade = SKAction.wait(forDuration: C.creature_deathFadeOutDuration)
+        run(waitForFade, completion: {
             player.removeFromParent()
         })
         
         //Hide the HUD
-        let hideAction = SKAction.fadeOutWithDuration(0.3)
+        let hideAction = SKAction.fadeOut(withDuration: 0.3)
 //        for child in hud.children {
 //            child.runAction(hideAction)
 //        }
-        gameplayHUD.runAction(hideAction)
+        gameplayHUD.run(hideAction)
         //Hide names
         for nameLabel in (playerNameLabelsAndCorrespondingIDs.map {$0.label}) {
-            nameLabel.runAction(hideAction)
+            nameLabel.run(hideAction)
         }
 //        
 //        let waitALittle = SKAction.waitForDuration(2)
@@ -1251,7 +1251,7 @@ class GameScene: SKScene {
 //        runAction(sequence, completion: {
 //            
 //        })
-        let waitOneSecond = SKAction.waitForDuration(1)
+        let waitOneSecond = SKAction.wait(forDuration: 1)
 //        let showTheButtons = SKAction.runBlock {
 //            // Showing the buttons in itself is starting an additional SKAction that will cause them to fade in. And then another action to wait for them to fade in and after they are visible, change their state to active. Bear with me.
 //            let btnFadeInTime = 0.5
@@ -1267,17 +1267,17 @@ class GameScene: SKScene {
 //            }
 //            self.runAction(SKAction.sequence([waitForButtonsToFadeIn, enableTheButtons]))
 //        }
-        let showTheGameOverHUD = SKAction.runBlock {
+        let showTheGameOverHUD = SKAction.run {
             let fadeInTime = 0.5
-            let fadeInAction = SKAction.fadeAlphaTo(0.85, duration: fadeInTime)
-            self.gameOverHUD.runAction(fadeInAction)
-            self.restartButton.state = .MSButtonNodeStateActive
-            self.backToMenuButton.state = .MSButtonNodeStateActive
+            let fadeInAction = SKAction.fadeAlpha(to: 0.85, duration: fadeInTime)
+            self.gameOverHUD.run(fadeInAction)
+            self.restartButton.state = .msButtonNodeStateActive
+            self.backToMenuButton.state = .msButtonNodeStateActive
             
-            let rankX = self.gameOverHUD.childNodeWithName("rankX") as! SKLabelNode
-            let ofX = self.gameOverHUD.childNodeWithName("ofX") as! SKLabelNode
-            let finalScore = self.gameOverHUD.childNodeWithName("finalScore") as! SKLabelNode
-            let highScore = self.gameOverHUD.childNodeWithName("highScore") as! SKLabelNode
+            let rankX = self.gameOverHUD.childNode(withName: "rankX") as! SKLabelNode
+            let ofX = self.gameOverHUD.childNode(withName: "ofX") as! SKLabelNode
+            let finalScore = self.gameOverHUD.childNode(withName: "finalScore") as! SKLabelNode
+            let highScore = self.gameOverHUD.childNode(withName: "highScore") as! SKLabelNode
             rankX.text = "Rank #\(self.leaderBoard.getRankOfCreature(withID: player.playerID)!)"
             ofX.text = "of \(self.allCreatures.count + 1 + self.fakePlayerDataBundles.count)"
             finalScore.text = "Score: \(self.playerScore)"
@@ -1290,41 +1290,41 @@ class GameScene: SKScene {
                 highScore.text = "Highscore: \(UserState.highScore)"
             }
         }
-        self.runAction(SKAction.sequence([waitOneSecond, showTheGameOverHUD]))
+        self.run(SKAction.sequence([waitOneSecond, showTheGameOverHUD]))
         
         // Finally, darken the game world
-        let fadeInABit = SKAction.fadeAlphaTo(0.6, duration: 1)
-        darkenNode.runAction(SKAction.sequence([waitOneSecond, fadeInABit]))
+        let fadeInABit = SKAction.fadeAlpha(to: 0.6, duration: 1)
+        darkenNode.run(SKAction.sequence([waitOneSecond, fadeInABit]))
         
         
     }
     
     func restartGameScene() {
-        let moveToCenterOfScreen = SKAction.moveTo(CGPoint(x: 0, y: 0), duration: loadingImageMoveTime)
-        loadingImage.runAction(moveToCenterOfScreen)
-        let waitForLoadingImageToMoveToTheCenterOfScreen = SKAction.waitForDuration(loadingImageMoveTime + 0.1)
-        let presentNewGameScene = SKAction.runBlock {
+        let moveToCenterOfScreen = SKAction.move(to: CGPoint(x: 0, y: 0), duration: loadingImageMoveTime)
+        loadingImage.run(moveToCenterOfScreen)
+        let waitForLoadingImageToMoveToTheCenterOfScreen = SKAction.wait(forDuration: loadingImageMoveTime + 0.1)
+        let presentNewGameScene = SKAction.run {
             let skView = self.view as SKView!
             let scene = GameScene(fileNamed:"GameScene") as GameScene!
             //scene.theEnteredInPlayerName = self.theEnteredInPlayerName
-            scene.scaleMode =  SKSceneScaleMode.ResizeFill
-            skView.presentScene(scene)
+            scene?.scaleMode =  SKSceneScaleMode.resizeFill
+            skView?.presentScene(scene)
         }
     
-        runAction(SKAction.sequence([waitForLoadingImageToMoveToTheCenterOfScreen, presentNewGameScene]))
+        run(SKAction.sequence([waitForLoadingImageToMoveToTheCenterOfScreen, presentNewGameScene]))
     }
     
     func goBackToMainScene() {
         let skView = self.view as SKView!
         let scene = MainScene(fileNamed:"MainScene") as MainScene!
         //scene.presetPlayerName = theEnteredInPlayerName
-        scene.scaleMode =  SKSceneScaleMode.ResizeFill
+        scene?.scaleMode =  SKSceneScaleMode.resizeFill
         //skView.presentScene(scene, transition: SKTransition.fadeWithColor(SKColor.blackColor(), duration: 1))
-        skView.presentScene(scene)
+        skView?.presentScene(scene)
     }
     
     // Helper method that returns the reference of a creature with the given ID. Theoretically, all creatures should have a unique ID.
-    func findCreatureByID(id: Int) -> Creature? {
+    func findCreatureByID(_ id: Int) -> Creature? {
         for c in allCreatures {
             if c.playerID == id { return c }
         }
@@ -1352,22 +1352,22 @@ class GameScene: SKScene {
     
 }
 
-func mapRadiansToDegrees0to360(rad: CGFloat) -> CGFloat{
+func mapRadiansToDegrees0to360(_ rad: CGFloat) -> CGFloat{
     var deg = rad.radiansToDegrees()
     if deg < 0 {
         deg += 360
     } else if deg > 360 {
-        deg = deg % 360
+        deg = deg.truncatingRemainder(dividingBy: 360)
     }
     return deg
 }
 
 
-func areaOfCircleWithRadius(r: CGFloat) -> CGFloat {
+func areaOfCircleWithRadius(_ r: CGFloat) -> CGFloat {
     return CGFloat(pi) * r * r
 }
 
-func radiusOfCircleWithArea(a: CGFloat) -> CGFloat {
+func radiusOfCircleWithArea(_ a: CGFloat) -> CGFloat {
     // a = pi * r**2
     // a / pi = r**2
     // r = sqrt(a / pi)
@@ -1375,7 +1375,7 @@ func radiusOfCircleWithArea(a: CGFloat) -> CGFloat {
 }
 
 
-func contains(a:[(x: Int, y: Int)], v:(x: Int, y: Int)) -> Bool {
+func contains(_ a:[(x: Int, y: Int)], v:(x: Int, y: Int)) -> Bool {
     let (c1, c2) = v
     for (v1, v2) in a { if v1 == c1 && v2 == c2 { return true } }
     return false

@@ -9,19 +9,19 @@
 import Foundation
 
 class UserState {
-    static var name: String = NSUserDefaults.standardUserDefaults().stringForKey("myName") ?? "Average Blob" {
+    static var name: String = UserDefaults.standard.string(forKey: "myName") ?? "Average Blob" {
         didSet {
-            NSUserDefaults.standardUserDefaults().setObject(name, forKey:"myName")
+            UserDefaults.standard.set(name, forKey:"myName")
             // Saves to disk immediately, otherwise it will save when it has time
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.synchronize()
         }
     }
     
-    static var highScore: Int = NSUserDefaults.standardUserDefaults().integerForKey("myHighScore") ?? 0 {
+    static var highScore: Int = UserDefaults.standard.integer(forKey: "myHighScore") ?? 0 {
         didSet {
-            NSUserDefaults.standardUserDefaults().setInteger(highScore, forKey:"myHighScore")
+            UserDefaults.standard.set(highScore, forKey:"myHighScore")
             // Saves to disk immediately, otherwise it will save when it has time
-            NSUserDefaults.standardUserDefaults().synchronize()
+            UserDefaults.standard.synchronize()
         }
     }
 }

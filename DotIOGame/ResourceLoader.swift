@@ -19,9 +19,9 @@ class ResourceLoader {
         //masterLabels = ResourceLoader.loadSKSAsReferenceNode("masterLabels")
     }
     
-    static func loadSKSAsReferenceNode(fileName: String) -> SKReferenceNode {
-        let resourcePath = NSBundle.mainBundle().pathForResource(fileName, ofType: "sks")
-        let referenceNode = SKReferenceNode(URL: NSURL(fileURLWithPath: resourcePath!))
+    static func loadSKSAsReferenceNode(_ fileName: String) -> SKReferenceNode {
+        let resourcePath = Bundle.main.path(forResource: fileName, ofType: "sks")
+        let referenceNode = SKReferenceNode(url: URL(fileURLWithPath: resourcePath!))
         return referenceNode
     }
     

@@ -32,9 +32,9 @@ class MineButton: SKSpriteNode {
     
     init() {
         greenPart = SKSpriteNode(imageNamed: "green_circle_solid.png")
-        super.init(texture: nil, color: SKColor.whiteColor(), size: CGSize(width: 100, height: 100))
+        super.init(texture: nil, color: SKColor.white, size: CGSize(width: 100, height: 100))
         alpha = 0.001 //Basically u can't see it. this is the hitbox
-        self.userInteractionEnabled = true
+        self.isUserInteractionEnabled = true
     }
     
     func addButtonIconToParent() {
@@ -61,9 +61,9 @@ class MineButton: SKSpriteNode {
         greenPart.zPosition = cropNode.zPosition + 1
         cropNode.addChild(greenPart)
         
-        let path = NSBundle.mainBundle().pathForResource("TouchPoint", ofType: "sks")
-        touchPointGraphic = SKReferenceNode (URL: NSURL (fileURLWithPath: path!))
-        touchPointGraphic.userInteractionEnabled = false
+        let path = Bundle.main.path(forResource: "TouchPoint", ofType: "sks")
+        touchPointGraphic = SKReferenceNode (url: URL (fileURLWithPath: path!))
+        touchPointGraphic.isUserInteractionEnabled = false
         touchPointGraphic.zPosition = self.zPosition - 1
         buttonIcon.addChild(touchPointGraphic)
     }
@@ -73,12 +73,12 @@ class MineButton: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        touchPointGraphic.runAction(SKAction.fadeOutWithDuration(0.3))
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchPointGraphic.run(SKAction.fadeOut(withDuration: 0.3))
         onPressed()
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         onReleased()
     }
 

@@ -20,7 +20,7 @@ class WarningSign: SKSpriteNode {
         //let texture = SKTexture(imageNamed: "warning sign.png")
         let texture = SKTexture(imageNamed: "warning_sign.png")
         let size = CGSize(width: 50, height: 50)
-        super.init(texture: texture, color: SKColor.whiteColor(), size: size)
+        super.init(texture: texture, color: SKColor.white, size: size)
         
     }
     
@@ -28,18 +28,18 @@ class WarningSign: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    func update(deltaTime: CGFloat) {
+    func update(_ deltaTime: CGFloat) {
         flashCounter += deltaTime
         if flashCounter >=  1 / (flashRate > 0 ? flashRate : 1) {
             // perform flash action
             self.removeAllActions()
-            let flashOn = SKAction.runBlock { self.alpha = 1 }
+            let flashOn = SKAction.run { self.alpha = 1 }
             //let waitAction = SKAction.waitForDuration(0.5)
-            let flashOff = SKAction.runBlock { self.alpha = 0.3 }
-            let smallWaitAction = SKAction.waitForDuration(0.2)
+            let flashOff = SKAction.run { self.alpha = 0.3 }
+            let smallWaitAction = SKAction.wait(forDuration: 0.2)
             
             let flashAction = SKAction.sequence([flashOff, smallWaitAction, flashOn])
-            self.runAction(flashAction)
+            self.run(flashAction)
 
             flashCounter = 0
         }

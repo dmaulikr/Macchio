@@ -24,18 +24,18 @@ class LeaderBoard: SKNode {
     
     override init() {
         
-        entryLabels = [(place: SKLabelNode, playerName: SKLabelNode, score: SKLabelNode)!](count: numberOfSlots, repeatedValue: nil)
-        playerIDs = [Int](count: numberOfSlots, repeatedValue: 0)
+        entryLabels = [(place: SKLabelNode, playerName: SKLabelNode, score: SKLabelNode)!](repeating: nil, count: numberOfSlots)
+        playerIDs = [Int](repeating: 0, count: numberOfSlots)
         
         masterLabelNode = SKLabelNode(fontNamed: "Helvetica Neue UltraLight 32.0")
-        masterLabelNode.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Center
+        masterLabelNode.verticalAlignmentMode = SKLabelVerticalAlignmentMode.center
         masterLabelNode.zPosition = 1
         
         //Initialize empty slots. Just the sprite nodes. The slot sprites go from lowest to highest. So #10 to #1
         for slotIndex in 0..<numberOfSlots {
             //let newSpriteNode = SKSpriteNode(color: UIColor.grayColor(), size: slotSize)
             let blankTexture = SKTexture(imageNamed: "blankImage.png")
-            let newSpriteNode = SKSpriteNode(texture: blankTexture, color: UIColor.grayColor(), size: slotSize)
+            let newSpriteNode = SKSpriteNode(texture: blankTexture, color: UIColor.gray, size: slotSize)
             newSpriteNode.alpha = 1
             newSpriteNode.anchorPoint = CGPoint(x: 0, y: 0)
             let position = CGPoint(x: 0, y: slotSize.height * CGFloat(slotIndex))
@@ -45,9 +45,9 @@ class LeaderBoard: SKNode {
             
         }
         
-        for (index, slotSprite) in slotSprites.enumerate() {
+        for (index, slotSprite) in slotSprites.enumerated() {
             let placeLabel = masterLabelNode.copy() as! SKLabelNode
-            placeLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+            placeLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
             placeLabel.text = "#\(numberOfSlots - index)"
             // When assigning positions, take into account the x: 0 and y: 0 anchor point for the slot node
             // place label goes to the left
@@ -55,14 +55,14 @@ class LeaderBoard: SKNode {
             slotSprite.addChild(placeLabel)
             
             let playerNameLabel = masterLabelNode.copy() as! SKLabelNode
-            playerNameLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
+            playerNameLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
             playerNameLabel.text = "N/A"
             // Player name goes towards the left but not quite in the left
             playerNameLabel.position = CGPoint(x: slotPadding + 80, y: slotSize.height/2)
             slotSprite.addChild(playerNameLabel)
             
             let playerScoreLabel = masterLabelNode.copy() as! SKLabelNode
-            playerScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
+            playerScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right
             playerScoreLabel.text = "N/A"
             // Score goes on the right
             playerScoreLabel.position = CGPoint(x: slotSize.width - slotPadding, y: slotSize.height/2)
@@ -84,10 +84,10 @@ class LeaderBoard: SKNode {
     }
     
     
-    func update(creatureDataSnapshots: [CreatureDataSnapshot]) {
+    func update(_ creatureDataSnapshots: [CreatureDataSnapshot]) {
         
         // The data's should be sorted in order from lowest score to highest score
-        sortedData = creatureDataSnapshots.sort(byScore)
+        sortedData = creatureDataSnapshots.sorted(by: byScore)
         
 //        
 //        let numberOfElementsToRead = sortedData.count <= numberOfSlots ? sortedData.count : numberOfSlots
@@ -107,7 +107,7 @@ class LeaderBoard: SKNode {
         if sortedData.count < numberOfSlots {
 
             // Assign what I have in sorted data to
-            for (index, data) in sortedData.enumerate() {
+            for (index, data) in sortedData.enumerated() {
                     entryLabels[index].playerName.text = data.playerName
                     entryLabels[index].score.text = String(data.score)
                     let labelColor = gameSceneColorToUIColor(data.color)
@@ -127,7 +127,7 @@ class LeaderBoard: SKNode {
             for index in sortedData.count - numberOfSlots..<sortedData.count {
                 theTop10Datas.append(sortedData[index])
             }
-            for (index, data) in theTop10Datas.enumerate() {
+            for (index, data) in theTop10Datas.enumerated() {
                 entryLabels[index].playerName.text = data.playerName
                 entryLabels[index].score.text = "\(data.score)"
                 let labelColor = gameSceneColorToUIColor(data.color)
@@ -142,7 +142,7 @@ class LeaderBoard: SKNode {
     
     func getRankOfCreature(withID creatureID: Int) -> Int? {
         // Note: sorted data is sorted from lowest score to highest score
-        for (index, data) in sortedData.enumerate() {
+        for (index, data) in sortedData.enumerated() {
             if data.playerID == creatureID {
                 return sortedData.count - index
             }
@@ -158,20 +158,20 @@ class LeaderBoard: SKNode {
     }
     
     // This function is to be used for sorting
-    func byScore(data1: CreatureDataSnapshot, data2: CreatureDataSnapshot) -> Bool {
+    func byScore(_ data1: CreatureDataSnapshot, data2: CreatureDataSnapshot) -> Bool {
         // should data1 go before data2 because it's score is less? if yes, return true
         return data1.score < data2.score
     }
     
-    func gameSceneColorToUIColor(inColor: Color) -> UIColor {
+    func gameSceneColorToUIColor(_ inColor: Color) -> UIColor {
         switch inColor {
-        case .Red:
+        case .red:
             return UIColor(red: 255.0 / 255, green: 100.0 / 255, blue: 100.0 / 255, alpha: 1.0)
-        case .Green:
+        case .green:
             return UIColor(red: 100.0 / 255, green: 255.0 / 255, blue: 100.0 / 255, alpha: 1.0)
-        case .Blue:
+        case .blue:
             return UIColor(red: 100.0 / 255, green: 100.0 / 255, blue: 255.0 / 255, alpha: 1.0)
-        case .Yellow:
+        case .yellow:
             return UIColor(red: 255.0 / 255, green: 255.0 / 255, blue: 100.0 / 255, alpha: 1.0)
 
         }
